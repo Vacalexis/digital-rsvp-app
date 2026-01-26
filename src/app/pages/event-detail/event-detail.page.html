@@ -1,0 +1,203 @@
+@if (event(); as currentEvent) {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/events"></ion-back-button>
+      </ion-buttons>
+      <ion-title>{{ currentEvent.title }}</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="showMoreOptions()">
+          <ion-icon slot="icon-only" name="ellipsis-horizontal-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content class="ion-padding">
+    <!-- Event Header -->
+    <div class="event-header">
+      <ion-chip color="primary">
+        {{ getEventTypeLabel(currentEvent.eventType) }}
+      </ion-chip>
+      
+      <h1>{{ currentEvent.title }}</h1>
+      @if (currentEvent.subtitle) {
+        <p class="subtitle">{{ currentEvent.subtitle }}</p>
+      }
+
+      @if (getDaysUntilEvent() > 0) {
+        <div class="countdown">
+          <span class="days">{{ getDaysUntilEvent() }}</span>
+          <span class="label">dias para o evento</span>
+        </div>
+      } @else if (getDaysUntilEvent() === 0) {
+        <div class="countdown today">
+          <span class="label">Hoje é o dia! 🎉</span>
+        </div>
+      }
+    </div>
+
+    <!-- Quick Stats -->
+    <ion-card class="stats-card">
+      <ion-card-content>
+        <div class="stats-grid">
+          <div class="stat confirmed">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <span class="value">{{ guestStats().confirmed }}</span>
+            <span class="label">Confirmados</span>
+          </div>
+          <div class="stat pending">
+            <ion-icon name="help-circle-outline"></ion-icon>
+            <span class="value">{{ guestStats().pending }}</span>
+            <span class="label">Pendentes</span>
+          </div>
+          <div class="stat declined">
+            <ion-icon name="close-circle-outline"></ion-icon>
+            <span class="value">{{ guestStats().declined }}</span>
+            <span class="label">Recusados</span>
+          </div>
+          <div class="stat total">
+            <ion-icon name="people-outline"></ion-icon>
+            <span class="value">{{ guestStats().totalAttending }}</span>
+            <span class="label">Total Presentes</span>
+          </div>
+        </div>
+        
+        @if (guestStats().total > 0) {
+          <div class="progress-bar">
+            <div class="progress" [style.width.%]="getConfirmationRate()"></div>
+          </div>
+          <p class="progress-label">{{ getConfirmationRate() }}% de confirmações</p>
+        }
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Event Details -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Detalhes do Evento</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item>
+            <ion-icon slot="start" name="calendar-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Data</h3>
+              <p>{{ formatDate(currentEvent.date) }}</p>
+            </ion-label>
+          </ion-item>
+          
+          @if (currentEvent.time) {
+            <ion-item>
+              <ion-icon slot="start" name="time-outline" color="primary"></ion-icon>
+              <ion-label>
+                <h3>Hora</h3>
+                <p>{{ currentEvent.time }}@if (currentEvent.endTime) { - {{ currentEvent.endTime }}}</p>
+              </ion-label>
+            </ion-item>
+          }
+          
+          <ion-item button (click)="openMaps()">
+            <ion-icon slot="start" name="location-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Local</h3>
+              <p>{{ currentEvent.venue.name }}</p>
+              <p class="address">{{ currentEvent.venue.address }}, {{ currentEvent.venue.city }}</p>
+            </ion-label>
+            <ion-icon slot="end" name="navigate-outline" color="medium"></ion-icon>
+          </ion-item>
+
+          @if (currentEvent.rsvpDeadline) {
+            <ion-item>
+              <ion-icon slot="start" name="mail-outline" color="primary"></ion-icon>
+              <ion-label>
+                <h3>Prazo RSVP</h3>
+                <p>{{ formatDate(currentEvent.rsvpDeadline) }}</p>
+              </ion-label>
+            </ion-item>
+          }
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    @if (currentEvent.description) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Descrição</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <p>{{ currentEvent.description }}</p>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    @if (currentEvent.schedule && currentEvent.schedule.length > 0) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Programa</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <div class="schedule-list">
+            @for (item of currentEvent.schedule; track item.id) {
+              <div class="schedule-item">
+                <div class="time">{{ item.time }}</div>
+                <div class="content">
+                  <h4>{{ item.title }}</h4>
+                  @if (item.description) {
+                    <p>{{ item.description }}</p>
+                  }
+                </div>
+              </div>
+            }
+          </div>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- Quick Actions -->
+    <div class="action-buttons">
+      <ion-button expand="block" (click)="navigateToGuests()">
+        <ion-icon slot="start" name="people-outline"></ion-icon>
+        Gerir Convidados
+        <ion-badge slot="end">{{ guestStats().total }}</ion-badge>
+      </ion-button>
+
+      <ion-button expand="block" color="secondary" (click)="showShareOptions()">
+        <ion-icon slot="start" name="share-outline"></ion-icon>
+        Partilhar Convite
+      </ion-button>
+
+      <ion-button expand="block" fill="outline" (click)="navigateToInvitation()">
+        <ion-icon slot="start" name="eye-outline"></ion-icon>
+        Pré-visualizar Convite
+      </ion-button>
+    </div>
+
+    <!-- Share Code -->
+    <ion-card class="share-code-card">
+      <ion-card-content>
+        <p>Código de Partilha</p>
+        <div class="code" (click)="copyShareLink()">
+          {{ currentEvent.shareCode }}
+          <ion-icon name="copy-outline"></ion-icon>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-content>
+} @else {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/events"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Evento não encontrado</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content class="ion-padding">
+    <div class="empty-state">
+      <p>O evento solicitado não foi encontrado.</p>
+      <ion-button routerLink="/events">Voltar aos Eventos</ion-button>
+    </div>
+  </ion-content>
+}

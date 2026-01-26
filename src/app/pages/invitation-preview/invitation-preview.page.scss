@@ -1,0 +1,246 @@
+.invitation-preview {
+  --theme-color: #8b5a5a;
+  min-height: 100%;
+  background: linear-gradient(135deg, #faf5f0 0%, #f0e8e0 100%);
+  padding: 24px 16px;
+}
+
+.envelope-wrapper {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+
+  .envelope {
+    width: 120px;
+    height: 80px;
+    background: #f5ebe0;
+    border-radius: 8px;
+    position: relative;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 50%;
+      background: linear-gradient(135deg, transparent 50%, #e8ddd0 50%);
+    }
+
+    .seal {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: var(--theme-color);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+      ion-icon {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+.invitation-card {
+  background: white;
+  border-radius: 24px;
+  padding: 40px 24px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.card-header {
+  margin-bottom: 24px;
+
+  .hosts {
+    font-size: 1rem;
+    color: var(--theme-color);
+    font-weight: 600;
+    margin: 0 0 8px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .invite-text {
+    font-size: 0.875rem;
+    color: var(--ion-color-medium);
+    margin: 0;
+    font-style: italic;
+  }
+}
+
+.event-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--theme-color);
+  margin: 0 0 8px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 1rem;
+  color: var(--ion-color-medium);
+  margin: 0;
+  font-style: italic;
+}
+
+.divider {
+  margin: 24px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--theme-color), transparent);
+    max-width: 80px;
+  }
+
+  span {
+    margin: 0 16px;
+    color: var(--theme-color);
+    font-size: 1.25rem;
+  }
+}
+
+.event-details {
+  margin-bottom: 24px;
+
+  .detail {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+
+    ion-icon {
+      font-size: 20px;
+      color: var(--theme-color);
+      margin-top: 2px;
+    }
+
+    span {
+      font-size: 1rem;
+    }
+
+    .venue {
+      display: flex;
+      flex-direction: column;
+      text-align: left;
+
+      strong {
+        color: var(--ion-text-color);
+      }
+
+      span {
+        font-size: 0.875rem;
+        color: var(--ion-color-medium);
+      }
+    }
+  }
+}
+
+.description {
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  color: var(--ion-color-medium);
+  margin: 0 0 24px;
+  padding: 0 16px;
+}
+
+.schedule {
+  background: #faf5f0;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 24px;
+
+  h3 {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--theme-color);
+    margin: 0 0 16px;
+  }
+
+  .schedule-item {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    .time {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--theme-color);
+      min-width: 50px;
+    }
+
+    .title {
+      font-size: 0.875rem;
+      color: var(--ion-text-color);
+    }
+  }
+}
+
+.countdown {
+  margin-bottom: 32px;
+
+  .number {
+    display: block;
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--theme-color);
+    line-height: 1;
+  }
+
+  .label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--ion-color-medium);
+  }
+}
+
+.rsvp-section {
+  padding-top: 24px;
+  border-top: 1px solid var(--ion-color-light);
+
+  p {
+    margin: 0 0 16px;
+    font-size: 0.875rem;
+    color: var(--ion-color-medium);
+  }
+
+  .rsvp-button {
+    --background: var(--theme-color);
+    --border-radius: 12px;
+    height: 48px;
+    margin-bottom: 12px;
+  }
+
+  .deadline {
+    font-size: 0.75rem;
+    font-style: italic;
+    margin: 0;
+  }
+}

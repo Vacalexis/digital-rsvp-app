@@ -1,0 +1,166 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/events/' + eventId() + '/guests'"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEdit() ? 'Editar Convidado' : 'Novo Convidado' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" color="primary">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        Guardar
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Informações Básicas</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-input 
+        label="Nome *" 
+        labelPlacement="stacked" 
+        [(ngModel)]="name"
+        placeholder="Nome completo">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Email" 
+        labelPlacement="stacked" 
+        type="email"
+        [(ngModel)]="email"
+        placeholder="email@exemplo.com">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Telefone" 
+        labelPlacement="stacked" 
+        type="tel"
+        [(ngModel)]="phone"
+        placeholder="+351 912 345 678">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-select 
+        label="Estado RSVP" 
+        labelPlacement="stacked" 
+        [(ngModel)]="rsvpStatus"
+        interface="action-sheet">
+        @for (status of rsvpStatuses; track status.value) {
+          <ion-select-option [value]="status.value">{{ status.label }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Acompanhante</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-toggle [(ngModel)]="plusOne">Traz acompanhante (+1)</ion-toggle>
+    </ion-item>
+
+    @if (plusOne) {
+      <ion-item>
+        <ion-input 
+          label="Nome do Acompanhante" 
+          labelPlacement="stacked" 
+          [(ngModel)]="plusOneName"
+          placeholder="Nome do acompanhante">
+        </ion-input>
+      </ion-item>
+
+      <ion-item>
+        <ion-toggle [(ngModel)]="plusOneConfirmed">Acompanhante confirmado</ion-toggle>
+      </ion-item>
+    }
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Restrições e Preferências</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-textarea 
+        label="Restrições Alimentares" 
+        labelPlacement="stacked" 
+        [(ngModel)]="dietaryRestrictions"
+        placeholder="ex: Vegetariano, Sem glúten..."
+        [autoGrow]="true"
+        rows="2">
+      </ion-textarea>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Alergias" 
+        labelPlacement="stacked" 
+        [(ngModel)]="allergies"
+        placeholder="ex: Marisco, Lactose...">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Sugestão de Música" 
+        labelPlacement="stacked" 
+        [(ngModel)]="songRequest"
+        placeholder="Qual música não pode faltar?">
+      </ion-input>
+    </ion-item>
+  </ion-item-group>
+
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Organização</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-input 
+        label="Grupo" 
+        labelPlacement="stacked" 
+        [(ngModel)]="group"
+        placeholder="ex: Família, Amigos Noivo, Trabalho...">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Número da Mesa" 
+        labelPlacement="stacked" 
+        type="number"
+        [(ngModel)]="tableNumber"
+        placeholder="ex: 5">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-textarea 
+        label="Notas" 
+        labelPlacement="stacked" 
+        [(ngModel)]="notes"
+        placeholder="Notas privadas sobre este convidado..."
+        [autoGrow]="true"
+        rows="2">
+      </ion-textarea>
+    </ion-item>
+  </ion-item-group>
+
+  <div class="form-actions">
+    <ion-button expand="block" (click)="save()">
+      <ion-icon slot="start" name="save-outline"></ion-icon>
+      {{ isEdit() ? 'Atualizar' : 'Adicionar' }} Convidado
+    </ion-button>
+  </div>
+</ion-content>

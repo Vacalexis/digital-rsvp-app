@@ -1,0 +1,123 @@
+@if (event(); as currentEvent) {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button [defaultHref]="'/events/' + eventId()"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Pré-visualização</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="shareInvitation()">
+          <ion-icon slot="icon-only" name="share-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    <div class="invitation-preview" [style.--theme-color]="getThemeColor()">
+      <!-- Envelope Animation Placeholder -->
+      <div class="envelope-wrapper">
+        <div class="envelope">
+          <div class="seal">
+            @if (currentEvent.hosts.length >= 2) {
+              {{ currentEvent.hosts[0].charAt(0) }}&{{ currentEvent.hosts[1].charAt(0) }}
+            } @else if (currentEvent.hosts.length === 1) {
+              {{ currentEvent.hosts[0].charAt(0) }}
+            } @else {
+              <ion-icon name="heart-outline"></ion-icon>
+            }
+          </div>
+        </div>
+      </div>
+
+      <!-- Invitation Card -->
+      <div class="invitation-card">
+        <div class="card-header">
+          @if (currentEvent.hosts.length > 0) {
+            <p class="hosts">{{ currentEvent.hosts.join(' & ') }}</p>
+          }
+          <p class="invite-text">Convidam-vos para o seu</p>
+        </div>
+
+        <h1 class="event-title">{{ currentEvent.title }}</h1>
+        
+        @if (currentEvent.subtitle) {
+          <p class="subtitle">{{ currentEvent.subtitle }}</p>
+        }
+
+        <div class="divider">
+          <span>♥</span>
+        </div>
+
+        <div class="event-details">
+          <div class="detail">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ formatDate(currentEvent.date) }}</span>
+          </div>
+
+          @if (currentEvent.time) {
+            <div class="detail">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ currentEvent.time }}@if (currentEvent.endTime) { - {{ currentEvent.endTime }}}</span>
+            </div>
+          }
+
+          <div class="detail">
+            <ion-icon name="location-outline"></ion-icon>
+            <div class="venue">
+              <strong>{{ currentEvent.venue.name }}</strong>
+              <span>{{ currentEvent.venue.address }}</span>
+              <span>{{ currentEvent.venue.city }}, {{ currentEvent.venue.country }}</span>
+            </div>
+          </div>
+        </div>
+
+        @if (currentEvent.description) {
+          <p class="description">{{ currentEvent.description }}</p>
+        }
+
+        @if (currentEvent.schedule && currentEvent.schedule.length > 0) {
+          <div class="schedule">
+            <h3>Programa</h3>
+            @for (item of currentEvent.schedule; track item.id) {
+              <div class="schedule-item">
+                <span class="time">{{ item.time }}</span>
+                <span class="title">{{ item.title }}</span>
+              </div>
+            }
+          </div>
+        }
+
+        @if (getDaysUntil() > 0) {
+          <div class="countdown">
+            <span class="number">{{ getDaysUntil() }}</span>
+            <span class="label">dias para o grande dia</span>
+          </div>
+        }
+
+        <div class="rsvp-section">
+          <p>Por favor confirme a sua presença</p>
+          <ion-button expand="block" class="rsvp-button">
+            Confirmar Presença
+          </ion-button>
+          @if (currentEvent.rsvpDeadline) {
+            <p class="deadline">Responda até {{ formatDate(currentEvent.rsvpDeadline) }}</p>
+          }
+        </div>
+      </div>
+    </div>
+  </ion-content>
+} @else {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/events"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Convite não encontrado</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content class="ion-padding">
+    <p>O convite não foi encontrado.</p>
+  </ion-content>
+}

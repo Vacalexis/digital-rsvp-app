@@ -1,0 +1,295 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="isEdit() ? '/events/' + eventId() : '/events'"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ isEdit() ? 'Editar Evento' : 'Novo Evento' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="save()" color="primary">
+        <ion-icon slot="start" name="save-outline"></ion-icon>
+        Guardar
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <!-- Basic Info -->
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Informações Básicas</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-select 
+        label="Tipo de Evento" 
+        labelPlacement="stacked" 
+        [(ngModel)]="eventType"
+        interface="action-sheet">
+        @for (type of eventTypes; track type.value) {
+          <ion-select-option [value]="type.value">{{ type.label }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Título *" 
+        labelPlacement="stacked" 
+        [(ngModel)]="title"
+        placeholder="ex: Casamento da Maria e João">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Subtítulo" 
+        labelPlacement="stacked" 
+        [(ngModel)]="subtitle"
+        placeholder="ex: Celebramos o nosso amor">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-textarea 
+        label="Descrição" 
+        labelPlacement="stacked" 
+        [(ngModel)]="description"
+        placeholder="Adicione uma descrição do evento..."
+        [autoGrow]="true"
+        rows="3">
+      </ion-textarea>
+    </ion-item>
+  </ion-item-group>
+
+  <!-- Date & Time -->
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Data e Hora</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-label>Data do Evento *</ion-label>
+      <ion-datetime-button datetime="eventDate"></ion-datetime-button>
+    </ion-item>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime 
+          id="eventDate" 
+          [(ngModel)]="date" 
+          presentation="date"
+          [preferWheel]="true">
+        </ion-datetime>
+      </ng-template>
+    </ion-modal>
+
+    <ion-item>
+      <ion-input 
+        label="Hora de Início" 
+        labelPlacement="stacked" 
+        type="time"
+        [(ngModel)]="time">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Hora de Fim" 
+        labelPlacement="stacked" 
+        type="time"
+        [(ngModel)]="endTime">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-label>Prazo para RSVP</ion-label>
+      <ion-datetime-button datetime="rsvpDate"></ion-datetime-button>
+    </ion-item>
+    <ion-modal [keepContentsMounted]="true">
+      <ng-template>
+        <ion-datetime 
+          id="rsvpDate" 
+          [(ngModel)]="rsvpDeadline" 
+          presentation="date"
+          [preferWheel]="true">
+        </ion-datetime>
+      </ng-template>
+    </ion-modal>
+  </ion-item-group>
+
+  <!-- Venue -->
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Local</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-input 
+        label="Nome do Local *" 
+        labelPlacement="stacked" 
+        [(ngModel)]="venueName"
+        placeholder="ex: Quinta das Flores">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Morada" 
+        labelPlacement="stacked" 
+        [(ngModel)]="venueAddress"
+        placeholder="ex: Rua das Flores, 123">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Cidade *" 
+        labelPlacement="stacked" 
+        [(ngModel)]="venueCity"
+        placeholder="ex: Lisboa">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="País" 
+        labelPlacement="stacked" 
+        [(ngModel)]="venueCountry"
+        placeholder="ex: Portugal">
+      </ion-input>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Link Google Maps" 
+        labelPlacement="stacked" 
+        type="url"
+        [(ngModel)]="venueMapsUrl"
+        placeholder="https://maps.google.com/...">
+      </ion-input>
+    </ion-item>
+  </ion-item-group>
+
+  <!-- Hosts -->
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Anfitriões</ion-label>
+      <ion-button slot="end" fill="clear" size="small" (click)="addHost()">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-item-divider>
+
+    @if (hosts.length === 0) {
+      <ion-item>
+        <ion-note>Nenhum anfitrião adicionado</ion-note>
+      </ion-item>
+    } @else {
+      @for (host of hosts; track host; let i = $index) {
+        <ion-item>
+          <ion-label>{{ host }}</ion-label>
+          <ion-button slot="end" fill="clear" color="danger" (click)="removeHost(i)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+      }
+    }
+  </ion-item-group>
+
+  <!-- Schedule -->
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Programa</ion-label>
+      <ion-button slot="end" fill="clear" size="small" (click)="addScheduleItem()">
+        <ion-icon slot="icon-only" name="add-outline"></ion-icon>
+      </ion-button>
+    </ion-item-divider>
+
+    @if (schedule.length === 0) {
+      <ion-item>
+        <ion-note>Nenhum item no programa</ion-note>
+      </ion-item>
+    } @else {
+      @for (item of schedule; track item.id; let i = $index) {
+        <ion-item>
+          <ion-label>
+            <h3>{{ item.time }} - {{ item.title }}</h3>
+            @if (item.description) {
+              <p>{{ item.description }}</p>
+            }
+          </ion-label>
+          <ion-button slot="end" fill="clear" color="danger" (click)="removeScheduleItem(i)">
+            <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+          </ion-button>
+        </ion-item>
+      }
+    }
+  </ion-item-group>
+
+  <!-- Theme & Settings -->
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Tema e Configurações</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-select 
+        label="Tema do Convite" 
+        labelPlacement="stacked" 
+        [(ngModel)]="theme"
+        interface="action-sheet">
+        @for (t of themes; track t.value) {
+          <ion-select-option [value]="t.value">{{ t.label }}</ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-select 
+        label="Idioma Principal" 
+        labelPlacement="stacked" 
+        [(ngModel)]="language"
+        interface="action-sheet">
+        <ion-select-option value="pt">Português</ion-select-option>
+        <ion-select-option value="en">English</ion-select-option>
+        <ion-select-option value="es">Español</ion-select-option>
+        <ion-select-option value="fr">Français</ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item>
+      <ion-input 
+        label="Número Máximo de Convidados" 
+        labelPlacement="stacked" 
+        type="number"
+        [(ngModel)]="maxGuests"
+        placeholder="Deixe vazio para ilimitado">
+      </ion-input>
+    </ion-item>
+  </ion-item-group>
+
+  <!-- RSVP Options -->
+  <ion-item-group>
+    <ion-item-divider>
+      <ion-label>Opções do RSVP</ion-label>
+    </ion-item-divider>
+
+    <ion-item>
+      <ion-toggle [(ngModel)]="allowPlusOne">Permitir acompanhante (+1)</ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-toggle [(ngModel)]="askDietaryRestrictions">Perguntar restrições alimentares</ion-toggle>
+    </ion-item>
+
+    <ion-item>
+      <ion-toggle [(ngModel)]="askSongRequest">Perguntar sugestão de música</ion-toggle>
+    </ion-item>
+  </ion-item-group>
+
+  <div class="form-actions">
+    <ion-button expand="block" (click)="save()">
+      <ion-icon slot="start" name="save-outline"></ion-icon>
+      {{ isEdit() ? 'Atualizar Evento' : 'Criar Evento' }}
+    </ion-button>
+  </div>
+</ion-content>

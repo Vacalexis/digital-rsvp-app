@@ -1,0 +1,132 @@
+.page-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 16px;
+  text-align: center;
+}
+
+ion-card {
+  margin: 0 0 16px;
+  border-radius: 16px;
+
+  ion-card-title {
+    font-size: 1rem;
+    font-weight: 600;
+  }
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-bottom: 24px;
+
+  .stat-card {
+    background: var(--ion-color-light);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+
+    ion-icon {
+      font-size: 28px;
+    }
+
+    .value {
+      font-size: 2rem;
+      font-weight: 700;
+    }
+
+    .label {
+      font-size: 0.75rem;
+      color: var(--ion-color-medium);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    &.confirmed {
+      ion-icon, .value { color: var(--ion-color-success); }
+    }
+    &.pending {
+      ion-icon, .value { color: var(--ion-color-warning); }
+    }
+    &.declined {
+      ion-icon, .value { color: var(--ion-color-danger); }
+    }
+    &.maybe {
+      ion-icon, .value { color: var(--ion-color-medium); }
+    }
+  }
+}
+
+.progress-section {
+  .progress-item {
+    margin-bottom: 16px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .progress-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 0.875rem;
+
+    span:last-child {
+      font-weight: 600;
+    }
+  }
+
+  .progress-bar {
+    height: 8px;
+    background: var(--ion-color-light);
+    border-radius: 4px;
+    overflow: hidden;
+
+    .progress {
+      height: 100%;
+      border-radius: 4px;
+      transition: width 0.3s ease;
+
+      &.confirmed {
+        background: linear-gradient(90deg, var(--ion-color-success), var(--ion-color-tertiary));
+      }
+      &.response {
+        background: linear-gradient(90deg, var(--ion-color-primary), var(--ion-color-secondary));
+      }
+    }
+  }
+}
+
+ion-list {
+  padding: 0;
+
+  ion-item {
+    --padding-start: 0;
+    --inner-padding-end: 0;
+    margin-bottom: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    ion-icon[slot="start"] {
+      margin-right: 12px;
+    }
+
+    h3 {
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    p {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
+  }
+}

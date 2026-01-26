@@ -1,0 +1,160 @@
+@if (event(); as currentEvent) {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button [defaultHref]="'/events/' + eventId()"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Estatísticas</ion-title>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content class="ion-padding">
+    <h2 class="page-title">{{ currentEvent.title }}</h2>
+
+    <!-- Main Stats -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Resumo RSVP</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="stats-grid">
+          <div class="stat-card confirmed">
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+            <span class="value">{{ stats().confirmed }}</span>
+            <span class="label">Confirmados</span>
+          </div>
+          <div class="stat-card pending">
+            <ion-icon name="time-outline"></ion-icon>
+            <span class="value">{{ stats().pending }}</span>
+            <span class="label">Pendentes</span>
+          </div>
+          <div class="stat-card declined">
+            <ion-icon name="close-circle-outline"></ion-icon>
+            <span class="value">{{ stats().declined }}</span>
+            <span class="label">Recusados</span>
+          </div>
+          <div class="stat-card maybe">
+            <ion-icon name="help-circle-outline"></ion-icon>
+            <span class="value">{{ stats().maybe }}</span>
+            <span class="label">Talvez</span>
+          </div>
+        </div>
+
+        <div class="progress-section">
+          <div class="progress-item">
+            <div class="progress-header">
+              <span>Taxa de Confirmação</span>
+              <span>{{ getConfirmationRate() }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress confirmed" [style.width.%]="getConfirmationRate()"></div>
+            </div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-header">
+              <span>Taxa de Resposta</span>
+              <span>{{ getResponseRate() }}%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress response" [style.width.%]="getResponseRate()"></div>
+            </div>
+          </div>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Attendance -->
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Previsão de Presenças</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list lines="none">
+          <ion-item>
+            <ion-icon slot="start" name="people-outline" color="primary"></ion-icon>
+            <ion-label>
+              <h3>Total de Convidados</h3>
+              <p>Incluindo todos os estados</p>
+            </ion-label>
+            <ion-chip slot="end">{{ stats().total }}</ion-chip>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="checkmark-circle-outline" color="success"></ion-icon>
+            <ion-label>
+              <h3>Total de Presenças Confirmadas</h3>
+              <p>Convidados + acompanhantes confirmados</p>
+            </ion-label>
+            <ion-chip slot="end" color="success">{{ stats().totalAttending }}</ion-chip>
+          </ion-item>
+          <ion-item>
+            <ion-icon slot="start" name="person-add-outline" color="tertiary"></ion-icon>
+            <ion-label>
+              <h3>Com Acompanhante (+1)</h3>
+              <p>Convidados com acompanhante confirmado</p>
+            </ion-label>
+            <ion-chip slot="end" color="tertiary">{{ stats().withPlusOne }}</ion-chip>
+          </ion-item>
+        </ion-list>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Dietary -->
+    @if (guestsWithDietary().length > 0) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Restrições Alimentares</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            @for (guest of guestsWithDietary(); track guest.id) {
+              <ion-item>
+                <ion-icon slot="start" name="restaurant-outline" color="warning"></ion-icon>
+                <ion-label>
+                  <h3>{{ guest.name }}</h3>
+                  @if (guest.dietaryRestrictions) {
+                    <p>{{ guest.dietaryRestrictions }}</p>
+                  }
+                  @if (guest.allergies) {
+                    <p><strong>Alergias:</strong> {{ guest.allergies }}</p>
+                  }
+                </ion-label>
+              </ion-item>
+            }
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    }
+
+    <!-- Groups -->
+    @if (guestsByGroup().size > 1) {
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Por Grupo</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list lines="none">
+            @for (group of guestsByGroup() | keyvalue; track group.key) {
+              <ion-item>
+                <ion-label>{{ group.key }}</ion-label>
+                <ion-chip slot="end">{{ group.value.length }}</ion-chip>
+              </ion-item>
+            }
+          </ion-list>
+        </ion-card-content>
+      </ion-card>
+    }
+  </ion-content>
+} @else {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/events"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Evento não encontrado</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content class="ion-padding">
+    <p>O evento não foi encontrado.</p>
+  </ion-content>
+}

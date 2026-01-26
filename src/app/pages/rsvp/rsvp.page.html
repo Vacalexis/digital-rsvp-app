@@ -1,0 +1,188 @@
+@if (event(); as currentEvent) {
+  <ion-content [style.--theme-color]="getThemeColor()">
+    @if (!submitted()) {
+      <div class="rsvp-page">
+        <!-- Event Header -->
+        <div class="event-header">
+          <div class="seal">
+            <ion-icon name="heart-outline"></ion-icon>
+          </div>
+          <h1>{{ currentEvent.title }}</h1>
+          @if (currentEvent.subtitle) {
+            <p class="subtitle">{{ currentEvent.subtitle }}</p>
+          }
+        </div>
+
+        <!-- Event Details -->
+        <div class="event-info">
+          <div class="info-item">
+            <ion-icon name="calendar-outline"></ion-icon>
+            <span>{{ formatDate(currentEvent.date) }}</span>
+          </div>
+          @if (currentEvent.time) {
+            <div class="info-item">
+              <ion-icon name="time-outline"></ion-icon>
+              <span>{{ currentEvent.time }}</span>
+            </div>
+          }
+          <div class="info-item">
+            <ion-icon name="location-outline"></ion-icon>
+            <span>{{ currentEvent.venue.name }}, {{ currentEvent.venue.city }}</span>
+          </div>
+        </div>
+
+        <!-- RSVP Form -->
+        <div class="rsvp-form">
+          <h2>Confirme a sua presença</h2>
+
+          <div class="form-group">
+            <label>O seu nome *</label>
+            <ion-input 
+              [(ngModel)]="guestName"
+              placeholder="Nome completo"
+              fill="outline">
+            </ion-input>
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <ion-input 
+              [(ngModel)]="guestEmail"
+              type="email"
+              placeholder="email@exemplo.com"
+              fill="outline">
+            </ion-input>
+          </div>
+
+          <div class="form-group">
+            <label>Telefone</label>
+            <ion-input 
+              [(ngModel)]="guestPhone"
+              type="tel"
+              placeholder="+351 912 345 678"
+              fill="outline">
+            </ion-input>
+          </div>
+
+          <div class="form-group">
+            <label>Vai poder estar presente?</label>
+            <ion-radio-group [(ngModel)]="attending">
+              <div class="radio-options">
+                <div class="radio-option" [class.selected]="attending === 'yes'">
+                  <ion-radio value="yes"></ion-radio>
+                  <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                  <span>Sim, estarei presente!</span>
+                </div>
+                <div class="radio-option" [class.selected]="attending === 'no'">
+                  <ion-radio value="no"></ion-radio>
+                  <ion-icon name="close-circle-outline" color="danger"></ion-icon>
+                  <span>Infelizmente não poderei</span>
+                </div>
+                <div class="radio-option" [class.selected]="attending === 'maybe'">
+                  <ion-radio value="maybe"></ion-radio>
+                  <ion-icon name="help-circle-outline" color="medium"></ion-icon>
+                  <span>Ainda não sei</span>
+                </div>
+              </div>
+            </ion-radio-group>
+          </div>
+
+          @if (attending === 'yes' && currentEvent.allowPlusOne) {
+            <div class="form-group">
+              <ion-item lines="none" class="toggle-item">
+                <ion-toggle [(ngModel)]="bringingPlusOne">Vou levar acompanhante</ion-toggle>
+              </ion-item>
+              @if (bringingPlusOne) {
+                <ion-input 
+                  [(ngModel)]="plusOneName"
+                  placeholder="Nome do acompanhante"
+                  fill="outline"
+                  class="plus-one-input">
+                </ion-input>
+              }
+            </div>
+          }
+
+          @if (attending === 'yes' && currentEvent.askDietaryRestrictions) {
+            <div class="form-group">
+              <label>Restrições alimentares ou alergias</label>
+              <ion-textarea 
+                [(ngModel)]="dietaryRestrictions"
+                placeholder="Ex: Vegetariano, alergia a marisco..."
+                fill="outline"
+                [autoGrow]="true"
+                rows="2">
+              </ion-textarea>
+            </div>
+          }
+
+          @if (attending === 'yes' && currentEvent.askSongRequest) {
+            <div class="form-group">
+              <label>Sugestão de música 🎵</label>
+              <ion-input 
+                [(ngModel)]="songRequest"
+                placeholder="Qual música não pode faltar?"
+                fill="outline">
+              </ion-input>
+            </div>
+          }
+
+          <div class="form-group">
+            <label>Mensagem para os anfitriões</label>
+            <ion-textarea 
+              [(ngModel)]="message"
+              placeholder="Deixe uma mensagem..."
+              fill="outline"
+              [autoGrow]="true"
+              rows="3">
+            </ion-textarea>
+          </div>
+
+          <ion-button expand="block" (click)="submit()" class="submit-button">
+            Confirmar Resposta
+          </ion-button>
+
+          @if (currentEvent.rsvpDeadline) {
+            <p class="deadline">Responda até {{ formatDate(currentEvent.rsvpDeadline) }}</p>
+          }
+        </div>
+      </div>
+    } @else {
+      <!-- Thank You Message -->
+      <div class="thank-you">
+        <div class="icon-wrapper" [class.confirmed]="response() === 'confirmed'" [class.declined]="response() === 'declined'">
+          @if (response() === 'confirmed') {
+            <ion-icon name="checkmark-circle-outline"></ion-icon>
+          } @else if (response() === 'declined') {
+            <ion-icon name="close-circle-outline"></ion-icon>
+          } @else {
+            <ion-icon name="help-circle-outline"></ion-icon>
+          }
+        </div>
+        
+        <h1>Obrigado, {{ guestName }}!</h1>
+        
+        @if (response() === 'confirmed') {
+          <p>A sua presença está confirmada. Mal podemos esperar para celebrar consigo!</p>
+        } @else if (response() === 'declined') {
+          <p>Lamentamos que não possa estar presente. Obrigado por responder.</p>
+        } @else {
+          <p>Obrigado por responder. Esperamos ter notícias suas em breve!</p>
+        }
+
+        <div class="event-reminder">
+          <h3>{{ currentEvent.title }}</h3>
+          <p>{{ formatDate(currentEvent.date) }}</p>
+          <p>{{ currentEvent.venue.name }}, {{ currentEvent.venue.city }}</p>
+        </div>
+      </div>
+    }
+  </ion-content>
+} @else {
+  <ion-content class="ion-padding">
+    <div class="not-found">
+      <h1>Convite não encontrado</h1>
+      <p>O código de convite não é válido ou o evento já não está disponível.</p>
+    </div>
+  </ion-content>
+}

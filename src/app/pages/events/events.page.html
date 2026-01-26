@@ -1,0 +1,125 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>
+      <div class="title-with-icon">
+        <ion-icon name="sparkles-outline"></ion-icon>
+        <span>Meus Eventos</span>
+      </div>
+    </ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="navigateToSettings()">
+        <ion-icon slot="icon-only" name="settings-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [value]="segment" (ionChange)="segmentChanged($event)">
+      <ion-segment-button value="upcoming">
+        <ion-label>Próximos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="past">
+        <ion-label>Passados</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (displayedEvents().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">
+        <ion-icon name="calendar-outline"></ion-icon>
+      </div>
+      <h2>Nenhum evento {{ segment === 'upcoming' ? 'próximo' : 'passado' }}</h2>
+      <p>
+        @if (segment === 'upcoming') {
+          Crie o seu primeiro evento e comece a gerir os seus convites digitais.
+        } @else {
+          Os eventos passados aparecerão aqui.
+        }
+      </p>
+      @if (segment === 'upcoming') {
+        <ion-button (click)="navigateToNewEvent()" expand="block">
+          <ion-icon slot="start" name="add-outline"></ion-icon>
+          Criar Evento
+        </ion-button>
+      }
+    </div>
+  } @else {
+    <div class="events-grid">
+      @for (event of displayedEvents(); track event.id) {
+        <ion-card (click)="navigateToEvent(event)" class="event-card">
+          @if (event.coverImage) {
+            <div class="card-cover" [style.backgroundImage]="'url(' + event.coverImage + ')'"></div>
+          } @else {
+            <div class="card-cover default-cover" [attr.data-theme]="event.theme">
+              <ion-icon [name]="getEventTypeIcon(event.eventType)"></ion-icon>
+            </div>
+          }
+          
+          <ion-card-header>
+            <ion-card-subtitle>
+              <ion-chip [color]="segment === 'upcoming' ? 'primary' : 'medium'" size="small">
+                {{ getEventTypeLabel(event.eventType) }}
+              </ion-chip>
+            </ion-card-subtitle>
+            <ion-card-title>{{ event.title }}</ion-card-title>
+          </ion-card-header>
+
+          <ion-card-content>
+            <div class="event-info">
+              <div class="info-row">
+                <ion-icon name="calendar-outline"></ion-icon>
+                <span>{{ formatDate(event.date) }}</span>
+              </div>
+              @if (event.time) {
+                <div class="info-row">
+                  <ion-icon name="time-outline"></ion-icon>
+                  <span>{{ event.time }}</span>
+                </div>
+              }
+              <div class="info-row">
+                <ion-icon name="location-outline"></ion-icon>
+                <span>{{ event.venue.name }}</span>
+              </div>
+            </div>
+
+            <div class="guest-stats">
+              @let stats = getGuestStats(event.id);
+              <div class="stat">
+                <span class="stat-value">{{ stats.confirmed }}</span>
+                <span class="stat-label">Confirmados</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">{{ stats.pending }}</span>
+                <span class="stat-label">Pendentes</span>
+              </div>
+              <div class="stat">
+                <span class="stat-value">{{ stats.total }}</span>
+                <span class="stat-label">Total</span>
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <ion-button fill="clear" size="small" (click)="editEvent(event, $event)">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small" (click)="duplicateEvent(event, $event)">
+                <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+              </ion-button>
+              <ion-button fill="clear" size="small" color="danger" (click)="deleteEvent(event, $event)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      }
+    </div>
+  }
+
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="navigateToNewEvent()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

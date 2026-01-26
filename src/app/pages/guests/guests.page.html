@@ -1,0 +1,153 @@
+@if (event(); as currentEvent) {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button [defaultHref]="'/events/' + eventId()"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Convidados</ion-title>
+      <ion-buttons slot="end">
+        <ion-button (click)="exportGuests()">
+          <ion-icon slot="icon-only" name="download-outline"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+    <ion-toolbar>
+      <ion-searchbar 
+        placeholder="Pesquisar convidados..."
+        [debounce]="300"
+        (ionInput)="searchChanged($event)">
+      </ion-searchbar>
+    </ion-toolbar>
+    <ion-toolbar>
+      <ion-segment [value]="statusFilter()" (ionChange)="segmentChanged($event)">
+        <ion-segment-button value="all">
+          <ion-label>Todos</ion-label>
+          <ion-badge>{{ stats().total }}</ion-badge>
+        </ion-segment-button>
+        <ion-segment-button value="confirmed">
+          <ion-label>✓</ion-label>
+          <ion-badge color="success">{{ stats().confirmed }}</ion-badge>
+        </ion-segment-button>
+        <ion-segment-button value="pending">
+          <ion-label>⏳</ion-label>
+          <ion-badge color="warning">{{ stats().pending }}</ion-badge>
+        </ion-segment-button>
+        <ion-segment-button value="declined">
+          <ion-label>✗</ion-label>
+          <ion-badge color="danger">{{ stats().declined }}</ion-badge>
+        </ion-segment-button>
+      </ion-segment>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content>
+    @if (filteredGuests().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">
+          <ion-icon name="people-outline"></ion-icon>
+        </div>
+        @if (allGuests().length === 0) {
+          <h2>Nenhum convidado</h2>
+          <p>Adicione os seus primeiros convidados para começar a gerir os RSVPs.</p>
+          <ion-button (click)="addQuickGuest()">
+            <ion-icon slot="start" name="add-outline"></ion-icon>
+            Adicionar Convidado
+          </ion-button>
+        } @else {
+          <h2>Nenhum resultado</h2>
+          <p>Não foram encontrados convidados com os filtros aplicados.</p>
+        }
+      </div>
+    } @else {
+      <ion-list>
+        @for (guest of filteredGuests(); track guest.id) {
+          <ion-item-sliding>
+            <ion-item button (click)="navigateToEditGuest(guest)">
+              <ion-avatar slot="start" class="guest-avatar" [attr.data-status]="guest.rsvpStatus">
+                <span>{{ getInitials(guest.name) }}</span>
+              </ion-avatar>
+              <ion-label>
+                <h2>
+                  {{ guest.name }}
+                  @if (guest.plusOne) {
+                    <ion-badge color="tertiary" class="plus-one-badge">+1</ion-badge>
+                  }
+                </h2>
+                <p>
+                  @if (guest.email) {
+                    <span class="contact-info">
+                      <ion-icon name="mail-outline"></ion-icon>
+                      {{ guest.email }}
+                    </span>
+                  }
+                  @if (guest.phone) {
+                    <span class="contact-info">
+                      <ion-icon name="call-outline"></ion-icon>
+                      {{ guest.phone }}
+                    </span>
+                  }
+                </p>
+                <p class="guest-extras">
+                  @if (guest.dietaryRestrictions || guest.allergies) {
+                    <ion-chip size="small" color="warning">
+                      <ion-icon name="restaurant-outline"></ion-icon>
+                      Restrições
+                    </ion-chip>
+                  }
+                  @if (guest.songRequest) {
+                    <ion-chip size="small" color="secondary">
+                      <ion-icon name="musical-notes-outline"></ion-icon>
+                      Música
+                    </ion-chip>
+                  }
+                  @if (guest.group) {
+                    <ion-chip size="small" color="medium">
+                      {{ guest.group }}
+                    </ion-chip>
+                  }
+                </p>
+              </ion-label>
+              <ion-chip 
+                slot="end" 
+                [color]="getStatusConfig(guest.rsvpStatus).color"
+                (click)="showStatusOptions(guest); $event.stopPropagation()">
+                <ion-icon [name]="getStatusConfig(guest.rsvpStatus).icon"></ion-icon>
+                <ion-label>{{ getStatusConfig(guest.rsvpStatus).label }}</ion-label>
+              </ion-chip>
+            </ion-item>
+
+            <ion-item-options side="end">
+              <ion-item-option color="primary" (click)="navigateToEditGuest(guest)">
+                <ion-icon slot="icon-only" name="create-outline"></ion-icon>
+              </ion-item-option>
+              <ion-item-option color="danger" (click)="deleteGuest(guest)">
+                <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+              </ion-item-option>
+            </ion-item-options>
+          </ion-item-sliding>
+        }
+      </ion-list>
+    }
+
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+      <ion-fab-button (click)="addQuickGuest()">
+        <ion-icon name="add-outline"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-content>
+} @else {
+  <ion-header class="ion-no-border">
+    <ion-toolbar>
+      <ion-buttons slot="start">
+        <ion-back-button defaultHref="/events"></ion-back-button>
+      </ion-buttons>
+      <ion-title>Evento não encontrado</ion-title>
+    </ion-toolbar>
+  </ion-header>
+  
+  <ion-content class="ion-padding">
+    <div class="empty-state">
+      <p>O evento solicitado não foi encontrado.</p>
+    </div>
+  </ion-content>
+}

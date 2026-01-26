@@ -1,0 +1,99 @@
+/**
+ * Event Model - Representa um evento/convite
+ */
+export interface Event {
+  id: string;
+  title: string;
+  subtitle?: string;
+  description?: string;
+  eventType: EventType;
+  date: string; // ISO date string
+  time?: string;
+  endDate?: string;
+  endTime?: string;
+  venue: Venue;
+  hosts: string[];
+  coverImage?: string;
+  theme: InvitationTheme;
+  language: string;
+  schedule?: ScheduleItem[];
+  rsvpDeadline?: string;
+  maxGuests?: number;
+  allowPlusOne: boolean;
+  askDietaryRestrictions: boolean;
+  askSongRequest: boolean;
+  customQuestions?: CustomQuestion[];
+  shareCode: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export type EventType = 
+  | 'wedding'
+  | 'engagement'
+  | 'birthday'
+  | 'baby-shower'
+  | 'anniversary'
+  | 'graduation'
+  | 'corporate'
+  | 'other';
+
+export interface Venue {
+  name: string;
+  address: string;
+  city: string;
+  country: string;
+  coordinates?: {
+    lat: number;
+    lng: number;
+  };
+  mapsUrl?: string;
+}
+
+export interface ScheduleItem {
+  id: string;
+  time: string;
+  title: string;
+  description?: string;
+  icon?: string;
+}
+
+export interface CustomQuestion {
+  id: string;
+  question: string;
+  type: 'text' | 'select' | 'multiselect';
+  options?: string[];
+  required: boolean;
+}
+
+export type InvitationTheme = 
+  | 'elegant'
+  | 'minimal'
+  | 'floral'
+  | 'rustic'
+  | 'modern'
+  | 'romantic'
+  | 'tropical'
+  | 'classic';
+
+export const EVENT_TYPES: { value: EventType; label: string; icon: string }[] = [
+  { value: 'wedding', label: 'Casamento', icon: 'heart' },
+  { value: 'engagement', label: 'Noivado', icon: 'diamond' },
+  { value: 'birthday', label: 'Aniversário', icon: 'gift' },
+  { value: 'baby-shower', label: 'Chá de Bebé', icon: 'balloon' },
+  { value: 'anniversary', label: 'Aniversário de Casamento', icon: 'sparkles' },
+  { value: 'graduation', label: 'Formatura', icon: 'school' },
+  { value: 'corporate', label: 'Evento Corporativo', icon: 'briefcase' },
+  { value: 'other', label: 'Outro', icon: 'calendar' },
+];
+
+export const INVITATION_THEMES: { value: InvitationTheme; label: string; color: string }[] = [
+  { value: 'elegant', label: 'Elegante', color: '#8b5a5a' },
+  { value: 'minimal', label: 'Minimalista', color: '#2d2d2d' },
+  { value: 'floral', label: 'Floral', color: '#7d9a7d' },
+  { value: 'rustic', label: 'Rústico', color: '#a67c52' },
+  { value: 'modern', label: 'Moderno', color: '#4a5568' },
+  { value: 'romantic', label: 'Romântico', color: '#c9a0a0' },
+  { value: 'tropical', label: 'Tropical', color: '#38a169' },
+  { value: 'classic', label: 'Clássico', color: '#c9a962' },
+];

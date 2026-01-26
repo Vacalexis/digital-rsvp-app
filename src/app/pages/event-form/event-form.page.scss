@@ -1,0 +1,35 @@
+ion-item-divider {
+  --background: transparent;
+  --color: var(--ion-color-primary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 16px;
+  padding-left: 0;
+
+  &:first-of-type {
+    margin-top: 0;
+  }
+}
+
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+  margin-bottom: 4px;
+}
+
+ion-note {
+  font-style: italic;
+  color: var(--ion-color-medium);
+}
+
+.form-actions {
+  margin-top: 32px;
+  margin-bottom: 32px;
+
+  ion-button {
+    --border-radius: 12px;
+    height: 48px;
+  }
+}
