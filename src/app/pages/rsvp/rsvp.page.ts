@@ -11,8 +11,6 @@ import {
   IonToggle,
   IonItem,
   IonLabel,
-  IonRadioGroup,
-  IonRadio,
   ToastController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -44,8 +42,6 @@ import { Event, RsvpStatus, INVITATION_THEMES } from '@models/index';
     IonToggle,
     IonItem,
     IonLabel,
-    IonRadioGroup,
-    IonRadio,
   ],
   templateUrl: './rsvp.page.html',
   styleUrls: ['./rsvp.page.scss'],

@@ -70,25 +70,20 @@
 
           <div class="form-group">
             <label>Vai poder estar presente?</label>
-            <ion-radio-group [(ngModel)]="attending">
-              <div class="radio-options">
-                <div class="radio-option" [class.selected]="attending === 'yes'">
-                  <ion-radio value="yes"></ion-radio>
-                  <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
-                  <span>Sim, estarei presente!</span>
-                </div>
-                <div class="radio-option" [class.selected]="attending === 'no'">
-                  <ion-radio value="no"></ion-radio>
-                  <ion-icon name="close-circle-outline" color="danger"></ion-icon>
-                  <span>Infelizmente não poderei</span>
-                </div>
-                <div class="radio-option" [class.selected]="attending === 'maybe'">
-                  <ion-radio value="maybe"></ion-radio>
-                  <ion-icon name="help-circle-outline" color="medium"></ion-icon>
-                  <span>Ainda não sei</span>
-                </div>
+            <div class="radio-options">
+              <div class="radio-option" [class.selected]="attending === 'yes'" (click)="attending = 'yes'">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>Sim, estarei presente!</span>
               </div>
-            </ion-radio-group>
+              <div class="radio-option" [class.selected]="attending === 'no'" (click)="attending = 'no'">
+                <ion-icon name="close-circle-outline" color="danger"></ion-icon>
+                <span>Infelizmente não poderei</span>
+              </div>
+              <div class="radio-option" [class.selected]="attending === 'maybe'" (click)="attending = 'maybe'">
+                <ion-icon name="help-circle-outline" color="medium"></ion-icon>
+                <span>Ainda não sei</span>
+              </div>
+            </div>
           </div>
 
           @if (attending === 'yes' && currentEvent.allowPlusOne) {

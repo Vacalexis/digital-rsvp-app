@@ -133,14 +133,13 @@ ion-content {
       transition: all 0.2s ease;
       border: 2px solid transparent;
 
+      &:hover {
+        background: rgba(139, 90, 90, 0.05);
+      }
+
       &.selected {
         background: rgba(139, 90, 90, 0.1);
         border-color: var(--theme-color);
-      }
-
-      ion-radio {
-        --color-checked: var(--theme-color);
-        display: none;
       }
 
       ion-icon {
