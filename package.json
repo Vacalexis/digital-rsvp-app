@@ -1,15 +1,18 @@
 {
   "name": "digital-rsvp-app",
-  "version": "0.0.1",
+  "version": "1.0.0",
+  "description": "Digital RSVP App - Gestão de convites digitais e RSVPs para eventos",
   "author": "Alexandre",
-  "homepage": "https://ionicframework.com/",
+  "private": true,
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "ionic:serve": "ionic serve",
+    "ionic:build": "ionic build"
   },
   "private": true,
   "dependencies": {
