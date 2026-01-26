@@ -1,0 +1,137 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/events/' + eventId()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Convites</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  @if (loading()) {
+  <div class="loading-state">
+    <ion-spinner name="crescent"></ion-spinner>
+    <p>A carregar convites...</p>
+  </div>
+  } @else {
+  <!-- Stats Summary -->
+  <div class="stats-bar">
+    <div class="stat">
+      <span class="value">{{ stats().total }}</span>
+      <span class="label">Total</span>
+    </div>
+    <div class="stat pending">
+      <span class="value">{{ stats().pending }}</span>
+      <span class="label">Pendentes</span>
+    </div>
+    <div class="stat submitted">
+      <span class="value">{{ stats().submitted }}</span>
+      <span class="label">Respondidos</span>
+    </div>
+  </div>
+
+  <!-- Search and Filter -->
+  <div class="search-section ion-padding-horizontal">
+    <ion-searchbar
+      placeholder="Procurar por nome ou código..."
+      [debounce]="300"
+      (ionInput)="onSearchChange($event)"
+    ></ion-searchbar>
+
+    <ion-segment [value]="filterStatus()" (ionChange)="onFilterChange($event)">
+      <ion-segment-button value="all">
+        <ion-label>Todos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="pending">
+        <ion-label>Pendentes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="submitted">
+        <ion-label>Respondidos</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </div>
+
+  <!-- Invitations List -->
+  @if (filteredInvitations().length === 0) {
+  <div class="empty-state ion-padding">
+    @if (invitations().length === 0) {
+    <ion-icon name="mail-outline" size="large"></ion-icon>
+    <h3>Sem convites</h3>
+    <p>Crie o primeiro convite para este evento.</p>
+    <ion-button (click)="openCreateModal()">
+      <ion-icon slot="start" name="add-outline"></ion-icon>
+      Criar Convite
+    </ion-button>
+    } @else {
+    <ion-icon name="search-outline" size="large"></ion-icon>
+    <h3>Nenhum resultado</h3>
+    <p>Tente uma pesquisa diferente.</p>
+    }
+  </div>
+  } @else {
+  <ion-list class="invitations-list">
+    @for (invitation of filteredInvitations(); track invitation.id) {
+    <ion-item-sliding>
+      <ion-item button (click)="openEditModal(invitation)">
+        <ion-icon
+          slot="start"
+          [name]="getInvitationIcon(invitation.invitationType)"
+          color="primary"
+        ></ion-icon>
+        <ion-label>
+          <h2>{{ getInviteeNames(invitation) }}</h2>
+          <p>
+            <ion-chip
+              [color]="invitation.invitationType === 'single' ? 'primary' : 'secondary'"
+              class="type-chip"
+            >
+              {{ getInvitationTypeLabel(invitation.invitationType) }}
+            </ion-chip>
+          </p>
+          <p class="code">
+            <ion-icon name="link-outline"></ion-icon>
+            {{ invitation.shareCode }}
+          </p>
+        </ion-label>
+        @if (invitation.rsvpSubmitted) {
+        <ion-badge color="success" slot="end">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          Respondido
+        </ion-badge>
+        } @else {
+        <ion-badge color="warning" slot="end">
+          <ion-icon name="time-outline"></ion-icon>
+          Pendente
+        </ion-badge>
+        }
+      </ion-item>
+
+      <ion-item-options side="end">
+        <ion-item-option
+          color="tertiary"
+          (click)="previewInvitation(invitation)"
+        >
+          <ion-icon slot="icon-only" name="eye-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option
+          color="primary"
+          (click)="copyInvitationLink(invitation)"
+        >
+          <ion-icon slot="icon-only" name="copy-outline"></ion-icon>
+        </ion-item-option>
+        <ion-item-option color="danger" (click)="confirmDelete(invitation)">
+          <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
+        </ion-item-option>
+      </ion-item-options>
+    </ion-item-sliding>
+    }
+  </ion-list>
+  } }
+
+  <!-- FAB for creating new invitation -->
+  <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+    <ion-fab-button (click)="openCreateModal()">
+      <ion-icon name="add-outline"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+</ion-content>

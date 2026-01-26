@@ -1,187 +1,440 @@
 @if (event(); as currentEvent) {
-  <ion-content [style.--theme-color]="getThemeColor()">
-    @if (!submitted()) {
-      <div class="rsvp-page">
-        <!-- Event Header -->
-        <div class="event-header">
-          <div class="seal">
-            <ion-icon name="heart-outline"></ion-icon>
-          </div>
-          <h1>{{ currentEvent.title }}</h1>
-          @if (currentEvent.subtitle) {
-            <p class="subtitle">{{ currentEvent.subtitle }}</p>
-          }
-        </div>
-
-        <!-- Event Details -->
-        <div class="event-info">
-          @if (currentEvent.date) {
-            <div class="info-item">
-              <ion-icon name="calendar-outline"></ion-icon>
-              <span>{{ formatDate(currentEvent.date) }}</span>
-            </div>
-          }
-          @if (currentEvent.time) {
-            <div class="info-item">
-              <ion-icon name="time-outline"></ion-icon>
-              <span>{{ currentEvent.time }}@if (currentEvent.endTime) { - {{ currentEvent.endTime }}}</span>
-            </div>
-          }
-          @if (currentEvent.venue?.name) {
-            <div class="info-item">
-              <ion-icon name="location-outline"></ion-icon>
-              <span>{{ currentEvent.venue.name }}@if (currentEvent.venue.city) {, {{ currentEvent.venue.city }}}</span>
-            </div>
-          }
-        </div>
-
-        <!-- RSVP Form -->
-        <div class="rsvp-form">
-          <h2>Confirme a sua presença</h2>
-
-          <div class="form-group">
-            <label>O seu nome *</label>
-            <ion-input 
-              [(ngModel)]="guestName"
-              placeholder="Nome completo"
-              fill="outline">
-            </ion-input>
-          </div>
-
-          <div class="form-group">
-            <label>Email</label>
-            <ion-input 
-              [(ngModel)]="guestEmail"
-              type="email"
-              placeholder="email@exemplo.com"
-              fill="outline">
-            </ion-input>
-          </div>
-
-          <div class="form-group">
-            <label>Telefone</label>
-            <ion-input 
-              [(ngModel)]="guestPhone"
-              type="tel"
-              placeholder="+351 912 345 678"
-              fill="outline">
-            </ion-input>
-          </div>
-
-          <div class="form-group">
-            <label>Vai poder estar presente?</label>
-            <div class="radio-options">
-              <div class="radio-option" [class.selected]="attending === 'yes'" (click)="attending = 'yes'">
-                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
-                <span>Sim, estarei presente!</span>
+<ion-content [style.--theme-color]="getThemeColor()">
+  @if (!submitted()) {
+  <div class="rsvp-page">
+    <!-- Event Header -->
+    <div class="event-header">
+      <div class="envelope-wrapper" aria-hidden="true">
+        <div class="open-envelope">
+          <div class="env-letter" [class.has-photo]="!!currentEvent.coverImage">
+            @if (currentEvent.coverImage) {
+            <img
+              class="env-photo"
+              [src]="currentEvent.coverImage"
+              [alt]="''"
+              loading="lazy"
+            />
+            }
+            <div class="env-letter-head">
+              <div class="env-letter-title">{{ currentEvent.title }}</div>
+              @if (currentEvent.date) {
+              <div class="env-letter-sub">
+                {{ getDisplayDate(currentEvent.date) }}
               </div>
-              <div class="radio-option" [class.selected]="attending === 'no'" (click)="attending = 'no'">
-                <ion-icon name="close-circle-outline" color="danger"></ion-icon>
-                <span>Infelizmente não poderei</span>
-              </div>
-              <div class="radio-option" [class.selected]="attending === 'maybe'" (click)="attending = 'maybe'">
-                <ion-icon name="help-circle-outline" color="medium"></ion-icon>
-                <span>Ainda não sei</span>
-              </div>
-            </div>
-          </div>
-
-          @if (attending === 'yes' && currentEvent.allowPlusOne) {
-            <div class="form-group">
-              <ion-item lines="none" class="toggle-item">
-                <ion-toggle [(ngModel)]="bringingPlusOne">Vou levar acompanhante</ion-toggle>
-              </ion-item>
-              @if (bringingPlusOne) {
-                <ion-input 
-                  [(ngModel)]="plusOneName"
-                  placeholder="Nome do acompanhante"
-                  fill="outline"
-                  class="plus-one-input">
-                </ion-input>
               }
             </div>
-          }
-
-          @if (attending === 'yes' && currentEvent.askDietaryRestrictions) {
-            <div class="form-group">
-              <label>Restrições alimentares ou alergias</label>
-              <ion-textarea 
-                [(ngModel)]="dietaryRestrictions"
-                placeholder="Ex: Vegetariano, alergia a marisco..."
-                fill="outline"
-                [autoGrow]="true"
-                rows="2">
-              </ion-textarea>
-            </div>
-          }
-
-          @if (attending === 'yes' && currentEvent.askSongRequest) {
-            <div class="form-group">
-              <label>Sugestão de música 🎵</label>
-              <ion-input 
-                [(ngModel)]="songRequest"
-                placeholder="Qual música não pode faltar?"
-                fill="outline">
-              </ion-input>
-            </div>
-          }
-
-          <div class="form-group">
-            <label>Mensagem para os anfitriões</label>
-            <ion-textarea 
-              [(ngModel)]="message"
-              placeholder="Deixe uma mensagem..."
-              fill="outline"
-              [autoGrow]="true"
-              rows="3">
-            </ion-textarea>
+            <div class="env-letter-mark">{{ getMonogram(currentEvent) }}</div>
           </div>
-
-          <ion-button expand="block" (click)="submit()" class="submit-button">
-            Confirmar Resposta
-          </ion-button>
-
-          @if (currentEvent.rsvpDeadline) {
-            <p class="deadline">Responda até {{ formatDate(currentEvent.rsvpDeadline) }}</p>
-          }
+          <div class="env-seal">{{ getMonogram(currentEvent) }}</div>
         </div>
       </div>
-    } @else {
-      <!-- Thank You Message -->
-      <div class="thank-you">
-        <div class="icon-wrapper" [class.confirmed]="response() === 'confirmed'" [class.declined]="response() === 'declined'">
-          @if (response() === 'confirmed') {
-            <ion-icon name="checkmark-circle-outline"></ion-icon>
-          } @else if (response() === 'declined') {
-            <ion-icon name="close-circle-outline"></ion-icon>
-          } @else {
-            <ion-icon name="help-circle-outline"></ion-icon>
-          }
-        </div>
-        
-        <h1>Obrigado, {{ guestName }}!</h1>
-        
-        @if (response() === 'confirmed') {
-          <p>A sua presença está confirmada. Mal podemos esperar para celebrar consigo!</p>
-        } @else if (response() === 'declined') {
-          <p>Lamentamos que não possa estar presente. Obrigado por responder.</p>
-        } @else {
-          <p>Obrigado por responder. Esperamos ter notícias suas em breve!</p>
-        }
 
-        <div class="event-reminder">
-          <h3>{{ currentEvent.title }}</h3>
-          <p>{{ formatDate(currentEvent.date) }}</p>
-          <p>{{ currentEvent.venue.name }}, {{ currentEvent.venue.city }}</p>
-        </div>
-      </div>
-    }
-  </ion-content>
-} @else {
-  <ion-content class="ion-padding">
-    <div class="not-found">
-      <h1>Convite não encontrado</h1>
-      <p>O código de convite não é válido ou o evento já não está disponível.</p>
+      <h1>{{ currentEvent.title }}</h1>
+      @if (currentEvent.subtitle) {
+      <p class="subtitle">{{ currentEvent.subtitle }}</p>
+      }
     </div>
-  </ion-content>
+
+    <!-- Event Details -->
+    <div class="event-info">
+      @if (currentEvent.date) {
+      <div class="info-item">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <span>{{ getDisplayDate(currentEvent.date) }}</span>
+      </div>
+      } @if (getTimeLabel(currentEvent); as timeLabel) {
+      <div class="info-item">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>{{ timeLabel }}</span>
+      </div>
+      } @if (currentEvent.venue.name) {
+      <div class="info-item">
+        <ion-icon name="location-outline"></ion-icon>
+        <span>
+          {{ currentEvent.venue.name }} @if (currentEvent.venue.city) {, {{
+          currentEvent.venue.city }}}
+        </span>
+      </div>
+      }
+    </div>
+
+    <!-- RSVP Form -->
+    <div class="rsvp-form">
+      <h2>Confirma a tua presença</h2>
+
+      <!-- Personalized greeting for invitation-based RSVP -->
+      @if (!isLegacyMode()) {
+      <div class="guest-greeting">
+        @if (invitationType() === 'couple') {
+        <p class="greeting-name">
+          {{ primaryGuestName() }} & {{ secondaryGuestName() }}
+        </p>
+        } @else {
+        <p class="greeting-name">{{ primaryGuestName() }}</p>
+        } @if (hasChildren()) {
+        <p class="greeting-sub">e família</p>
+        }
+      </div>
+      }
+
+      <!-- Legacy mode: ask for name/email/phone -->
+      @if (isLegacyMode()) {
+      <div class="form-group">
+        <label>O teu nome *</label>
+        <ion-input
+          [(ngModel)]="guestName"
+          placeholder="Nome completo"
+          fill="outline"
+        >
+        </ion-input>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <ion-input
+          [(ngModel)]="guestEmail"
+          type="email"
+          placeholder="email@exemplo.com"
+          fill="outline"
+        >
+        </ion-input>
+      </div>
+
+      <div class="form-group">
+        <label>Telefone</label>
+        <ion-input
+          [(ngModel)]="guestPhone"
+          type="tel"
+          placeholder="+351 912 345 678"
+          fill="outline"
+        >
+        </ion-input>
+      </div>
+      }
+
+      <div class="form-group">
+        <label>Vai poder estar presente?</label>
+        <div class="radio-options">
+          <div
+            class="radio-option"
+            [class.selected]="attending === 'yes'"
+            (click)="attending = 'yes'"
+          >
+            <ion-icon
+              name="checkmark-circle-outline"
+              color="success"
+            ></ion-icon>
+            <span>Sim, estarei presente!</span>
+          </div>
+          <div
+            class="radio-option"
+            [class.selected]="attending === 'no'"
+            (click)="attending = 'no'"
+          >
+            <ion-icon name="close-circle-outline" color="danger"></ion-icon>
+            <span>Infelizmente não poderei</span>
+          </div>
+          <div
+            class="radio-option"
+            [class.selected]="attending === 'maybe'"
+            (click)="attending = 'maybe'"
+          >
+            <ion-icon name="help-circle-outline" color="medium"></ion-icon>
+            <span>Ainda não sei</span>
+          </div>
+        </div>
+      </div>
+
+      @if (attending === 'yes' && allowsPlusOne()) {
+      <div class="form-group">
+        <!-- Only show toggle in legacy mode or single-plus-one -->
+        @if (isLegacyMode() || invitationType() === 'single-plus-one') {
+        <ion-item lines="none" class="toggle-item">
+          <ion-toggle [(ngModel)]="bringingPlusOne"
+            >Vou levar acompanhante</ion-toggle
+          >
+        </ion-item>
+        } @if (bringingPlusOne || invitationType() === 'single-plus-one') { @if
+        (isLegacyMode()) {
+        <ion-input
+          [(ngModel)]="plusOneName"
+          placeholder="Nome do acompanhante"
+          fill="outline"
+          class="plus-one-input"
+        >
+        </ion-input>
+        } @if (currentEvent.askDietaryRestrictions) {
+        <div class="plus-one-dietary">
+          <label>Restrições alimentares do acompanhante</label>
+          <ion-select
+            [(ngModel)]="plusOneDietaryChoice"
+            interface="popover"
+            placeholder="Seleciona uma opção"
+            fill="outline"
+          >
+            <ion-select-option value="none">Nenhuma</ion-select-option>
+            <ion-select-option value="Vegetariano"
+              >Vegetariano</ion-select-option
+            >
+            <ion-select-option value="Vegan">Vegan</ion-select-option>
+            <ion-select-option value="Sem glúten">Sem glúten</ion-select-option>
+            <ion-select-option value="Sem lactose"
+              >Sem lactose</ion-select-option
+            >
+            <ion-select-option value="Alergia a frutos secos"
+              >Alergia a frutos secos</ion-select-option
+            >
+            <ion-select-option value="Alergia a marisco"
+              >Alergia a marisco</ion-select-option
+            >
+            <ion-select-option value="Halal">Halal</ion-select-option>
+            <ion-select-option value="Kosher">Kosher</ion-select-option>
+            <ion-select-option value="other">Outras</ion-select-option>
+          </ion-select>
+
+          @if (plusOneDietaryChoice === 'other') {
+          <ion-textarea
+            [(ngModel)]="plusOneDietaryOther"
+            placeholder="Escreve aqui…"
+            fill="outline"
+            [autoGrow]="true"
+            rows="2"
+          >
+          </ion-textarea>
+          }
+        </div>
+        } }
+      </div>
+      }
+
+      <!-- Couple: Secondary guest section -->
+      @if (attending === 'yes' && invitationType() === 'couple') {
+      <div class="form-group couple-section">
+        <div class="section-header">
+          <span class="section-title">{{ secondaryGuestName() }}</span>
+        </div>
+        <ion-item lines="none" class="toggle-item">
+          <ion-toggle [(ngModel)]="secondaryAttending"
+            >Vai estar presente</ion-toggle
+          >
+        </ion-item>
+        @if (secondaryAttending && currentEvent.askDietaryRestrictions) {
+        <div class="secondary-dietary">
+          <label>Restrições alimentares</label>
+          <ion-select
+            [(ngModel)]="secondaryDietaryChoice"
+            interface="popover"
+            placeholder="Seleciona uma opção"
+            fill="outline"
+          >
+            <ion-select-option value="none">Nenhuma</ion-select-option>
+            <ion-select-option value="Vegetariano"
+              >Vegetariano</ion-select-option
+            >
+            <ion-select-option value="Vegan">Vegan</ion-select-option>
+            <ion-select-option value="Sem glúten">Sem glúten</ion-select-option>
+            <ion-select-option value="Sem lactose"
+              >Sem lactose</ion-select-option
+            >
+            <ion-select-option value="Alergia a frutos secos"
+              >Alergia a frutos secos</ion-select-option
+            >
+            <ion-select-option value="Alergia a marisco"
+              >Alergia a marisco</ion-select-option
+            >
+            <ion-select-option value="Halal">Halal</ion-select-option>
+            <ion-select-option value="Kosher">Kosher</ion-select-option>
+            <ion-select-option value="other">Outras</ion-select-option>
+          </ion-select>
+
+          @if (secondaryDietaryChoice === 'other') {
+          <ion-textarea
+            [(ngModel)]="secondaryDietaryOther"
+            placeholder="Escreve aqui…"
+            fill="outline"
+            [autoGrow]="true"
+            rows="2"
+          >
+          </ion-textarea>
+          }
+        </div>
+        }
+      </div>
+      }
+
+      <!-- Children section -->
+      @if (attending === 'yes' && hasChildren()) {
+      <div class="form-group children-section">
+        <div class="section-header">
+          <span class="section-title">Filhos</span>
+        </div>
+        <div class="children-count">
+          <label>Quantos filhos vão estar presentes?</label>
+          <ion-select
+            [(ngModel)]="childrenAttending"
+            interface="popover"
+            fill="outline"
+          >
+            @for (i of [0, 1, 2, 3, 4, 5]; track i) {
+            <ion-select-option [value]="i">{{ i }}</ion-select-option>
+            }
+          </ion-select>
+        </div>
+        @if (childrenAttending > 0 && currentEvent.askDietaryRestrictions) {
+        <div class="children-dietary">
+          <label>Restrições alimentares dos filhos</label>
+          <ion-select
+            [(ngModel)]="childrenDietaryChoice"
+            interface="popover"
+            placeholder="Seleciona uma opção"
+            fill="outline"
+          >
+            <ion-select-option value="none">Nenhuma</ion-select-option>
+            <ion-select-option value="Vegetariano"
+              >Vegetariano</ion-select-option
+            >
+            <ion-select-option value="Vegan">Vegan</ion-select-option>
+            <ion-select-option value="Sem glúten">Sem glúten</ion-select-option>
+            <ion-select-option value="Sem lactose"
+              >Sem lactose</ion-select-option
+            >
+            <ion-select-option value="Alergia a frutos secos"
+              >Alergia a frutos secos</ion-select-option
+            >
+            <ion-select-option value="Alergia a marisco"
+              >Alergia a marisco</ion-select-option
+            >
+            <ion-select-option value="Halal">Halal</ion-select-option>
+            <ion-select-option value="Kosher">Kosher</ion-select-option>
+            <ion-select-option value="other">Outras</ion-select-option>
+          </ion-select>
+
+          @if (childrenDietaryChoice === 'other') {
+          <ion-textarea
+            [(ngModel)]="childrenDietaryOther"
+            placeholder="Escreve aqui…"
+            fill="outline"
+            [autoGrow]="true"
+            rows="2"
+          >
+          </ion-textarea>
+          }
+        </div>
+        }
+      </div>
+      } @if (attending === 'yes' && currentEvent.askDietaryRestrictions) {
+      <div class="form-group">
+        <label>Restrições alimentares ou alergias</label>
+        <ion-select
+          [(ngModel)]="dietaryChoice"
+          interface="popover"
+          placeholder="Seleciona uma opção"
+          fill="outline"
+        >
+          <ion-select-option value="none">Nenhuma</ion-select-option>
+          <ion-select-option value="Vegetariano">Vegetariano</ion-select-option>
+          <ion-select-option value="Vegan">Vegan</ion-select-option>
+          <ion-select-option value="Sem glúten">Sem glúten</ion-select-option>
+          <ion-select-option value="Sem lactose">Sem lactose</ion-select-option>
+          <ion-select-option value="Alergia a frutos secos"
+            >Alergia a frutos secos</ion-select-option
+          >
+          <ion-select-option value="Alergia a marisco"
+            >Alergia a marisco</ion-select-option
+          >
+          <ion-select-option value="Halal">Halal</ion-select-option>
+          <ion-select-option value="Kosher">Kosher</ion-select-option>
+          <ion-select-option value="other">Outras</ion-select-option>
+        </ion-select>
+
+        @if (dietaryChoice === 'other') {
+        <ion-textarea
+          [(ngModel)]="dietaryOther"
+          placeholder="Escreve aqui…"
+          fill="outline"
+          [autoGrow]="true"
+          rows="2"
+        >
+        </ion-textarea>
+        }
+      </div>
+      } @if (attending === 'yes' && currentEvent.askSongRequest) {
+      <div class="form-group">
+        <label>Sugestão de música 🎵</label>
+        <ion-input
+          [(ngModel)]="songRequest"
+          placeholder="Qual música não pode faltar?"
+          fill="outline"
+        >
+        </ion-input>
+      </div>
+      }
+
+      <div class="form-group">
+        <label>Mensagem para os anfitriões</label>
+        <ion-textarea
+          [(ngModel)]="message"
+          placeholder="Deixe uma mensagem..."
+          fill="outline"
+          [autoGrow]="true"
+          rows="3"
+        >
+        </ion-textarea>
+      </div>
+
+      <ion-button expand="block" (click)="submit()" class="submit-button">
+        Confirmar Resposta
+      </ion-button>
+
+      @if (currentEvent.rsvpDeadline) {
+      <p class="deadline">
+        Responde até {{ formatDate(currentEvent.rsvpDeadline) }}
+      </p>
+      }
+    </div>
+  </div>
+  } @else {
+  <!-- Thank You Message -->
+  <div class="thank-you">
+    <div
+      class="icon-wrapper"
+      [class.confirmed]="response() === 'confirmed'"
+      [class.declined]="response() === 'declined'"
+    >
+      @if (response() === 'confirmed') {
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      } @else if (response() === 'declined') {
+      <ion-icon name="close-circle-outline"></ion-icon>
+      } @else {
+      <ion-icon name="help-circle-outline"></ion-icon>
+      }
+    </div>
+
+    <h1>Obrigado, {{ guestName }}!</h1>
+
+    @if (response() === 'confirmed') {
+    <p>
+      A tua presença está confirmada. Mal podemos esperar para celebrar contigo!
+    </p>
+    } @else if (response() === 'declined') {
+    <p>Lamentamos que não possas estar presente. Obrigado por responder.</p>
+    } @else {
+    <p>Obrigado por responder. Esperamos ter notícias tuas em breve!</p>
+    }
+
+    <div class="event-reminder">
+      <h3>{{ currentEvent.title }}</h3>
+      <p>{{ formatDate(currentEvent.date) }}</p>
+      <p>{{ currentEvent.venue.name }}, {{ currentEvent.venue.city }}</p>
+    </div>
+  </div>
+  }
+</ion-content>
+} @else {
+<ion-content class="ion-padding">
+  <div class="not-found">
+    <h1>Convite não encontrado</h1>
+    <p>O código de convite não é válido ou o evento já não está disponível.</p>
+  </div>
+</ion-content>
 }

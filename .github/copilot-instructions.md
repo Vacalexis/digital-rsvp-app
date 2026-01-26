@@ -236,6 +236,26 @@ interface GuestStats {
 npm start          # Development server (http://localhost:4200)
 npm run build      # Production build
 npm run lint       # Lint check
+vercel dev         # Local dev server with API endpoints (http://localhost:3000)
+```
+
+### ⚠️ Terminal Management for Debugging
+
+When running `vercel dev` (or any dev server):
+- The server runs as a **background process** and occupies the terminal
+- **NEVER run other commands in the same terminal** - this will interrupt the server
+- **ALWAYS open a new terminal window/tab** for additional commands (API tests, git, npm, etc.)
+- Use `Ctrl+C` only when you want to stop the server
+
+**Example workflow:**
+```bash
+# Terminal 1 (keep running)
+vercel dev
+
+# Terminal 2 (for other commands)
+Invoke-RestMethod http://localhost:3000/api/events
+git status
+npm run lint
 ```
 
 ---
@@ -257,7 +277,11 @@ git push origin development
 
 ## 🚀 Deployment (Vercel)
 
-This project is configured for **Vercel** deployment with automatic deploys on push to `development`.
+This project is **already connected to Vercel** with active deployments.
+
+### Publishing updates
+- Push to the branch configured in Vercel (default: `development`)
+- Vercel will build and deploy automatically
 
 ### Configuration
 - **Config file**: `vercel.json` (in project root)

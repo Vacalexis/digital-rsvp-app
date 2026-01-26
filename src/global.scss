@@ -26,6 +26,136 @@
  * https://ionicframework.com/docs/theming/dark-mode
  */
 
+/* Dark mode desativado - causava inconsistências visuais */
 /* @import "@ionic/angular/css/palettes/dark.always.css"; */
 /* @import "@ionic/angular/css/palettes/dark.class.css"; */
-@import "@ionic/angular/css/palettes/dark.system.css";
+/* @import "@ionic/angular/css/palettes/dark.system.css"; */
+
+/* ========================================
+   Correções de cores para modo claro
+   ======================================== */
+
+/* Datetime button - garantir visibilidade */
+ion-datetime-button {
+  --ion-color-base: var(--ion-color-primary) !important;
+
+  &::part(native) {
+    background: var(--ion-color-primary);
+    color: white;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-weight: 500;
+  }
+}
+
+/* Datetime picker modal */
+ion-datetime {
+  --background: #ffffff;
+  --background-rgb: 255, 255, 255;
+  --title-color: var(--ion-color-dark);
+  --ion-text-color: var(--ion-color-dark);
+
+  &::part(wheel-item) {
+    color: var(--ion-color-dark);
+  }
+
+  &::part(wheel-item active) {
+    color: var(--ion-color-primary);
+  }
+}
+
+/* AlertController inputs - corrigir contraste */
+ion-alert {
+  --background: #ffffff;
+
+  .alert-wrapper {
+    background: #ffffff !important;
+  }
+
+  .alert-head {
+    background: var(--ion-color-primary);
+
+    .alert-title {
+      color: white !important;
+    }
+  }
+
+  .alert-input-wrapper {
+    background: #f5f5f5 !important;
+
+    input,
+    .alert-input {
+      color: var(--ion-color-dark) !important;
+      background: #f5f5f5 !important;
+
+      /* Time picker específico */
+      &[type="time"] {
+        color: var(--ion-color-dark) !important;
+        -webkit-text-fill-color: var(--ion-color-dark) !important;
+
+        &::-webkit-calendar-picker-indicator {
+          filter: invert(0.3);
+        }
+      }
+    }
+  }
+
+  .alert-button {
+    color: var(--ion-color-primary) !important;
+  }
+}
+
+/* Inputs genéricos */
+ion-input {
+  --color: var(--ion-color-dark);
+  --placeholder-color: var(--ion-color-medium);
+
+  input[type="time"],
+  input[type="date"] {
+    color: var(--ion-color-dark) !important;
+    -webkit-text-fill-color: var(--ion-color-dark) !important;
+
+    &::-webkit-calendar-picker-indicator {
+      filter: invert(0.3);
+    }
+  }
+}
+
+/* Toggle - garantir contraste */
+ion-toggle {
+  --track-background: #d0d0d0;
+  --track-background-checked: var(--ion-color-primary);
+  --handle-background: #ffffff;
+  --handle-background-checked: #ffffff;
+}
+
+/* Segment buttons */
+ion-segment-button {
+  --color: var(--ion-color-medium);
+  --color-checked: var(--ion-color-primary);
+  --indicator-color: var(--ion-color-primary);
+}
+
+/* Modal backgrounds */
+ion-modal {
+  --background: #ffffff;
+
+  ion-content {
+    --background: #ffffff;
+  }
+}
+
+/* Action sheet */
+ion-action-sheet {
+  --background: #ffffff;
+  --button-color: var(--ion-color-dark);
+}
+
+/* Popover */
+ion-popover {
+  --background: #ffffff;
+
+  ion-content {
+    --background: #ffffff;
+  }
+}

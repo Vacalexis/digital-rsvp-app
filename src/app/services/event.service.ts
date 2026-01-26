@@ -1,40 +1,59 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Event, EventType, InvitationTheme } from '@models/index';
-import { firstValueFrom } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { Injectable, signal, computed, inject } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { Event, EventType, InvitationTheme } from "@models/index";
+import { firstValueFrom } from "rxjs";
+import { environment } from "../../environments/environment";
 
 @Injectable({
-  providedIn: 'root',
+  providedIn: "root",
 })
 export class EventService {
   private http = inject(HttpClient);
   private readonly API_URL = environment.apiUrl;
-  
+
   private eventsSignal = signal<Event[]>([]);
   private loadingSignal = signal<boolean>(false);
   private errorSignal = signal<string | null>(null);
-  
+
   public events = computed(() => this.eventsSignal());
   public loading = computed(() => this.loadingSignal());
   public error = computed(() => this.errorSignal());
-  
+
+  // Computed signals for filtered events
+  public upcomingEvents = computed(() => {
+    const now = new Date();
+    const events = this.eventsSignal();
+    return events
+      .filter((e) => this.getEventEndDateTime(e) >= now)
+      .sort((a, b) => a.date.localeCompare(b.date));
+  });
+
+  public pastEvents = computed(() => {
+    const now = new Date();
+    const events = this.eventsSignal();
+    return events
+      .filter((e) => this.getEventEndDateTime(e) < now)
+      .sort((a, b) => b.date.localeCompare(a.date));
+  });
+
   constructor() {
-    this.loadEvents();
+    void this.loadEvents();
   }
 
   async loadEvents(): Promise<void> {
     this.loadingSignal.set(true);
     this.errorSignal.set(null);
-    
+
     try {
-      const events = await firstValueFrom(
-        this.http.get<Event[]>(`${this.API_URL}/events`)
-      );
+      // Small minimum loading time for better UX (avoid flash)
+      const [events] = await Promise.all([
+        firstValueFrom(this.http.get<Event[]>(`${this.API_URL}/events`)),
+        new Promise((resolve) => setTimeout(resolve, 300)),
+      ]);
       this.eventsSignal.set(events || []);
     } catch (error) {
-      console.error('Error loading events:', error);
-      this.errorSignal.set('Erro ao carregar eventos');
+      console.error("Error loading events:", error);
+      this.errorSignal.set("Erro ao carregar eventos");
       this.eventsSignal.set([]);
     } finally {
       this.loadingSignal.set(false);
@@ -48,11 +67,11 @@ export class EventService {
   async getEventByIdAsync(id: string): Promise<Event | undefined> {
     try {
       const event = await firstValueFrom(
-        this.http.get<Event>(`${this.API_URL}/events/${id}`)
+        this.http.get<Event>(`${this.API_URL}/events/${id}`),
       );
       return event;
     } catch (error) {
-      console.error('Error fetching event:', error);
+      console.error("Error fetching event:", error);
       return undefined;
     }
   }
@@ -61,64 +80,85 @@ export class EventService {
     return this.eventsSignal().find((e) => e.shareCode === code.toUpperCase());
   }
 
+  async ensureEventLoaded(id: string): Promise<void> {
+    const existing = this.getEventById(id);
+    if (existing) return;
+
+    const fetched = await this.getEventByIdAsync(id);
+    if (!fetched) return;
+
+    this.eventsSignal.update((events) => {
+      const index = events.findIndex((event) => event.id === fetched.id);
+      if (index >= 0) {
+        const updated = [...events];
+        updated[index] = fetched;
+        return updated;
+      }
+      return [...events, fetched];
+    });
+  }
+
   async getEventByShareCodeAsync(code: string): Promise<Event | undefined> {
     try {
       const event = await firstValueFrom(
-        this.http.get<Event>(`${this.API_URL}/events/share/${code}`)
+        this.http.get<Event>(`${this.API_URL}/events/share/${code}`),
       );
       return event;
     } catch (error) {
-      console.error('Error fetching event by share code:', error);
+      console.error("Error fetching event by share code:", error);
       return undefined;
     }
   }
 
-  async createEvent(eventData: Omit<Event, 'id' | 'shareCode' | 'createdAt' | 'updatedAt'>): Promise<Event> {
+  async createEvent(
+    eventData: Omit<Event, "id" | "shareCode" | "createdAt" | "updatedAt">,
+  ): Promise<Event> {
     try {
       const newEvent = await firstValueFrom(
-        this.http.post<Event>(`${this.API_URL}/events`, eventData)
+        this.http.post<Event>(`${this.API_URL}/events`, eventData),
       );
-      
+
       // Update local state
       this.eventsSignal.update((events) => [...events, newEvent]);
-      
+
       return newEvent;
     } catch (error) {
-      console.error('Error creating event:', error);
+      console.error("Error creating event:", error);
       throw error;
     }
   }
 
-  async updateEvent(id: string, updates: Partial<Event>): Promise<Event | undefined> {
+  async updateEvent(
+    id: string,
+    updates: Partial<Event>,
+  ): Promise<Event | undefined> {
     try {
       const updatedEvent = await firstValueFrom(
-        this.http.put<Event>(`${this.API_URL}/events/${id}`, updates)
+        this.http.put<Event>(`${this.API_URL}/events/${id}`, updates),
       );
-      
+
       // Update local state
       this.eventsSignal.update((events) =>
-        events.map((event) => (event.id === id ? updatedEvent : event))
+        events.map((event) => (event.id === id ? updatedEvent : event)),
       );
-      
+
       return updatedEvent;
     } catch (error) {
-      console.error('Error updating event:', error);
+      console.error("Error updating event:", error);
       return undefined;
     }
   }
 
   async deleteEvent(id: string): Promise<boolean> {
     try {
-      await firstValueFrom(
-        this.http.delete(`${this.API_URL}/events/${id}`)
-      );
-      
+      await firstValueFrom(this.http.delete(`${this.API_URL}/events/${id}`));
+
       // Update local state
       this.eventsSignal.update((events) => events.filter((e) => e.id !== id));
-      
+
       return true;
     } catch (error) {
-      console.error('Error deleting event:', error);
+      console.error("Error deleting event:", error);
       return false;
     }
   }
@@ -127,8 +167,14 @@ export class EventService {
     const event = this.getEventById(id);
     if (!event) return undefined;
 
-    const { id: _, shareCode: __, createdAt: ___, updatedAt: ____, ...eventData } = event;
-    
+    const {
+      id: _,
+      shareCode: __,
+      createdAt: ___,
+      updatedAt: ____,
+      ...eventData
+    } = event;
+
     return this.createEvent({
       ...eventData,
       title: `${event.title} (Cópia)`,
@@ -139,17 +185,21 @@ export class EventService {
     return this.eventsSignal().filter((e) => e.eventType === type);
   }
 
-  getUpcomingEvents(): Event[] {
-    const now = new Date().toISOString();
-    return this.eventsSignal()
-      .filter((e) => e.date >= now)
-      .sort((a, b) => a.date.localeCompare(b.date));
-  }
+  private getEventEndDateTime(event: Event): Date {
+    const baseDate = event.endDate || event.date;
+    const endTime = event.endTime || event.time || "23:59";
 
-  getPastEvents(): Event[] {
-    const now = new Date().toISOString();
-    return this.eventsSignal()
-      .filter((e) => e.date < now)
-      .sort((a, b) => b.date.localeCompare(a.date));
+    const [hours, minutes] = endTime.split(":").map((value) => Number(value));
+    const date = new Date(baseDate);
+
+    if (!Number.isNaN(hours)) {
+      // Se endTime é 00:00, assume que é meia-noite do dia SEGUINTE (fim do evento)
+      if (hours === 0 && minutes === 0) {
+        date.setDate(date.getDate() + 1);
+      }
+      date.setHours(hours, Number.isNaN(minutes) ? 0 : minutes, 0, 0);
+    }
+
+    return date;
   }
 }
