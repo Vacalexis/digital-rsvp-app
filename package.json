@@ -4,6 +4,9 @@
   "description": "Digital RSVP App - Gestão de convites digitais e RSVPs para eventos",
   "author": "Alexandre",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
