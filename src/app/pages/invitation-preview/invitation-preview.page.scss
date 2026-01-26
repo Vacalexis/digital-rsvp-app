@@ -129,15 +129,18 @@
     justify-content: center;
     gap: 12px;
     margin-bottom: 16px;
+    min-height: 28px;
 
     ion-icon {
       font-size: 20px;
       color: var(--theme-color);
       margin-top: 2px;
+      flex-shrink: 0;
     }
 
     span {
       font-size: 1rem;
+      color: var(--ion-text-color);
     }
 
     .venue {
@@ -147,6 +150,7 @@
 
       strong {
         color: var(--ion-text-color);
+        font-size: 1rem;
       }
 
       span {

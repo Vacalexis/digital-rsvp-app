@@ -50,10 +50,12 @@
         </div>
 
         <div class="event-details">
-          <div class="detail">
-            <ion-icon name="calendar-outline"></ion-icon>
-            <span>{{ formatDate(currentEvent.date) }}</span>
-          </div>
+          @if (currentEvent.date) {
+            <div class="detail">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ formatDate(currentEvent.date) }}</span>
+            </div>
+          }
 
           @if (currentEvent.time) {
             <div class="detail">
@@ -62,14 +64,20 @@
             </div>
           }
 
-          <div class="detail">
-            <ion-icon name="location-outline"></ion-icon>
-            <div class="venue">
-              <strong>{{ currentEvent.venue.name }}</strong>
-              <span>{{ currentEvent.venue.address }}</span>
-              <span>{{ currentEvent.venue.city }}, {{ currentEvent.venue.country }}</span>
+          @if (currentEvent.venue?.name) {
+            <div class="detail">
+              <ion-icon name="location-outline"></ion-icon>
+              <div class="venue">
+                <strong>{{ currentEvent.venue.name }}</strong>
+                @if (currentEvent.venue.address) {
+                  <span>{{ currentEvent.venue.address }}</span>
+                }
+                @if (currentEvent.venue.city || currentEvent.venue.country) {
+                  <span>{{ currentEvent.venue.city }}@if (currentEvent.venue.city && currentEvent.venue.country) {, }{{ currentEvent.venue.country }}</span>
+                }
+              </div>
             </div>
-          </div>
+          }
         </div>
 
         @if (currentEvent.description) {

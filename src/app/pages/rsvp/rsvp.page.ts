@@ -20,6 +20,7 @@ import {
   heartOutline,
   checkmarkCircleOutline,
   closeCircleOutline,
+  helpCircleOutline,
   calendarOutline,
   locationOutline,
   timeOutline,
@@ -76,6 +77,7 @@ export class RsvpPage implements OnInit {
       heartOutline,
       checkmarkCircleOutline,
       closeCircleOutline,
+      helpCircleOutline,
       calendarOutline,
       locationOutline,
       timeOutline,
@@ -98,13 +100,19 @@ export class RsvpPage implements OnInit {
   }
 
   formatDate(dateStr: string): string {
-    const date = new Date(dateStr);
-    return date.toLocaleDateString('pt-PT', {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    });
+    if (!dateStr) return '';
+    try {
+      const date = new Date(dateStr);
+      if (isNaN(date.getTime())) return dateStr;
+      return date.toLocaleDateString('pt-PT', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric',
+      });
+    } catch {
+      return dateStr;
+    }
   }
 
   async submit() {

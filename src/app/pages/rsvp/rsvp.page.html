@@ -15,20 +15,24 @@
 
         <!-- Event Details -->
         <div class="event-info">
-          <div class="info-item">
-            <ion-icon name="calendar-outline"></ion-icon>
-            <span>{{ formatDate(currentEvent.date) }}</span>
-          </div>
+          @if (currentEvent.date) {
+            <div class="info-item">
+              <ion-icon name="calendar-outline"></ion-icon>
+              <span>{{ formatDate(currentEvent.date) }}</span>
+            </div>
+          }
           @if (currentEvent.time) {
             <div class="info-item">
               <ion-icon name="time-outline"></ion-icon>
-              <span>{{ currentEvent.time }}</span>
+              <span>{{ currentEvent.time }}@if (currentEvent.endTime) { - {{ currentEvent.endTime }}}</span>
             </div>
           }
-          <div class="info-item">
-            <ion-icon name="location-outline"></ion-icon>
-            <span>{{ currentEvent.venue.name }}, {{ currentEvent.venue.city }}</span>
-          </div>
+          @if (currentEvent.venue?.name) {
+            <div class="info-item">
+              <ion-icon name="location-outline"></ion-icon>
+              <span>{{ currentEvent.venue.name }}@if (currentEvent.venue.city) {, {{ currentEvent.venue.city }}}</span>
+            </div>
+          }
         </div>
 
         <!-- RSVP Form -->
