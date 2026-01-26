@@ -27,10 +27,13 @@ import {
   downloadOutline,
   shareSocialOutline,
   heartOutline,
+  logOutOutline,
 } from 'ionicons/icons';
+import { Router } from '@angular/router';
 
 import { EventService } from '@services/event.service';
 import { GuestService } from '@services/guest.service';
+import { AuthService } from '@services/auth.service';
 
 @Component({
   selector: 'app-settings',
@@ -58,6 +61,8 @@ export class SettingsPage {
   private guestService = inject(GuestService);
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   appVersion = '1.0.0';
 
@@ -72,6 +77,7 @@ export class SettingsPage {
       downloadOutline,
       shareSocialOutline,
       heartOutline,
+      logOutOutline,
     });
   }
 
@@ -134,6 +140,25 @@ export class SettingsPage {
         <p>Inspirado em <a href="https://thedigitalyes.com" target="_blank">The Digital Yes</a></p>
       `,
       buttons: ['OK'],
+    });
+    await alert.present();
+  }
+
+  async logout() {
+    const alert = await this.alertController.create({
+      header: 'Terminar Sessão',
+      message: 'Tem a certeza que deseja sair da aplicação?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Sair',
+          role: 'destructive',
+          handler: () => {
+            this.authService.logout();
+            this.router.navigate(['/login']);
+          },
+        },
+      ],
     });
     await alert.present();
   }

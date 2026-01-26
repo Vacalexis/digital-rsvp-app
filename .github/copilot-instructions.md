@@ -273,13 +273,77 @@ This project is configured for **Vercel** deployment with automatic deploys on p
 
 ---
 
+## �️ Database (MongoDB Atlas)
+
+This project uses **MongoDB Atlas** as the cloud database with **Vercel Serverless Functions** as the API layer.
+
+### Architecture Decision
+We chose **manual MongoDB setup** over Vercel's MongoDB Integration because:
+- Both approaches are functionally identical
+- Manual setup provides more flexibility (not locked to Atlas)
+- Same code, same performance
+- Vercel Integration is just a shortcut for adding the connection string
+
+### Configuration
+- **Cluster**: `digital-rsvp-dev.xyhvdtd.mongodb.net`
+- **Database**: `digital-rsvp`
+- **Collections**: `events`, `guests`
+- **API Layer**: Vercel Serverless Functions (TypeScript in `/api` folder)
+
+### Environment Variables
+Add to Vercel Dashboard → Settings → Environment Variables:
+```
+MONGODB_URI=mongodb+srv://<username>:<password>@digital-rsvp-dev.xyhvdtd.mongodb.net/digital-rsvp?retryWrites=true&w=majority&appName=digital-rsvp-dev
+```
+
+### API Endpoints
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/events` | List all events |
+| POST | `/api/events` | Create event |
+| GET | `/api/events/:id` | Get event by ID |
+| PUT | `/api/events/:id` | Update event |
+| DELETE | `/api/events/:id` | Delete event |
+| GET | `/api/events/share/:code` | Get event by share code |
+| GET | `/api/guests?eventId=` | List guests (optional filter) |
+| POST | `/api/guests` | Create guest |
+| GET | `/api/guests/:id` | Get guest by ID |
+| PUT | `/api/guests/:id` | Update guest |
+| DELETE | `/api/guests/:id` | Delete guest |
+
+---
+
+## 🔐 Authentication
+
+Simple browser-based authentication with rate limiting.
+
+### Current Implementation
+- **Storage**: `sessionStorage` (clears on tab close)
+- **Rate Limiting**: `localStorage` (persists across sessions)
+- **Default Credentials**: `admin:rsvp2024`
+- **Security**: SHA-256 hashed credentials, 5 attempts before 5-min lockout
+
+### Not Integrated with MongoDB (By Design)
+Authentication is intentionally kept local because:
+- Simple single-user app (no need for user management)
+- Works offline
+- No sensitive data exposure
+- Can be extended to MongoDB if multi-user is needed later
+
+### Changing Password
+1. Run `node generate-hash.js <username> <password>`
+2. Update `VALID_HASH` in `auth.service.ts`
+
+---
+
 ## 🔮 Future Enhancements
 
-- [ ] Backend API integration (Firebase/Supabase)
+- [x] Backend API integration (MongoDB Atlas)
+- [x] User authentication (basic)
 - [ ] QR code generation for invitations
 - [ ] Email/SMS notification sending
 - [ ] Image upload for event covers
-- [ ] User authentication
+- [ ] Multi-user authentication with MongoDB
 - [ ] Multi-language support (i18n)
 - [ ] Dark mode theme
 - [ ] PDF export of guest lists
