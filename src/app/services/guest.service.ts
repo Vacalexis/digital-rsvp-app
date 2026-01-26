@@ -1,118 +1,133 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Guest, RsvpStatus, GuestStats } from '@models/index';
+import { firstValueFrom } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GuestService {
-  private readonly STORAGE_KEY = 'digital_rsvp_guests';
+  private http = inject(HttpClient);
+  private readonly API_URL = environment.apiUrl;
   
   private guestsSignal = signal<Guest[]>([]);
+  private loadingSignal = signal<boolean>(false);
+  private errorSignal = signal<string | null>(null);
   
   public guests = computed(() => this.guestsSignal());
+  public loading = computed(() => this.loadingSignal());
+  public error = computed(() => this.errorSignal());
   
   constructor() {
-    this.loadFromStorage();
+    this.loadGuests();
   }
 
-  private loadFromStorage(): void {
+  async loadGuests(eventId?: string): Promise<void> {
+    this.loadingSignal.set(true);
+    this.errorSignal.set(null);
+    
     try {
-      const stored = localStorage.getItem(this.STORAGE_KEY);
-      if (stored) {
-        const guests = JSON.parse(stored) as Guest[];
-        this.guestsSignal.set(guests);
-      }
+      const url = eventId 
+        ? `${this.API_URL}/guests?eventId=${eventId}`
+        : `${this.API_URL}/guests`;
+      
+      const guests = await firstValueFrom(
+        this.http.get<Guest[]>(url)
+      );
+      this.guestsSignal.set(guests || []);
     } catch (error) {
-      console.error('Error loading guests from storage:', error);
+      console.error('Error loading guests:', error);
+      this.errorSignal.set('Erro ao carregar convidados');
       this.guestsSignal.set([]);
+    } finally {
+      this.loadingSignal.set(false);
     }
-  }
-
-  private saveToStorage(): void {
-    try {
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.guestsSignal()));
-    } catch (error) {
-      console.error('Error saving guests to storage:', error);
-    }
-  }
-
-  private generateId(): string {
-    return `gst_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
   }
 
   getGuestsByEventId(eventId: string): Guest[] {
     return this.guestsSignal().filter((g) => g.eventId === eventId);
   }
 
+  async getGuestsByEventIdAsync(eventId: string): Promise<Guest[]> {
+    try {
+      const guests = await firstValueFrom(
+        this.http.get<Guest[]>(`${this.API_URL}/guests?eventId=${eventId}`)
+      );
+      return guests || [];
+    } catch (error) {
+      console.error('Error fetching guests:', error);
+      return [];
+    }
+  }
+
   getGuestById(id: string): Guest | undefined {
     return this.guestsSignal().find((g) => g.id === id);
   }
 
-  createGuest(guestData: Omit<Guest, 'id' | 'createdAt' | 'updatedAt'>): Guest {
-    const now = new Date().toISOString();
-    const newGuest: Guest = {
-      ...guestData,
-      id: this.generateId(),
-      createdAt: now,
-      updatedAt: now,
-    };
-
-    this.guestsSignal.update((guests) => [...guests, newGuest]);
-    this.saveToStorage();
-    return newGuest;
-  }
-
-  updateGuest(id: string, updates: Partial<Guest>): Guest | undefined {
-    let updatedGuest: Guest | undefined;
-
-    this.guestsSignal.update((guests) =>
-      guests.map((guest) => {
-        if (guest.id === id) {
-          updatedGuest = {
-            ...guest,
-            ...updates,
-            updatedAt: new Date().toISOString(),
-          };
-          return updatedGuest;
-        }
-        return guest;
-      })
-    );
-
-    if (updatedGuest) {
-      this.saveToStorage();
+  async createGuest(guestData: Omit<Guest, 'id' | 'createdAt' | 'updatedAt'>): Promise<Guest> {
+    try {
+      const newGuest = await firstValueFrom(
+        this.http.post<Guest>(`${this.API_URL}/guests`, guestData)
+      );
+      
+      // Update local state
+      this.guestsSignal.update((guests) => [...guests, newGuest]);
+      
+      return newGuest;
+    } catch (error) {
+      console.error('Error creating guest:', error);
+      throw error;
     }
-
-    return updatedGuest;
   }
 
-  deleteGuest(id: string): boolean {
-    const initialLength = this.guestsSignal().length;
-    
-    this.guestsSignal.update((guests) => guests.filter((g) => g.id !== id));
-    
-    if (this.guestsSignal().length < initialLength) {
-      this.saveToStorage();
+  async updateGuest(id: string, updates: Partial<Guest>): Promise<Guest | undefined> {
+    try {
+      const updatedGuest = await firstValueFrom(
+        this.http.put<Guest>(`${this.API_URL}/guests/${id}`, updates)
+      );
+      
+      // Update local state
+      this.guestsSignal.update((guests) =>
+        guests.map((guest) => (guest.id === id ? updatedGuest : guest))
+      );
+      
+      return updatedGuest;
+    } catch (error) {
+      console.error('Error updating guest:', error);
+      return undefined;
+    }
+  }
+
+  async deleteGuest(id: string): Promise<boolean> {
+    try {
+      await firstValueFrom(
+        this.http.delete(`${this.API_URL}/guests/${id}`)
+      );
+      
+      // Update local state
+      this.guestsSignal.update((guests) => guests.filter((g) => g.id !== id));
+      
       return true;
+    } catch (error) {
+      console.error('Error deleting guest:', error);
+      return false;
     }
-    
-    return false;
   }
 
-  deleteGuestsByEventId(eventId: string): number {
-    const initialLength = this.guestsSignal().length;
+  async deleteGuestsByEventId(eventId: string): Promise<number> {
+    const guests = this.getGuestsByEventId(eventId);
+    let deletedCount = 0;
     
-    this.guestsSignal.update((guests) => guests.filter((g) => g.eventId !== eventId));
-    
-    const deletedCount = initialLength - this.guestsSignal().length;
-    if (deletedCount > 0) {
-      this.saveToStorage();
+    for (const guest of guests) {
+      const deleted = await this.deleteGuest(guest.id);
+      if (deleted) deletedCount++;
     }
     
     return deletedCount;
   }
 
-  updateRsvpStatus(id: string, status: RsvpStatus): Guest | undefined {
+  async updateRsvpStatus(id: string, status: RsvpStatus): Promise<Guest | undefined> {
     return this.updateGuest(id, {
       rsvpStatus: status,
       rsvpDate: new Date().toISOString(),
@@ -223,14 +238,14 @@ export class GuestService {
     return csvContent;
   }
 
-  markInvitationSent(id: string): Guest | undefined {
+  async markInvitationSent(id: string): Promise<Guest | undefined> {
     return this.updateGuest(id, {
       invitationSent: true,
       invitationSentDate: new Date().toISOString(),
     });
   }
 
-  markReminderSent(id: string): Guest | undefined {
+  async markReminderSent(id: string): Promise<Guest | undefined> {
     return this.updateGuest(id, {
       reminderSent: true,
       reminderSentDate: new Date().toISOString(),

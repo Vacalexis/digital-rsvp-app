@@ -184,7 +184,7 @@ export class GuestsPage implements OnInit {
   }
 
   async updateGuestStatus(guest: Guest, newStatus: RsvpStatus) {
-    this.guestService.updateRsvpStatus(guest.id, newStatus);
+    await this.guestService.updateRsvpStatus(guest.id, newStatus);
     
     const toast = await this.toastController.create({
       message: `Estado atualizado para: ${RSVP_STATUS_CONFIG[newStatus].label}`,
@@ -222,7 +222,7 @@ export class GuestsPage implements OnInit {
           text: 'Eliminar',
           role: 'destructive',
           handler: async () => {
-            this.guestService.deleteGuest(guest.id);
+            await this.guestService.deleteGuest(guest.id);
             
             const toast = await this.toastController.create({
               message: 'Convidado eliminado!',
@@ -280,7 +280,7 @@ export class GuestsPage implements OnInit {
               return false;
             }
 
-            this.guestService.createGuest({
+            await this.guestService.createGuest({
               eventId: this.eventId(),
               name: data.name.trim(),
               email: data.email?.trim() || undefined,

@@ -157,9 +157,9 @@ export class GuestFormPage implements OnInit {
 
     try {
       if (this.isEdit() && this.guestId()) {
-        this.guestService.updateGuest(this.guestId()!, guestData);
+        await this.guestService.updateGuest(this.guestId()!, guestData);
       } else {
-        this.guestService.createGuest(guestData);
+        await this.guestService.createGuest(guestData);
       }
 
       const toast = await this.toastController.create({

@@ -80,11 +80,15 @@ export class RsvpPage implements OnInit {
     });
   }
 
-  ngOnInit() {
+  async ngOnInit() {
     const code = this.route.snapshot.paramMap.get('code');
     if (code) {
       this.shareCode.set(code);
-      const foundEvent = this.eventService.getEventByShareCode(code);
+      // Try local state first, then fetch from API
+      let foundEvent = this.eventService.getEventByShareCode(code);
+      if (!foundEvent) {
+        foundEvent = await this.eventService.getEventByShareCodeAsync(code);
+      }
       this.event.set(foundEvent);
     }
   }
@@ -136,7 +140,7 @@ export class RsvpPage implements OnInit {
       this.attending === 'yes' ? 'confirmed' : 
       this.attending === 'no' ? 'declined' : 'maybe';
 
-    this.guestService.createGuest({
+    await this.guestService.createGuest({
       eventId: evt.id,
       name: this.guestName.trim(),
       email: this.guestEmail?.trim() || undefined,

@@ -169,7 +169,7 @@ export class EventsPage {
         {
           text: 'Duplicar',
           handler: async () => {
-            const newEvent = this.eventService.duplicateEvent(event.id);
+            const newEvent = await this.eventService.duplicateEvent(event.id);
             if (newEvent) {
               const toast = await this.toastController.create({
                 message: 'Evento duplicado com sucesso!',
@@ -202,8 +202,8 @@ export class EventsPage {
           text: 'Eliminar',
           role: 'destructive',
           handler: async () => {
-            this.guestService.deleteGuestsByEventId(event.id);
-            this.eventService.deleteEvent(event.id);
+            await this.guestService.deleteGuestsByEventId(event.id);
+            await this.eventService.deleteEvent(event.id);
             
             const toast = await this.toastController.create({
               message: 'Evento eliminado com sucesso!',

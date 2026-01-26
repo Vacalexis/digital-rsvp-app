@@ -276,9 +276,9 @@ export class EventFormPage implements OnInit {
 
     try {
       if (this.isEdit() && this.eventId()) {
-        this.eventService.updateEvent(this.eventId()!, eventData);
+        await this.eventService.updateEvent(this.eventId()!, eventData);
       } else {
-        this.eventService.createEvent(eventData as Omit<Event, 'id' | 'shareCode' | 'createdAt' | 'updatedAt'>);
+        await this.eventService.createEvent(eventData as Omit<Event, 'id' | 'shareCode' | 'createdAt' | 'updatedAt'>);
       }
 
       const toast = await this.toastController.create({
