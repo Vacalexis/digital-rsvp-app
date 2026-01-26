@@ -240,9 +240,24 @@ npm run lint       # Lint check
 
 ---
 
+## � Git Workflow
+
+**IMPORTANT**: Only push to `development` branch during development.
+
+```bash
+# Standard commit workflow
+git add -A
+git commit -m "type: description"
+git push origin development
+```
+
+**Do NOT push to `main`** unless explicitly requested for a production release. The `development` branch is the production branch on Vercel.
+
+---
+
 ## 🚀 Deployment (Vercel)
 
-This project is configured for **Vercel** deployment with automatic deploys on push.
+This project is configured for **Vercel** deployment with automatic deploys on push to `development`.
 
 ### Configuration
 - **Config file**: `vercel.json` (in project root)
