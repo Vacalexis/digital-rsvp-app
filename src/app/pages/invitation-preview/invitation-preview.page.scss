@@ -1,625 +1,15 @@
-.invitation-preview {
-  --theme-color: #8b5a5a;
-  --invitation-text: #1f2937;
-  --invitation-body: #4b5563;
-  --invitation-muted: #6b7280;
-  --invitation-divider: rgba(31, 41, 55, 0.14);
-  --invitation-card-border: rgba(31, 41, 55, 0.08);
-  --invitation-soft: #faf5f0;
-  --invitation-soft-2: #f3eae1;
-  min-height: 100%;
-  background:
-    radial-gradient(
-      1200px 600px at 10% -10%,
-      rgba(139, 90, 90, 0.1),
-      transparent 55%
-    ),
-    radial-gradient(
-      900px 450px at 110% 10%,
-      rgba(139, 90, 90, 0.08),
-      transparent 55%
-    ),
-    linear-gradient(
-      135deg,
-      var(--invitation-soft) 0%,
-      var(--invitation-soft-2) 100%
-    );
-  padding: 28px 16px 40px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-.envelope-wrapper {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 18px;
-  padding-bottom: 36px; // Espaço para o selo não ficar cortado
-
-  .open-envelope {
-    width: 168px;
-    height: 112px;
-    position: relative;
-    border-radius: 16px;
-    border: 1px solid rgba(31, 41, 55, 0.08);
-    background: linear-gradient(180deg, #f7efe8 0%, #efe2d7 100%);
-    box-shadow:
-      0 18px 38px rgba(31, 41, 55, 0.12),
-      0 6px 14px rgba(31, 41, 55, 0.08);
-    isolation: isolate;
-    overflow: visible; // Permitir que o selo saia do envelope
-    transform: translateY(0);
-    transition:
-      transform 220ms ease,
-      box-shadow 220ms ease;
-
-    /* Front pocket */
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #f3e7dd 0%, #e8d6c9 100%);
-      clip-path: polygon(0 100%, 0 38%, 50% 70%, 100% 38%, 100% 100%);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-      z-index: 3;
-    }
-
-    /* Open flap */
-    &::after {
-      content: "";
-      position: absolute;
-      left: -1px;
-      right: -1px;
-      top: -1px;
-      height: 64px;
-      background: linear-gradient(180deg, #fbf3ed 0%, #efe2d7 100%);
-      clip-path: polygon(0 0, 100% 0, 50% 76%);
-      transform-origin: top center;
-      transform: perspective(700px) rotateX(180deg) translateY(-6px);
-      box-shadow: 0 10px 18px rgba(31, 41, 55, 0.12);
-      z-index: 4;
-      animation: env-flap-open 720ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
-    }
-
-    .env-letter {
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      top: 12px;
-      height: 92px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(31, 41, 55, 0.08);
-      box-shadow:
-        0 18px 44px rgba(31, 41, 55, 0.14),
-        0 8px 18px rgba(31, 41, 55, 0.08);
-      z-index: 2;
-      overflow: hidden;
-      transform: translateY(26px);
-      animation: env-letter-slide 780ms cubic-bezier(0.2, 0.9, 0.2, 1) 60ms both;
-
-      &.has-photo {
-        background: rgba(255, 255, 255, 0.96);
-      }
-
-      .env-photo {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        display: block;
-        filter: saturate(1.04) contrast(1.02);
-        transform: scale(1.02);
-      }
-
-      .env-letter-mark {
-        position: absolute;
-        right: 12px;
-        bottom: 10px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.86);
-        border: 1px solid rgba(31, 41, 55, 0.1);
-        color: var(--invitation-text);
-        font-weight: 700;
-        letter-spacing: 0.6px;
-        font-size: 0.82rem;
-      }
-
-      .env-letter-head {
-        position: absolute;
-        left: 12px;
-        right: 12px;
-        top: 10px;
-        padding: 10px 10px 12px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.82);
-        border: 1px solid rgba(31, 41, 55, 0.1);
-        backdrop-filter: blur(6px);
-        opacity: 0;
-        transform: translateY(-6px);
-        transition:
-          opacity 220ms ease,
-          transform 220ms ease;
-
-        .env-letter-title {
-          font-weight: 750;
-          color: var(--invitation-text);
-          font-size: 0.92rem;
-          line-height: 1.15;
-          letter-spacing: -0.2px;
-          text-wrap: balance;
-        }
-
-        .env-letter-sub {
-          margin-top: 6px;
-          color: rgba(31, 41, 55, 0.72);
-          font-size: 0.78rem;
-          line-height: 1.2;
-        }
-      }
-    }
-
-    .env-seal {
-      position: absolute;
-      left: 50%;
-      top: 64px;
-      transform: translateX(-50%);
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: var(--theme-color);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 0.875rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      box-shadow:
-        0 10px 22px rgba(31, 41, 55, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
-      z-index: 5;
-    }
-
-    &:hover {
-      transform: translateY(-2px);
-      box-shadow:
-        0 22px 44px rgba(31, 41, 55, 0.14),
-        0 10px 18px rgba(31, 41, 55, 0.1);
-
-      .env-letter {
-        transform: translateY(12px);
-      }
-
-      .env-letter .env-letter-head {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  }
-}
-
-@keyframes env-flap-open {
-  0% {
-    transform: perspective(700px) rotateX(0deg) translateY(0);
-  }
-
-  100% {
-    transform: perspective(700px) rotateX(180deg) translateY(-6px);
-  }
-}
-
-@keyframes env-letter-slide {
-  0% {
-    transform: translateY(34px);
-  }
-
-  70% {
-    transform: translateY(16px);
-  }
-
-  100% {
-    transform: translateY(20px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .envelope-wrapper .open-envelope::after,
-  .envelope-wrapper .open-envelope .env-letter {
-    animation: none;
-  }
-
-  .envelope-wrapper .open-envelope .env-letter {
-    transform: translateY(20px);
-  }
-
-  .envelope-wrapper .open-envelope:hover .env-letter {
-    transform: translateY(20px);
-  }
-
-  .envelope-wrapper .open-envelope .env-letter .env-letter-head {
-    transition: none;
-    opacity: 1;
-    transform: none;
-  }
-}
-
-.invitation-card {
-  background: white;
-  border-radius: 28px;
-  padding: clamp(28px, 4.2vw, 44px) clamp(18px, 4vw, 32px);
-  border: 1px solid var(--invitation-card-border);
-  box-shadow:
-    0 24px 70px rgba(31, 41, 55, 0.12),
-    0 10px 24px rgba(31, 41, 55, 0.08);
-  text-align: center;
-  max-width: 520px;
-  margin: 0 auto;
-  color: var(--invitation-text);
-}
-
-.hero {
-  position: relative;
-  display: flex;
-  justify-content: center;
-  margin: 4px 0 18px;
-}
-
-.photo-frame {
-  position: relative;
-  width: 164px;
-  height: 164px;
-  border-radius: 999px;
-  overflow: hidden;
-  border: 1px solid rgba(31, 41, 55, 0.1);
-  box-shadow:
-    0 18px 44px rgba(31, 41, 55, 0.18),
-    0 8px 18px rgba(31, 41, 55, 0.1);
-  background: rgba(250, 245, 240, 0.9);
-
-  img {
-    position: relative;
-    z-index: 1;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: center;
-    display: block;
-  }
-}
-
-.crest {
-  position: absolute;
-  bottom: -14px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 56px;
-  height: 56px;
-  border-radius: 999px;
-  background: var(--theme-color);
-  color: #fff;
-  display: grid;
-  place-items: center;
-  border: 4px solid #fff;
-  box-shadow:
-    0 14px 28px rgba(31, 41, 55, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.25);
-}
-
-.crest-text {
-  font-weight: 700;
-  letter-spacing: 0.6px;
-  font-size: 0.95rem;
-  line-height: 1;
-}
-
-.hero:not(.has-photo) {
-  margin-top: 10px;
-  margin-bottom: 12px;
-
-  .crest {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    transform: none;
-    width: 70px;
-    height: 70px;
-  }
-
-  .crest-text {
-    font-size: 1.1rem;
-    letter-spacing: 0.8px;
-  }
-}
-
-.card-header {
-  margin-bottom: 18px;
-
-  .hosts {
-    font-size: 0.95rem;
-    color: var(--theme-color);
-    font-weight: 600;
-    margin: 0 0 8px;
-    letter-spacing: 1.6px;
-    text-transform: uppercase;
-  }
-
-  .invite-text {
-    font-size: 0.875rem;
-    color: var(--invitation-muted);
-    margin: 0;
-    font-style: italic;
-  }
-}
-
-/* Theme variants */
-.invitation-preview[data-theme="minimal"] {
-  --invitation-soft: #fbfbfb;
-  --invitation-soft-2: #f3f4f6;
-
-  .envelope-wrapper {
-    margin-bottom: 14px;
-  }
-
-  .divider span {
-    font-size: 1.1rem;
-  }
-
-  .photo-frame {
-    width: min(520px, 100%);
-    height: 220px;
-    border-radius: 18px;
-  }
-
-  .crest {
-    width: 52px;
-    height: 52px;
-    border-width: 3px;
-  }
-}
-
-.invitation-preview[data-theme="floral"] {
-  --invitation-soft: #f7faf7;
-  --invitation-soft-2: #eef6ee;
-
-  .photo-frame {
-    border-radius: 999px;
-  }
-
-  .photo-frame::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    background:
-      radial-gradient(
-        circle at 20% 20%,
-        rgba(125, 154, 125, 0.22),
-        transparent 45%
-      ),
-      radial-gradient(
-        circle at 80% 30%,
-        rgba(125, 154, 125, 0.18),
-        transparent 45%
-      ),
-      radial-gradient(
-        circle at 35% 85%,
-        rgba(125, 154, 125, 0.16),
-        transparent 45%
-      );
-    z-index: 0;
-    opacity: 0.65;
-    pointer-events: none;
-  }
-}
-
-.event-title {
-  font-size: clamp(1.85rem, 4.8vw, 2.65rem);
-  font-weight: 750;
-  color: var(--theme-color);
-  margin: 0 0 10px;
-  line-height: 1.12;
-  letter-spacing: -0.5px;
-  text-wrap: balance;
-}
-
-.subtitle {
-  font-size: 1.02rem;
-  color: var(--invitation-muted);
-  margin: 0;
-  font-style: italic;
-}
-
-.divider {
-  margin: 18px 0 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  &::before,
-  &::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      transparent,
-      var(--theme-color),
-      transparent
-    );
-    max-width: 96px;
-  }
-
-  span {
-    margin: 0 16px;
-    color: var(--theme-color);
-    font-size: 1.25rem;
-  }
-}
-
-.event-details {
-  margin: 0 auto 22px;
-  max-width: 420px;
-  width: 100%;
-
-  .detail {
-    display: grid;
-    grid-template-columns: 28px 1fr;
-    column-gap: 12px;
-    align-items: start;
-    margin-bottom: 12px;
-    min-height: 28px;
-    text-align: left;
-
-    ion-icon {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: var(--theme-color);
-      margin-top: 1px;
-      justify-self: start;
-      background: rgba(139, 90, 90, 0.1);
-      border: 1px solid rgba(139, 90, 90, 0.12);
-      border-radius: 999px;
-    }
-
-    .detail-content {
-      min-width: 0;
-    }
-
-    .detail-main {
-      font-size: 1rem;
-      color: var(--invitation-text);
-      line-height: 1.35;
-      word-break: break-word;
-    }
-
-    .detail-sub {
-      margin-top: 2px;
-      font-size: 0.875rem;
-      color: var(--invitation-muted);
-      line-height: 1.3;
-      word-break: break-word;
-    }
-
-    .time-separator {
-      color: var(--invitation-muted);
-      font-weight: 500;
-    }
-  }
-}
-
-.description {
-  font-size: 0.975rem;
-  line-height: 1.6;
-  color: var(--invitation-body);
-  margin: 0 0 20px;
-  padding: 0 16px;
-}
-
-.schedule {
-  background: rgba(250, 245, 240, 0.85);
-  border-radius: 16px;
-  padding: 18px;
-  margin: 0 auto 22px;
-  border: 1px solid rgba(31, 41, 55, 0.06);
-
-  h3 {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--theme-color);
-    margin: 0 0 16px;
-  }
-
-  .schedule-item {
-    display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 12px;
-    align-items: baseline;
-    margin-bottom: 12px;
-    padding-bottom: 12px;
-    border-bottom: 1px dashed rgba(31, 41, 55, 0.1);
-
-    &:last-child {
-      margin-bottom: 0;
-      padding-bottom: 0;
-      border-bottom: 0;
-    }
-
-    .time {
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--theme-color);
-      letter-spacing: 0.2px;
-    }
-
-    .title {
-      font-size: 0.925rem;
-      color: var(--invitation-text);
-      opacity: 1;
-      font-weight: 500;
-    }
-  }
-}
-
-.countdown {
-  margin-bottom: 22px;
-
-  .number {
-    display: block;
-    font-size: clamp(2.4rem, 8vw, 3.2rem);
-    font-weight: 700;
-    color: var(--theme-color);
-    line-height: 1;
-  }
-
-  .label {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: var(--invitation-muted);
-  }
-}
-
-.rsvp-section {
-  padding-top: 24px;
-  border-top: 1px solid var(--invitation-divider);
-
-  p {
-    margin: 0 0 16px;
-    font-size: 0.875rem;
-    color: var(--invitation-muted);
-  }
-
-  .rsvp-button {
-    --background: var(--theme-color);
-    --background-hover: color-mix(in srgb, var(--theme-color) 92%, #000);
-    --background-activated: color-mix(in srgb, var(--theme-color) 85%, #000);
-    --color: #fff;
-    --border-radius: 12px;
-    --box-shadow: 0 14px 26px rgba(139, 90, 90, 0.28);
-    height: 48px;
-    margin-bottom: 12px;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-  }
-
-  .deadline {
-    font-size: 0.75rem;
-    font-style: italic;
-    margin: 0;
-    color: var(--invitation-muted);
-  }
-}
-
+/**
+ * InvitationPreview Page Styles
+ * 
+ * Contains only RSVP form styles since the invitation card visual
+ * is now handled by InvitationCardComponent.
+ */
+
+// RSVP Form Styles (projected into InvitationCardComponent via ng-content)
 .rsvp-form {
   padding-top: 24px;
   margin-top: 18px;
-  border-top: 1px solid var(--invitation-divider);
+  border-top: 1px solid var(--invitation-divider, rgba(31, 41, 55, 0.14));
   text-align: left;
 
   &.preview {
@@ -631,7 +21,7 @@
     font-weight: 650;
     text-align: center;
     margin: 0 0 18px;
-    color: var(--theme-color);
+    color: var(--theme-color, #8b5a5a);
     letter-spacing: -0.2px;
   }
 
@@ -643,7 +33,7 @@
       font-size: 0.875rem;
       font-weight: 600;
       margin-bottom: 8px;
-      color: var(--invitation-text);
+      color: var(--invitation-text, #1f2937);
     }
 
     ion-input,
@@ -652,9 +42,9 @@
       --border-radius: 12px;
       --background: rgba(255, 255, 255, 0.78);
       --border-color: rgba(31, 41, 55, 0.14);
-      --color: var(--invitation-text);
+      --color: var(--invitation-text, #1f2937);
       --placeholder-color: rgba(107, 114, 128, 0.85);
-      --highlight-color-focused: var(--theme-color);
+      --highlight-color-focused: var(--theme-color, #8b5a5a);
     }
 
     ion-select {
@@ -690,6 +80,20 @@
     flex-direction: column;
     gap: 8px;
 
+    &.compact {
+      flex-direction: row;
+
+      .radio-option {
+        flex: 1;
+        justify-content: center;
+        padding: 10px 12px;
+
+        span {
+          font-size: 0.875rem;
+        }
+      }
+    }
+
     .radio-option {
       display: flex;
       align-items: center;
@@ -707,7 +111,7 @@
 
       &.selected {
         background: rgba(139, 90, 90, 0.1);
-        border-color: color-mix(in srgb, var(--theme-color) 65%, #000);
+        border-color: color-mix(in srgb, var(--theme-color, #8b5a5a) 65%, #000);
       }
 
       ion-icon {
@@ -717,14 +121,44 @@
 
       span {
         font-size: 0.9375rem;
-        color: var(--invitation-text);
+        color: var(--invitation-text, #1f2937);
         font-weight: 500;
       }
     }
   }
 
+  // Couple RSVP section with equal cards
+  .couple-rsvp-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 20px;
+
+    .guest-card {
+      background: rgba(250, 245, 240, 0.9);
+      border-radius: 14px;
+      padding: 14px;
+      border: 1px solid rgba(31, 41, 55, 0.08);
+
+      h4 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--theme-color, #8b5a5a);
+        margin: 0 0 10px;
+        text-align: center;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    @media (max-width: 400px) {
+      grid-template-columns: 1fr;
+    }
+  }
+
   .submit-button {
-    --background: var(--theme-color);
+    --background: var(--theme-color, #8b5a5a);
     --border-radius: 12px;
     --color: #fff;
     --box-shadow: 0 14px 26px rgba(139, 90, 90, 0.28);
@@ -736,7 +170,7 @@
   .open-real-button {
     --border-radius: 12px;
     --border-color: rgba(31, 41, 55, 0.2);
-    --color: var(--invitation-text);
+    --color: var(--invitation-text, #1f2937);
     height: 48px;
     margin-top: 10px;
   }
@@ -744,19 +178,13 @@
   .deadline {
     text-align: center;
     font-size: 0.75rem;
-    color: var(--invitation-muted);
+    color: var(--invitation-muted, #6b7280);
     margin: 14px 0 0;
     font-style: italic;
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .envelope-wrapper .open-envelope {
-    transition: none;
-  }
-}
-
-// Preview Mode Selector
+// Preview Mode Selector (only on preview page)
 .preview-mode-selector {
   margin-bottom: 20px;
   padding: 16px;
@@ -768,7 +196,7 @@
     display: block;
     font-size: 0.75rem;
     font-weight: 600;
-    color: var(--invitation-muted);
+    color: var(--invitation-muted, #6b7280);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 10px;
@@ -779,7 +207,7 @@
   }
 
   ion-segment-button {
-    --indicator-color: var(--theme-color);
+    --indicator-color: var(--theme-color, #8b5a5a);
     --color-checked: white;
     font-size: 0.8125rem;
     min-height: 36px;
@@ -797,44 +225,18 @@
 
   .greeting {
     font-size: 1.25rem;
-    color: var(--invitation-text);
+    color: var(--invitation-text, #1f2937);
     margin: 0 0 6px;
 
     strong {
-      color: var(--theme-color);
+      color: var(--theme-color, #8b5a5a);
     }
   }
 
   .greeting-sub {
     font-size: 0.9375rem;
-    color: var(--invitation-muted);
+    color: var(--invitation-muted, #6b7280);
     margin: 0;
-  }
-}
-
-// Secondary Guest Section
-.secondary-guest {
-  padding: 16px;
-  background: rgba(139, 90, 90, 0.04);
-  border-radius: 12px;
-  margin-top: 8px;
-
-  > label {
-    font-weight: 600;
-  }
-
-  .radio-options.horizontal {
-    flex-direction: row;
-
-    .radio-option {
-      flex: 1;
-      justify-content: center;
-      padding: 12px;
-    }
-  }
-
-  .secondary-dietary {
-    margin-top: 14px;
   }
 }
 
@@ -850,5 +252,11 @@
 
   .children-dietary {
     margin-top: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radio-option {
+    transition: none;
   }
 }

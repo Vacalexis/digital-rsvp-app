@@ -24,22 +24,19 @@ import {
 import { addIcons } from "ionicons";
 import {
   shareOutline,
-  calendarOutline,
-  locationOutline,
-  timeOutline,
-  heartOutline,
   checkmarkCircleOutline,
   closeCircleOutline,
   helpCircleOutline,
 } from "ionicons/icons";
 
 import { EventService } from "@services/event.service";
+import { InvitationType, INVITATION_TYPES } from "@models/index";
+import { InvitationCardComponent } from "@components/invitation-card/invitation-card.component";
 import {
-  Event,
-  INVITATION_THEMES,
-  InvitationType,
-  INVITATION_TYPES,
-} from "@models/index";
+  DietarySelectComponent,
+  DietaryValue,
+} from "@components/dietary-select/dietary-select.component";
+import { formatDatePT } from "@utils/date.utils";
 
 @Component({
   selector: "app-invitation-preview",
@@ -64,6 +61,8 @@ import {
     IonLabel,
     IonSegment,
     IonSegmentButton,
+    InvitationCardComponent,
+    DietarySelectComponent,
   ],
   templateUrl: "./invitation-preview.page.html",
   styleUrls: ["./invitation-preview.page.scss"],
@@ -88,33 +87,27 @@ export class InvitationPreviewPage implements OnInit {
   attendingPreview: "yes" | "no" | "maybe" = "yes";
   bringingPlusOnePreview = false;
   plusOneNamePreview = "";
-  dietaryChoicePreview: string = "none";
-  dietaryOtherPreview = "";
-  plusOneDietaryChoicePreview: string = "none";
-  plusOneDietaryOtherPreview = "";
   songRequestPreview = "";
   messagePreview = "";
 
+  // Dietary values using new component model
+  primaryDietary: DietaryValue = { choice: "none", other: "" };
+  plusOneDietary: DietaryValue = { choice: "none", other: "" };
+  secondaryDietary: DietaryValue = { choice: "none", other: "" };
+  childrenDietary: DietaryValue = { choice: "none", other: "" };
+
   // Couple mode - secondary guest
   secondaryAttendingPreview = true;
-  secondaryDietaryChoicePreview: string = "none";
-  secondaryDietaryOtherPreview = "";
 
   // Children mode
   childrenAttendingPreview = 0;
-  childrenDietaryChoicePreview: string = "none";
-  childrenDietaryOtherPreview = "";
 
   constructor() {
     addIcons({
       shareOutline,
-      calendarOutline,
-      timeOutline,
-      locationOutline,
       checkmarkCircleOutline,
       closeCircleOutline,
       helpCircleOutline,
-      heartOutline,
     });
   }
 
@@ -151,89 +144,12 @@ export class InvitationPreviewPage implements OnInit {
       this.previewMode === "family" ? this.simulatedChildrenCount : 0;
   }
 
-  getThemeColor(): string {
-    const event = this.event();
-    if (!event) return "#8b5a5a";
-    return (
-      INVITATION_THEMES.find((t) => t.value === event.theme)?.color || "#8b5a5a"
-    );
-  }
-
-  getDisplayDate(dateStr?: string): string {
-    if (!dateStr) return "";
-    const formatted = this.formatDate(dateStr);
-    return formatted || dateStr;
-  }
-
-  getMonogram(event: Event): string {
-    const hosts = (event.hosts || [])
-      .map((name) => name.trim())
-      .filter(Boolean);
-
-    if (hosts.length >= 2) {
-      const first = hosts[0].charAt(0).toUpperCase();
-      const second = hosts[1].charAt(0).toUpperCase();
-      return `${first}&${second}`;
-    }
-
-    if (hosts.length === 1) {
-      return hosts[0].charAt(0).toUpperCase();
-    }
-
-    return "♥";
-  }
-
-  getTimeLabel(event: Event): string | null {
-    const startFromEvent = (event.time || "").trim();
-    const startFromSchedule = (event.schedule?.[0]?.time || "").trim();
-    const start = startFromEvent || startFromSchedule;
-    const end = (event.endTime || "").trim();
-    const normalizedEnd = end === "00:00" ? "" : end;
-
-    if (start && normalizedEnd) return `${start} - ${normalizedEnd}`;
-    if (start) return start;
-    if (normalizedEnd) return `até ${normalizedEnd}`;
-    return null;
-  }
-
   formatDate(dateStr: string): string {
-    if (!dateStr) return "";
-    try {
-      // Handle ISO date strings from IonDatetime (e.g., "2026-03-14T00:00:00")
-      // Extract just the date part if it contains 'T'
-      const datePart = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
-      const [year, month, day] = datePart.split("-").map(Number);
-
-      if (!year || !month || !day) {
-        return dateStr;
-      }
-
-      const date = new Date(year, month - 1, day);
-      if (isNaN(date.getTime())) return dateStr;
-
-      return date.toLocaleDateString("pt-PT", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    } catch {
-      return dateStr;
-    }
+    return formatDatePT(dateStr);
   }
 
-  getDaysUntil(): number {
-    const event = this.event();
-    if (!event) return 0;
-
-    const eventDate = new Date(event.date);
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    eventDate.setHours(0, 0, 0, 0);
-
-    return Math.ceil(
-      (eventDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-    );
+  getChildrenOptions(): number[] {
+    return [0, 1, 2, 3, 4, 5];
   }
 
   shareInvitation() {

@@ -1,0 +1,133 @@
+@if (currentEvent(); as evt) {
+<div
+  class="invitation-card-wrapper"
+  [style.--theme-color]="themeColor()"
+  [attr.data-theme]="evt.theme"
+  [class.compact]="compact"
+>
+  <!-- Opened envelope (decorative) -->
+  @if (showEnvelope) {
+  <div class="envelope-wrapper" aria-hidden="true">
+    <div class="open-envelope">
+      <div class="env-letter" [class.has-photo]="!!evt.coverImage">
+        @if (evt.coverImage) {
+        <img
+          class="env-photo"
+          [src]="evt.coverImage"
+          alt=""
+          loading="lazy"
+        />
+        }
+        <div class="env-letter-head">
+          <div class="env-letter-title">{{ evt.title }}</div>
+          @if (evt.date) {
+          <div class="env-letter-sub">{{ getDisplayDate(evt.date) }}</div>
+          }
+        </div>
+        <div class="env-letter-mark">{{ monogram() }}</div>
+      </div>
+      <div class="env-seal">{{ monogram() }}</div>
+    </div>
+  </div>
+  }
+
+  <!-- Invitation Card -->
+  <div class="invitation-card">
+    <div class="hero" [class.has-photo]="!!evt.coverImage">
+      @if (evt.coverImage) {
+      <div class="photo-frame">
+        <img [src]="evt.coverImage" [alt]="evt.title" loading="lazy" />
+      </div>
+      }
+
+      <div class="crest" aria-hidden="true">
+        <div class="crest-decoration"></div>
+        <span class="crest-icon"></span>
+        <span class="crest-text">{{ monogram() }}</span>
+      </div>
+    </div>
+
+    <div class="card-header">
+      @if (evt.hosts && evt.hosts.length > 0) {
+      <p class="hosts">{{ evt.hosts.join(' & ') }}</p>
+      }
+      <p class="invite-text">Convidam-te para o seu</p>
+    </div>
+
+    <h1 class="event-title">{{ evt.title }}</h1>
+
+    @if (evt.subtitle) {
+    <p class="subtitle">{{ evt.subtitle }}</p>
+    }
+
+    <div class="divider">
+      <span>♥</span>
+    </div>
+
+    <div class="event-details">
+      @if (evt.date) {
+      <div class="detail">
+        <ion-icon name="calendar-outline"></ion-icon>
+        <div class="detail-content">
+          <div class="detail-main">{{ getDisplayDate(evt.date) }}</div>
+        </div>
+      </div>
+      }
+      
+      @if (timeLabel(); as time) {
+      <div class="detail">
+        <ion-icon name="time-outline"></ion-icon>
+        <div class="detail-content">
+          <div class="detail-main">{{ time }}</div>
+        </div>
+      </div>
+      }
+      
+      @if (evt.venue.name) {
+      <div class="detail">
+        <ion-icon name="location-outline"></ion-icon>
+        <div class="detail-content">
+          <div class="detail-main">
+            <strong>{{ evt.venue.name }}</strong>
+          </div>
+          @if (evt.venue.address) {
+          <div class="detail-sub">{{ evt.venue.address }}</div>
+          }
+          @if (evt.venue.city || evt.venue.country) {
+          <div class="detail-sub">
+            {{ (evt.venue.city || '') + (evt.venue.city && evt.venue.country ? ', ' : '') + (evt.venue.country || '') }}
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+
+    @if (evt.description) {
+    <p class="description">{{ evt.description }}</p>
+    }
+
+    @if (showSchedule && evt.schedule && evt.schedule.length > 0) {
+    <div class="schedule">
+      <h3>Programa</h3>
+      @for (item of evt.schedule; track item.id) {
+      <div class="schedule-item">
+        <span class="time">{{ item.time }}</span>
+        <span class="title">{{ item.title }}</span>
+      </div>
+      }
+    </div>
+    }
+
+    @if (showCountdown && daysUntil() > 0) {
+    <div class="countdown">
+      <span class="number">{{ daysUntil() }}</span>
+      <span class="label">dias para o grande dia</span>
+    </div>
+    }
+
+    <!-- Content projection for RSVP form or other content -->
+    <ng-content></ng-content>
+  </div>
+</div>
+}

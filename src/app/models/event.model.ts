@@ -44,7 +44,8 @@ export interface Invitation {
   secondaryGuest?: InvitedPerson; // Para casais
   allowPlusOne: boolean; // Sobrepõe o default do evento
   childrenCount?: number; // Número de filhos incluídos
-  childrenNames?: string[]; // Nomes dos filhos (se conhecidos)
+  childrenNames?: string[]; // Nomes dos filhos (legacy, deprecated)
+  children?: InvitedChild[]; // Dados completos dos filhos
 
   // Estado
   rsvpSubmitted: boolean;
@@ -58,6 +59,11 @@ export interface InvitedPerson {
   name: string;
   email?: string;
   phone?: string;
+}
+
+export interface InvitedChild {
+  name: string;
+  age?: number; // Idade opcional - se não preenchida, convidado indica no RSVP
 }
 
 export type InvitationType =

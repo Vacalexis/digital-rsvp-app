@@ -24,9 +24,12 @@ import {
   IonToggle,
   IonNote,
   IonSpinner,
+  IonIcon,
   ModalController,
   ToastController,
 } from "@ionic/angular/standalone";
+import { addIcons } from "ionicons";
+import { trashOutline, addOutline } from "ionicons/icons";
 
 import {
   InvitationService,
@@ -35,6 +38,7 @@ import {
 import {
   Invitation,
   InvitationType,
+  InvitedChild,
   INVITATION_TYPES,
   Event,
 } from "@models/index";
@@ -60,6 +64,7 @@ import {
     IonToggle,
     IonNote,
     IonSpinner,
+    IonIcon,
   ],
   template: `
     <ion-header>
@@ -100,10 +105,16 @@ import {
           </ion-select>
         </ion-item>
 
-        <!-- Primary Guest -->
+        <!-- Guest 1 (renamed from Primary for equality) -->
+        <ion-item class="section-header">
+          <ion-label>
+            <h2>{{ showSecondaryGuest() ? "Convidado 1" : "Convidado" }}</h2>
+          </ion-label>
+        </ion-item>
+
         <ion-item>
           <ion-input
-            label="Nome do Convidado Principal"
+            label="Nome"
             labelPlacement="stacked"
             placeholder="Ex: João Silva"
             [(ngModel)]="primaryGuestName"
@@ -131,18 +142,17 @@ import {
           ></ion-input>
         </ion-item>
 
-        <!-- Secondary Guest (for couples) -->
+        <!-- Guest 2 (for couples/family - equal treatment) -->
         @if (showSecondaryGuest()) {
           <ion-item class="section-header">
             <ion-label>
-              <h2>Segundo Convidado</h2>
-              <p>Para casais ou convites duplos</p>
+              <h2>Convidado 2</h2>
             </ion-label>
           </ion-item>
 
           <ion-item>
             <ion-input
-              label="Nome do Segundo Convidado"
+              label="Nome"
               labelPlacement="stacked"
               placeholder="Ex: Maria Silva"
               [(ngModel)]="secondaryGuestName"
@@ -160,51 +170,77 @@ import {
           </ion-item>
         }
 
-        <!-- Allow Plus One -->
-        @if (showPlusOneOption()) {
-          <ion-item>
-            <ion-toggle [(ngModel)]="allowPlusOne">
-              Permitir Acompanhante
-            </ion-toggle>
-          </ion-item>
-          <ion-note class="ion-padding-horizontal">
-            O convidado poderá trazer um acompanhante adicional.
-          </ion-note>
-        }
+        <!-- Allow Plus One - ALWAYS visible, Host decides -->
+        <ion-item class="section-header">
+          <ion-label>
+            <h2>Opções</h2>
+          </ion-label>
+        </ion-item>
 
-        <!-- Children (for family type) -->
+        <ion-item>
+          <ion-toggle [(ngModel)]="allowPlusOne">
+            Permitir Acompanhante
+          </ion-toggle>
+        </ion-item>
+        <ion-note class="ion-padding-horizontal">
+          Se ativado, o convidado poderá adicionar um acompanhante no RSVP.
+        </ion-note>
+
+        <!-- Children (for family type) - Name and optional age -->
         @if (showChildrenOption()) {
           <ion-item class="section-header">
             <ion-label>
               <h2>Filhos</h2>
-              <p>Número de crianças incluídas no convite</p>
+              <p>Adicione cada filho com nome e idade (opcional)</p>
             </ion-label>
           </ion-item>
 
-          <ion-item>
-            <ion-input
-              label="Número de Filhos"
-              labelPlacement="stacked"
-              type="number"
-              min="0"
-              max="10"
-              [(ngModel)]="childrenCount"
-            ></ion-input>
-          </ion-item>
-
-          @if (childrenCount > 0) {
-            <ion-item>
-              <ion-input
-                label="Nomes dos Filhos (opcional)"
-                labelPlacement="stacked"
-                placeholder="Ex: Pedro, Ana"
-                [(ngModel)]="childrenNamesText"
-              ></ion-input>
-            </ion-item>
-            <ion-note class="ion-padding-horizontal">
-              Separe os nomes por vírgula.
-            </ion-note>
+          @for (child of childrenList; track $index) {
+            <div class="child-row">
+              <ion-item class="child-name-item">
+                <ion-input
+                  [label]="'Filho ' + ($index + 1)"
+                  labelPlacement="stacked"
+                  placeholder="Nome"
+                  [(ngModel)]="childrenList[$index].name"
+                ></ion-input>
+              </ion-item>
+              <ion-item class="child-age-item">
+                <ion-input
+                  label="Idade"
+                  labelPlacement="stacked"
+                  type="number"
+                  placeholder="?"
+                  min="0"
+                  max="18"
+                  [(ngModel)]="childrenList[$index].age"
+                ></ion-input>
+              </ion-item>
+              <ion-button
+                fill="clear"
+                color="danger"
+                class="remove-child-btn"
+                (click)="removeChild($index)"
+              >
+                <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+              </ion-button>
+            </div>
           }
+
+          <ion-note class="ion-padding-horizontal">
+            Se não souber a idade, deixe em branco. O convidado indicará no
+            RSVP.
+          </ion-note>
+
+          <ion-button
+            fill="outline"
+            expand="block"
+            (click)="addChild()"
+            class="add-child-btn"
+          >
+            <ion-icon name="add-outline" slot="start"></ion-icon>
+            Adicionar Filho
+          </ion-button>
         }
       </ion-list>
     </ion-content>
@@ -249,6 +285,34 @@ import {
         width: 20px;
         height: 20px;
       }
+      .child-row {
+        display: flex;
+        gap: 8px;
+        align-items: flex-end;
+        margin-bottom: 0.5rem;
+      }
+
+      .child-name-item {
+        flex: 1;
+        --background: white;
+        border-radius: 8px;
+      }
+
+      .child-age-item {
+        width: 70px;
+        flex-shrink: 0;
+        --background: white;
+        border-radius: 8px;
+      }
+
+      .remove-child-btn {
+        height: 48px;
+        margin-bottom: 2px;
+      }
+      .add-child-btn {
+        margin-top: 0.5rem;
+        --border-radius: 8px;
+      }
     `,
   ],
 })
@@ -272,11 +336,18 @@ export class InvitationFormModalComponent implements OnInit {
   secondaryGuestName = "";
   secondaryGuestEmail = "";
   allowPlusOne = false;
-  childrenCount = 0;
-  childrenNamesText = "";
+  childrenList: InvitedChild[] = []; // Individual children with name and optional age
+
+  constructor() {
+    addIcons({ trashOutline, addOutline });
+  }
 
   get isEditing(): boolean {
     return !!this.invitation;
+  }
+
+  get childrenCount(): number {
+    return this.childrenList.length;
   }
 
   showSecondaryGuest = computed(() => {
@@ -315,8 +386,23 @@ export class InvitationFormModalComponent implements OnInit {
     this.secondaryGuestName = inv.secondaryGuest?.name || "";
     this.secondaryGuestEmail = inv.secondaryGuest?.email || "";
     this.allowPlusOne = inv.allowPlusOne;
-    this.childrenCount = inv.childrenCount || 0;
-    this.childrenNamesText = inv.childrenNames?.join(", ") || "";
+    // Load children - support both new format and legacy
+    if (inv.children && inv.children.length > 0) {
+      this.childrenList = inv.children.map((c) => ({ ...c }));
+    } else if (inv.childrenNames && inv.childrenNames.length > 0) {
+      // Legacy format - convert to new format
+      this.childrenList = inv.childrenNames.map((name) => ({ name }));
+    } else {
+      this.childrenList = [];
+    }
+  }
+
+  addChild() {
+    this.childrenList.push({ name: "", age: undefined });
+  }
+
+  removeChild(index: number) {
+    this.childrenList.splice(index, 1);
   }
 
   onTypeChange() {
@@ -364,13 +450,18 @@ export class InvitationFormModalComponent implements OnInit {
       }
 
       // Add children if applicable
-      if (this.showChildrenOption() && this.childrenCount > 0) {
-        data.childrenCount = this.childrenCount;
-        if (this.childrenNamesText.trim()) {
-          data.childrenNames = this.childrenNamesText
-            .split(",")
-            .map((n) => n.trim())
-            .filter((n) => n);
+      if (this.showChildrenOption() && this.childrenList.length > 0) {
+        const validChildren = this.childrenList
+          .filter((c) => c.name.trim())
+          .map((c) => ({
+            name: c.name.trim(),
+            age: c.age ?? undefined,
+          }));
+        if (validChildren.length > 0) {
+          data.childrenCount = validChildren.length;
+          data.children = validChildren;
+          // Also set legacy field for backwards compatibility
+          data.childrenNames = validChildren.map((c) => c.name);
         }
       }
 
