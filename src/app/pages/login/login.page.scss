@@ -1,0 +1,158 @@
+// Wedding theme colors
+$rose: #8b5a5a;
+$gold: #c9a962;
+$cream: #faf5f0;
+$white: #ffffff;
+
+.login-content {
+  --background: #{$rose};
+}
+
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100%;
+  padding: 24px;
+}
+
+.login-logo {
+  margin-bottom: 32px;
+  text-align: center;
+
+  .logo-icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: $white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+
+    ion-icon {
+      font-size: 40px;
+      color: $rose;
+    }
+  }
+
+  h2 {
+    color: $white;
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 16px;
+  background: $white;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+
+  ion-card-header {
+    text-align: center;
+    padding-bottom: 8px;
+
+    ion-card-title {
+      color: $rose;
+      font-weight: 700;
+      font-size: 22px;
+    }
+  }
+
+  ion-card-content {
+    padding: 16px 24px 24px;
+  }
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.login-input {
+  --background: #{$cream};
+  --border-radius: 12px;
+  --padding-start: 16px;
+  --padding-end: 16px;
+  --min-height: 52px;
+  border-radius: 12px;
+  overflow: hidden;
+
+  ion-icon {
+    color: $rose;
+    font-size: 20px;
+    margin-right: 12px;
+  }
+
+  ion-input {
+    --color: #{$rose};
+    --placeholder-color: rgba($rose, 0.5);
+    font-weight: 500;
+  }
+}
+
+.error-message {
+  text-align: center;
+  padding: 8px;
+  
+  ion-text {
+    font-size: 13px;
+    font-weight: 500;
+  }
+}
+
+.lockout-message {
+  text-align: center;
+  padding: 12px;
+  background: rgba($gold, 0.15);
+  border-radius: 8px;
+  
+  ion-text {
+    font-size: 14px;
+    font-weight: 600;
+    color: darken($gold, 15%);
+  }
+}
+
+.login-button {
+  --background: #{$rose};
+  --background-hover: darken($rose, 10%);
+  --border-radius: 12px;
+  --box-shadow: 0 4px 12px rgba($rose, 0.4);
+  height: 52px;
+  margin-top: 8px;
+  font-weight: 700;
+  font-size: 16px;
+  text-transform: none;
+
+  ion-icon {
+    font-size: 20px;
+    margin-right: 8px;
+  }
+
+  ion-spinner {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.login-footer {
+  margin-top: 32px;
+  text-align: center;
+
+  p {
+    color: rgba($white, 0.6);
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+}

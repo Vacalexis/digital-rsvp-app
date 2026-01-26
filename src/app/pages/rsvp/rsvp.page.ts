@@ -98,8 +98,17 @@ export class RsvpPage implements OnInit {
   formatDate(dateStr: string): string {
     if (!dateStr) return '';
     try {
-      const date = new Date(dateStr);
+      // Handle ISO date strings from IonDatetime (e.g., "2026-03-14T00:00:00")
+      const datePart = dateStr.includes('T') ? dateStr.split('T')[0] : dateStr;
+      const [year, month, day] = datePart.split('-').map(Number);
+      
+      if (!year || !month || !day) {
+        return dateStr;
+      }
+      
+      const date = new Date(year, month - 1, day);
       if (isNaN(date.getTime())) return dateStr;
+      
       return date.toLocaleDateString('pt-PT', {
         weekday: 'long',
         day: 'numeric',
