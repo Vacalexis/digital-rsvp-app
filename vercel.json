@@ -1,6 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run build",
+  "devCommand": "ng serve --port $PORT --disable-host-check",
   "outputDirectory": "www/browser",
   "framework": null,
   "functions": {
@@ -15,7 +16,7 @@
       "destination": "/api/:path*"
     },
     {
-      "source": "/((?!api|assets).*)",
+      "source": "/((?!api|assets|.*\\.js|.*\\.css|.*\\.ico|.*\\.png|.*\\.json|.*\\.woff2?).*)",
       "destination": "/index.html"
     }
   ],

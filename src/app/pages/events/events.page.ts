@@ -1,13 +1,11 @@
-import { Component, inject, computed } from '@angular/core';
-import { Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { Component, inject, computed, signal, effect } from "@angular/core";
+import { Router } from "@angular/router";
+import { CommonModule } from "@angular/common";
 import {
   IonHeader,
   IonToolbar,
   IonTitle,
   IonContent,
-  IonList,
-  IonItem,
   IonLabel,
   IonButton,
   IonIcon,
@@ -18,18 +16,15 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonCardContent,
-  IonBadge,
   IonButtons,
   IonChip,
-  IonItemSliding,
-  IonItemOptions,
-  IonItemOption,
   IonSegment,
   IonSegmentButton,
+  IonSpinner,
   AlertController,
   ToastController,
-} from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
+} from "@ionic/angular/standalone";
+import { addIcons } from "ionicons";
 import {
   addOutline,
   calendarOutline,
@@ -40,16 +35,17 @@ import {
   trashOutline,
   createOutline,
   copyOutline,
+  heart,
   heartOutline,
   sparklesOutline,
-} from 'ionicons/icons';
+} from "ionicons/icons";
 
-import { EventService } from '@services/event.service';
-import { GuestService } from '@services/guest.service';
-import { Event, EVENT_TYPES } from '@models/index';
+import { EventService } from "@services/event.service";
+import { GuestService } from "@services/guest.service";
+import { Event, EVENT_TYPES } from "@models/index";
 
 @Component({
-  selector: 'app-events',
+  selector: "app-events",
   standalone: true,
   imports: [
     CommonModule,
@@ -57,8 +53,6 @@ import { Event, EVENT_TYPES } from '@models/index';
     IonToolbar,
     IonTitle,
     IonContent,
-    IonList,
-    IonItem,
     IonLabel,
     IonButton,
     IonIcon,
@@ -69,17 +63,14 @@ import { Event, EVENT_TYPES } from '@models/index';
     IonCardTitle,
     IonCardSubtitle,
     IonCardContent,
-    IonBadge,
     IonButtons,
     IonChip,
-    IonItemSliding,
-    IonItemOptions,
-    IonItemOption,
     IonSegment,
     IonSegmentButton,
+    IonSpinner,
   ],
-  templateUrl: './events.page.html',
-  styleUrls: ['./events.page.scss'],
+  templateUrl: "./events.page.html",
+  styleUrls: ["./events.page.scss"],
 })
 export class EventsPage {
   private router = inject(Router);
@@ -88,15 +79,16 @@ export class EventsPage {
   private alertController = inject(AlertController);
   private toastController = inject(ToastController);
 
-  segment: 'upcoming' | 'past' = 'upcoming';
+  segment = signal<"upcoming" | "past">("upcoming");
 
+  loading = this.eventService.loading;
   events = computed(() => this.eventService.events());
-  
-  upcomingEvents = computed(() => this.eventService.getUpcomingEvents());
-  pastEvents = computed(() => this.eventService.getPastEvents());
 
-  displayedEvents = computed(() => 
-    this.segment === 'upcoming' ? this.upcomingEvents() : this.pastEvents()
+  upcomingEvents = this.eventService.upcomingEvents;
+  pastEvents = this.eventService.pastEvents;
+
+  displayedEvents = computed(() =>
+    this.segment() === "upcoming" ? this.upcomingEvents() : this.pastEvents(),
   );
 
   constructor() {
@@ -110,13 +102,19 @@ export class EventsPage {
       trashOutline,
       createOutline,
       copyOutline,
+      heart,
       heartOutline,
       sparklesOutline,
+    });
+
+    // Debug: track loading state
+    effect(() => {
+      console.log("[EventsPage] Loading state changed:", this.loading());
     });
   }
 
   segmentChanged(event: CustomEvent) {
-    this.segment = event.detail.value;
+    this.segment.set(event.detail.value);
   }
 
   getEventTypeLabel(type: string): string {
@@ -124,7 +122,7 @@ export class EventsPage {
   }
 
   getEventTypeIcon(type: string): string {
-    return EVENT_TYPES.find((t) => t.value === type)?.icon || 'calendar';
+    return EVENT_TYPES.find((t) => t.value === type)?.icon || "calendar";
   }
 
   getGuestStats(eventId: string) {
@@ -133,48 +131,48 @@ export class EventsPage {
 
   formatDate(dateStr: string): string {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('pt-PT', {
-      weekday: 'short',
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric',
+    return date.toLocaleDateString("pt-PT", {
+      weekday: "short",
+      day: "numeric",
+      month: "short",
+      year: "numeric",
     });
   }
 
   navigateToEvent(event: Event) {
-    this.router.navigate(['/events', event.id]);
+    this.router.navigate(["/events", event.id]);
   }
 
   navigateToNewEvent() {
-    this.router.navigate(['/events/new']);
+    this.router.navigate(["/events/new"]);
   }
 
   navigateToSettings() {
-    this.router.navigate(['/settings']);
+    this.router.navigate(["/settings"]);
   }
 
   async editEvent(event: Event, ev: MouseEvent) {
     ev.stopPropagation();
-    this.router.navigate(['/events', event.id, 'edit']);
+    this.router.navigate(["/events", event.id, "edit"]);
   }
 
   async duplicateEvent(event: Event, ev: MouseEvent) {
     ev.stopPropagation();
-    
+
     const alert = await this.alertController.create({
-      header: 'Duplicar Evento',
+      header: "Duplicar Evento",
       message: `Deseja duplicar o evento "${event.title}"?`,
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: "Cancelar", role: "cancel" },
         {
-          text: 'Duplicar',
+          text: "Duplicar",
           handler: async () => {
             const newEvent = await this.eventService.duplicateEvent(event.id);
             if (newEvent) {
               const toast = await this.toastController.create({
-                message: 'Evento duplicado com sucesso!',
+                message: "Evento duplicado com sucesso!",
                 duration: 2000,
-                color: 'success',
+                color: "success",
               });
               await toast.present();
             }
@@ -187,28 +185,27 @@ export class EventsPage {
 
   async deleteEvent(event: Event, ev: MouseEvent) {
     ev.stopPropagation();
-    
+
     const stats = this.getGuestStats(event.id);
-    const guestWarning = stats.total > 0 
-      ? ` e ${stats.total} convidado(s) associado(s)` 
-      : '';
+    const guestWarning =
+      stats.total > 0 ? ` e ${stats.total} convidado(s) associado(s)` : "";
 
     const alert = await this.alertController.create({
-      header: 'Eliminar Evento',
+      header: "Eliminar Evento",
       message: `Tem a certeza que deseja eliminar "${event.title}"${guestWarning}? Esta ação não pode ser revertida.`,
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: "Cancelar", role: "cancel" },
         {
-          text: 'Eliminar',
-          role: 'destructive',
+          text: "Eliminar",
+          role: "destructive",
           handler: async () => {
             await this.guestService.deleteGuestsByEventId(event.id);
             await this.eventService.deleteEvent(event.id);
-            
+
             const toast = await this.toastController.create({
-              message: 'Evento eliminado com sucesso!',
+              message: "Evento eliminado com sucesso!",
               duration: 2000,
-              color: 'success',
+              color: "success",
             });
             await toast.present();
           },

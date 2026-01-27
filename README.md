@@ -13,18 +13,18 @@ Abre [http://localhost:4200](http://localhost:4200)
 
 ## 📱 Navegação
 
-| Rota | Descrição |
-|------|-----------|
-| `/events` | Lista de eventos |
-| `/events/new` | Criar novo evento |
-| `/events/:id` | Dashboard do evento |
-| `/events/:id/edit` | Editar evento |
-| `/events/:id/guests` | Gestão de convidados |
-| `/events/:id/guests/new` | Adicionar convidado |
+| Rota                     | Descrição                   |
+| ------------------------ | --------------------------- |
+| `/events`                | Lista de eventos            |
+| `/events/new`            | Criar novo evento           |
+| `/events/:id`            | Dashboard do evento         |
+| `/events/:id/edit`       | Editar evento               |
+| `/events/:id/guests`     | Gestão de convidados        |
+| `/events/:id/guests/new` | Adicionar convidado         |
 | `/events/:id/invitation` | Pré-visualização do convite |
-| `/events/:id/stats` | Estatísticas de RSVPs |
-| `/rsvp/:code` | Formulário público de RSVP |
-| `/settings` | Definições da app |
+| `/events/:id/stats`      | Estatísticas de RSVPs       |
+| `/rsvp/:code`            | Formulário público de RSVP  |
+| `/settings`              | Definições da app           |
 
 ## ✨ Funcionalidades
 
@@ -88,16 +88,16 @@ src/app/
 
 ## 🎨 Design System
 
-| Cor | Hex | Uso |
-|-----|-----|-----|
-| Rose/Burgundy | `#8b5a5a` | Primária, botões |
-| Soft Gold | `#c9a962` | Acentos, destaques |
-| Sage Green | `#7d9a7d` | Elementos terciários |
-| Success | `#5a8b5a` | RSVP confirmado |
-| Warning | `#d4a84b` | RSVP pendente |
-| Danger | `#c25050` | RSVP recusado |
-| Cream | `#faf5f0` | Fundo |
-| Dark | `#2d2d2d` | Texto |
+| Cor           | Hex       | Uso                  |
+| ------------- | --------- | -------------------- |
+| Rose/Burgundy | `#8b5a5a` | Primária, botões     |
+| Soft Gold     | `#c9a962` | Acentos, destaques   |
+| Sage Green    | `#7d9a7d` | Elementos terciários |
+| Success       | `#5a8b5a` | RSVP confirmado      |
+| Warning       | `#d4a84b` | RSVP pendente        |
+| Danger        | `#c25050` | RSVP recusado        |
+| Cream         | `#faf5f0` | Fundo                |
+| Dark          | `#2d2d2d` | Texto                |
 
 ## 📝 Scripts
 
@@ -110,20 +110,18 @@ npm run test        # Testes unitários
 
 ## 🚀 Deployment
 
-Este projeto está configurado para deploy no **Vercel** com deploys automáticos.
+Este projeto **já está ligado ao Vercel** e tem deploys ativos.
 
-### Deploy Rápido
+### Como publicar novas versões
 
-1. Push do código para o repositório GitHub
-2. Ir a [vercel.com](https://vercel.com) e fazer login com GitHub
-3. Clicar "Add New Project" → Importar o repositório
-4. Clicar Deploy - pronto!
+1. Fazer push para o branch configurado no Vercel (por defeito: `development`)
+2. O Vercel faz build e publica automaticamente
 
 ### Configuração
 
 O ficheiro `vercel.json` está configurado com:
 - Build command: `npm run build`
-- Output directory: `www`
+- Output directory: `www/browser`
 - SPA rewrites para Angular routing
 
 ### Domínio Personalizado

@@ -96,7 +96,8 @@
   --ion-item-background: transparent;
 }
 
-/* Dark Mode */
+/* Dark Mode - DESATIVADO por agora (causava problemas visuais)
+   Para reativar: remover comentário do bloco abaixo
 @media (prefers-color-scheme: dark) {
   :root {
     --ion-color-primary: #c9a0a0;
@@ -133,3 +134,4 @@
     --ion-item-background: transparent;
   }
 }
+*/

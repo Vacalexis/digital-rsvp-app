@@ -1,113 +1,99 @@
-ion-content {
-  --theme-color: #8b5a5a;
-  --background: linear-gradient(135deg, #faf5f0 0%, #f0e8e0 100%);
+/**
+ * RSVP Page Styles
+ * 
+ * Contains RSVP form styles and envelope/content layouts.
+ */
+
+// ============================================
+// RSVP CONTENT (envelope + form)
+// ============================================
+
+.rsvp-content {
+  --background: linear-gradient(135deg, #faf5f0 0%, #f3eae1 50%, #ebe0d5 100%);
+  position: relative;
 }
 
-.rsvp-page {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 24px 16px 48px;
+// Envelope overlay
+.envelope-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
 }
 
-.event-header {
-  text-align: center;
-  margin-bottom: 32px;
-
-  .seal {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    background: var(--theme-color);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 24px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-
-    ion-icon {
-      font-size: 40px;
-    }
-  }
-
-  h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--theme-color);
-    margin: 0 0 8px;
-  }
-
-  .subtitle {
-    font-size: 1rem;
-    color: var(--ion-color-medium);
-    font-style: italic;
-    margin: 0;
+// RSVP wrapper com fade in
+.rsvp-wrapper {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 600ms ease-out, transform 600ms ease-out;
+  pointer-events: none;
+  
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
   }
 }
 
-.event-info {
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  margin-bottom: 32px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+// ============================================
+// RSVP Form Styles
+// ============================================
 
-  .info-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    min-height: 28px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    ion-icon {
-      font-size: 20px;
-      color: var(--theme-color);
-      flex-shrink: 0;
-    }
-
-    span {
-      font-size: 0.9375rem;
-      color: var(--ion-text-color);
-      line-height: 1.4;
-    }
-  }
-}
-
+// RSVP Form Styles (projected into InvitationCardComponent via ng-content)
 .rsvp-form {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding-top: 24px;
+  margin-top: 18px;
+  border-top: 1px solid var(--invitation-divider, rgba(31, 41, 55, 0.14));
+  text-align: left;
 
   h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 650;
     text-align: center;
-    margin: 0 0 24px;
-    color: var(--theme-color);
+    margin: 0 0 18px;
+    color: var(--theme-color, #8b5a5a);
+    letter-spacing: -0.2px;
   }
 
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 
     label {
       display: block;
       font-size: 0.875rem;
       font-weight: 600;
       margin-bottom: 8px;
-      color: var(--ion-text-color);
+      color: var(--invitation-text, #1f2937);
     }
 
-    ion-input, ion-textarea {
+    ion-input,
+    ion-select,
+    ion-textarea {
       --border-radius: 12px;
+      --background: rgba(255, 255, 255, 0.78);
+      --border-color: rgba(31, 41, 55, 0.14);
+      --color: var(--invitation-text, #1f2937);
+      --placeholder-color: rgba(107, 114, 128, 0.85);
+      --highlight-color-focused: var(--theme-color, #8b5a5a);
+    }
+
+    ion-select {
+      --padding-start: 12px;
+      --padding-end: 12px;
     }
 
     .plus-one-input {
       margin-top: 12px;
+    }
+
+    .plus-one-dietary {
+      margin-top: 12px;
+
+      label {
+        margin-top: 14px;
+      }
     }
 
     .toggle-item {
@@ -127,11 +113,11 @@ ion-content {
       align-items: center;
       gap: 12px;
       padding: 14px 16px;
-      background: var(--ion-color-light);
+      background: rgba(250, 245, 240, 0.85);
       border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
-      border: 2px solid transparent;
+      border: 1px solid rgba(31, 41, 55, 0.1);
 
       &:hover {
         background: rgba(139, 90, 90, 0.05);
@@ -139,7 +125,7 @@ ion-content {
 
       &.selected {
         background: rgba(139, 90, 90, 0.1);
-        border-color: var(--theme-color);
+        border-color: color-mix(in srgb, var(--theme-color, #8b5a5a) 65%, #000);
       }
 
       ion-icon {
@@ -149,99 +135,181 @@ ion-content {
 
       span {
         font-size: 0.9375rem;
-        color: var(--ion-text-color);
+        color: var(--invitation-text, #1f2937);
         font-weight: 500;
       }
     }
   }
 
   .submit-button {
-    --background: var(--theme-color);
+    --background: var(--theme-color, #8b5a5a);
     --border-radius: 12px;
+    --color: #fff;
+    --box-shadow: 0 14px 26px rgba(139, 90, 90, 0.28);
     height: 48px;
-    margin-top: 24px;
+    margin-top: 18px;
+    font-weight: 600;
   }
 
   .deadline {
     text-align: center;
     font-size: 0.75rem;
-    color: var(--ion-color-medium);
-    margin: 16px 0 0;
+    color: var(--invitation-muted, #6b7280);
+    margin: 14px 0 0;
     font-style: italic;
   }
 }
 
+// Guest Greeting
+.guest-greeting {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(139, 90, 90, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 90, 90, 0.1);
+
+  .greeting-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--theme-color, #8b5a5a);
+    margin: 0;
+  }
+
+  .greeting-sub {
+    font-size: 0.9375rem;
+    color: var(--invitation-muted, #6b7280);
+    margin: 4px 0 0;
+  }
+}
+
+// Couple Section
+.couple-section {
+  padding: 16px;
+  background: rgba(139, 90, 90, 0.04);
+  border-radius: 12px;
+
+  .section-header {
+    margin-bottom: 12px;
+
+    .section-title {
+      font-weight: 600;
+      color: var(--theme-color, #8b5a5a);
+    }
+  }
+
+  .secondary-dietary {
+    margin-top: 14px;
+  }
+}
+
+// Children Section
+.children-section {
+  padding: 16px;
+  background: rgba(201, 169, 98, 0.08);
+  border-radius: 12px;
+
+  .section-header {
+    margin-bottom: 12px;
+
+    .section-title {
+      font-weight: 600;
+      color: var(--theme-color, #8b5a5a);
+    }
+  }
+
+  .children-count {
+    margin-bottom: 14px;
+  }
+
+  .children-dietary {
+    margin-top: 14px;
+  }
+}
+
+// Thank You Page
 .thank-you {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100%;
-  padding: 48px 24px;
+  padding: 32px 24px;
   text-align: center;
+  background: linear-gradient(
+    135deg,
+    var(--invitation-soft, #faf5f0) 0%,
+    var(--invitation-soft-2, #f3eae1) 100%
+  );
 
   .icon-wrapper {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: var(--ion-color-medium);
-    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 24px;
+    background: rgba(139, 90, 90, 0.1);
 
     ion-icon {
-      font-size: 56px;
+      font-size: 48px;
+      color: var(--theme-color, #8b5a5a);
     }
 
     &.confirmed {
-      background: var(--ion-color-success);
+      background: rgba(90, 139, 90, 0.1);
+
+      ion-icon {
+        color: var(--ion-color-success);
+      }
     }
 
     &.declined {
-      background: var(--ion-color-danger);
+      background: rgba(194, 80, 80, 0.1);
+
+      ion-icon {
+        color: var(--ion-color-danger);
+      }
     }
   }
 
   h1 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
+    color: var(--theme-color, #8b5a5a);
     margin: 0 0 12px;
-    color: var(--theme-color);
   }
 
   p {
     font-size: 1rem;
-    color: var(--ion-color-medium);
-    margin: 0 0 32px;
+    color: var(--invitation-body, #4b5563);
+    margin: 0 0 24px;
     max-width: 320px;
   }
 
   .event-reminder {
-    background: white;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(31, 41, 55, 0.1);
 
     h3 {
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 600;
+      color: var(--invitation-text, #1f2937);
       margin: 0 0 8px;
-      color: var(--theme-color);
     }
 
     p {
-      margin: 0 0 4px;
-      font-size: 0.875rem;
-
-      &:last-child {
-        margin: 0;
-      }
+      font-size: 0.9375rem;
+      color: var(--invitation-muted, #6b7280);
+      margin: 4px 0;
     }
   }
 }
 
+// Not Found
 .not-found {
   display: flex;
   flex-direction: column;
@@ -251,12 +319,18 @@ ion-content {
   text-align: center;
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+    color: var(--ion-color-danger);
     margin: 0 0 12px;
   }
 
   p {
-    color: var(--ion-color-medium);
-    margin: 0;
+    color: var(--invitation-muted, #6b7280);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radio-option {
+    transition: none;
   }
 }

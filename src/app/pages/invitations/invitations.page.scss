@@ -1,0 +1,161 @@
+:host {
+  --page-background: var(--ion-color-light);
+}
+
+ion-content {
+  --background: var(--page-background);
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: var(--ion-color-medium);
+
+  p {
+    margin-top: 1rem;
+  }
+}
+
+.stats-bar {
+  display: flex;
+  justify-content: space-around;
+  padding: 1rem;
+  background: white;
+  border-bottom: 1px solid var(--ion-color-light-shade);
+
+  .stat {
+    text-align: center;
+
+    .value {
+      display: block;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--ion-color-dark);
+    }
+
+    .label {
+      font-size: 0.75rem;
+      color: var(--ion-color-medium);
+      text-transform: uppercase;
+    }
+
+    &.pending .value {
+      color: var(--ion-color-warning);
+    }
+
+    &.submitted .value {
+      color: var(--ion-color-success);
+    }
+  }
+}
+
+.search-section {
+  padding-top: 1rem;
+  background: white;
+
+  ion-searchbar {
+    --background: var(--ion-color-light);
+    --border-radius: 8px;
+    padding: 0;
+  }
+
+  ion-segment {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+
+  ion-icon {
+    font-size: 4rem;
+    color: var(--ion-color-medium);
+    margin-bottom: 1rem;
+  }
+
+  h3 {
+    margin: 0 0 0.5rem;
+    color: var(--ion-color-dark);
+  }
+
+  p {
+    margin: 0 0 1.5rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.invitations-list {
+  background: transparent;
+  padding: 0.5rem;
+
+  ion-item-sliding {
+    margin-bottom: 0.5rem;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  ion-item {
+    --background: white;
+    --border-radius: 12px;
+    --padding-start: 1rem;
+    --padding-end: 1rem;
+    --inner-padding-end: 0.5rem;
+
+    ion-icon[slot="start"] {
+      font-size: 1.5rem;
+      margin-right: 1rem;
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .type-chip {
+      height: 22px;
+      font-size: 0.7rem;
+      margin: 0;
+      padding: 0 8px;
+    }
+
+    .code {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.75rem;
+      color: var(--ion-color-medium);
+      margin-top: 0.25rem;
+
+      ion-icon {
+        font-size: 0.875rem;
+      }
+    }
+
+    ion-badge {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.7rem;
+      padding: 0.25rem 0.5rem;
+
+      ion-icon {
+        font-size: 0.875rem;
+      }
+    }
+  }
+}
+
+ion-fab-button {
+  --background: var(--ion-color-primary);
+  --color: white;
+}

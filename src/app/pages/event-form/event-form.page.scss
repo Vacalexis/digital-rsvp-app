@@ -24,6 +24,43 @@ ion-note {
   color: var(--ion-color-medium);
 }
 
+.cover-uploader {
+  padding: 8px 0 4px;
+}
+
+.cover-input {
+  display: none;
+}
+
+.cover-preview {
+  width: 100%;
+  max-width: 520px;
+  margin: 10px 0 12px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(31, 41, 55, 0.12);
+  box-shadow: 0 14px 30px rgba(31, 41, 55, 0.12);
+
+  img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+    background: #faf5f0;
+  }
+}
+
+.cover-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+
+  ion-button {
+    --border-radius: 12px;
+  }
+}
+
 .form-actions {
   margin-top: 32px;
   margin-bottom: 32px;
@@ -32,4 +69,17 @@ ion-note {
     --border-radius: 12px;
     height: 48px;
   }
+}
+
+/* Estilos para inputs de hora/data */
+ion-input[type="time"],
+ion-input[type="date"] {
+  input {
+    color: var(--ion-color-dark) !important;
+  }
+}
+
+/* Datetime button styling */
+ion-datetime-button {
+  margin-left: auto;
 }

@@ -1,5 +1,25 @@
 # Copilot Custom Instructions - Digital RSVP App
 
+## 🧠 Modus Operandi (IMPORTANT!)
+
+**For any complex visual or structural change, ALWAYS follow this workflow:**
+
+1. **PLAN FIRST**: Before writing any code, create a clear plan with:
+   - Visual structure (HTML elements and their purpose)
+   - Z-index layering (what's on top of what)
+   - CSS approach (transforms, animations, positioning)
+   - State changes (what happens on interaction)
+
+2. **THEN EXECUTE**: Only after the plan is documented/approved, implement the code.
+
+3. **SELF-CHECK**: Before and after edits, scan the touched files for syntax/structure errors (unclosed tags/braces, broken SCSS blocks) and fix them immediately.
+
+4. **VERIFY**: Run build to check for errors before moving on.
+
+This approach prevents iterative fixes and produces better results on the first attempt.
+
+---
+
 ## 📋 Project Overview
 
 This is an **Ionic 8 + Angular 18** standalone application for digital invitations and RSVP management. The app allows users to create digital event invitations, manage guest lists, track RSVPs, and export guest data.
@@ -236,13 +256,52 @@ interface GuestStats {
 npm start          # Development server (http://localhost:4200)
 npm run build      # Production build
 npm run lint       # Lint check
+vercel dev         # Local dev server with API endpoints (http://localhost:3000)
 ```
+
+### ⚠️ Terminal Management for Debugging
+
+When running `vercel dev` (or any dev server):
+- The server runs as a **background process** and occupies the terminal
+- **NEVER run other commands in the same terminal** - this will interrupt the server
+- **ALWAYS open a new terminal window/tab** for additional commands (API tests, git, npm, etc.)
+- Use `Ctrl+C` only when you want to stop the server
+
+**Example workflow:**
+```bash
+# Terminal 1 (keep running)
+vercel dev
+
+# Terminal 2 (for other commands)
+Invoke-RestMethod http://localhost:3000/api/events
+git status
+npm run lint
+```
+
+---
+
+## � Git Workflow
+
+**IMPORTANT**: Only push to `development` branch during development.
+
+```bash
+# Standard commit workflow
+git add -A
+git commit -m "type: description"
+git push origin development
+```
+
+**Do NOT push to `main`** unless explicitly requested for a production release. The `development` branch is the production branch on Vercel.
 
 ---
 
 ## 🚀 Deployment (Vercel)
 
-This project is configured for **Vercel** deployment with automatic deploys on push.
+This project is **already connected to Vercel** with active deployments.
+
+### Publishing updates
+- Push to the branch configured in Vercel (default: `development`)
+- Vercel will build and deploy automatically
 
 ### Configuration
 - **Config file**: `vercel.json` (in project root)

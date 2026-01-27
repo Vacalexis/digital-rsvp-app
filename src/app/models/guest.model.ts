@@ -4,6 +4,7 @@
 export interface Guest {
   id: string;
   eventId: string;
+  invitationId?: string; // Link ao convite específico
   name: string;
   email?: string;
   phone?: string;
@@ -12,9 +13,13 @@ export interface Guest {
   plusOne: boolean;
   plusOneName?: string;
   plusOneConfirmed?: boolean;
+  plusOneDietaryRestrictions?: string;
   dietaryRestrictions?: string;
   allergies?: string;
   songRequest?: string;
+  // Filhos
+  childrenAttending?: number;
+  childrenDietaryRestrictions?: string;
   customAnswers?: Record<string, string | string[]>;
   notes?: string;
   tableNumber?: number;
@@ -27,13 +32,24 @@ export interface Guest {
   updatedAt: string;
 }
 
-export type RsvpStatus = 'pending' | 'confirmed' | 'declined' | 'maybe';
+export type RsvpStatus = "pending" | "confirmed" | "declined" | "maybe";
 
-export const RSVP_STATUS_CONFIG: Record<RsvpStatus, { label: string; color: string; icon: string }> = {
-  pending: { label: 'Pendente', color: 'warning', icon: 'time-outline' },
-  confirmed: { label: 'Confirmado', color: 'success', icon: 'checkmark-circle-outline' },
-  declined: { label: 'Recusado', color: 'danger', icon: 'close-circle-outline' },
-  maybe: { label: 'Talvez', color: 'medium', icon: 'help-circle-outline' },
+export const RSVP_STATUS_CONFIG: Record<
+  RsvpStatus,
+  { label: string; color: string; icon: string }
+> = {
+  pending: { label: "Pendente", color: "warning", icon: "time-outline" },
+  confirmed: {
+    label: "Confirmado",
+    color: "success",
+    icon: "checkmark-circle-outline",
+  },
+  declined: {
+    label: "Recusado",
+    color: "danger",
+    icon: "close-circle-outline",
+  },
+  maybe: { label: "Talvez", color: "medium", icon: "help-circle-outline" },
 };
 
 export interface GuestGroup {

@@ -1,7 +1,7 @@
-import { Component, inject, computed, signal, OnInit } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
-import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { Component, inject, computed, signal, OnInit } from "@angular/core";
+import { Router, ActivatedRoute } from "@angular/router";
+import { CommonModule } from "@angular/common";
+import { FormsModule } from "@angular/forms";
 import {
   IonHeader,
   IonToolbar,
@@ -25,12 +25,11 @@ import {
   IonItemOptions,
   IonItemOption,
   IonAvatar,
-  IonNote,
   AlertController,
   ToastController,
   ActionSheetController,
-} from '@ionic/angular/standalone';
-import { addIcons } from 'ionicons';
+} from "@ionic/angular/standalone";
+import { addIcons } from "ionicons";
 import {
   addOutline,
   personOutline,
@@ -47,14 +46,14 @@ import {
   peopleOutline,
   filterOutline,
   downloadOutline,
-} from 'ionicons/icons';
+} from "ionicons/icons";
 
-import { EventService } from '@services/event.service';
-import { GuestService } from '@services/guest.service';
-import { Guest, RsvpStatus, RSVP_STATUS_CONFIG } from '@models/index';
+import { EventService } from "@services/event.service";
+import { GuestService } from "@services/guest.service";
+import { Guest, RsvpStatus, RSVP_STATUS_CONFIG } from "@models/index";
 
 @Component({
-  selector: 'app-guests',
+  selector: "app-guests",
   standalone: true,
   imports: [
     CommonModule,
@@ -81,10 +80,9 @@ import { Guest, RsvpStatus, RSVP_STATUS_CONFIG } from '@models/index';
     IonItemOptions,
     IonItemOption,
     IonAvatar,
-    IonNote,
   ],
-  templateUrl: './guests.page.html',
-  styleUrls: ['./guests.page.scss'],
+  templateUrl: "./guests.page.html",
+  styleUrls: ["./guests.page.scss"],
 })
 export class GuestsPage implements OnInit {
   private router = inject(Router);
@@ -95,31 +93,34 @@ export class GuestsPage implements OnInit {
   private toastController = inject(ToastController);
   private actionSheetController = inject(ActionSheetController);
 
-  eventId = signal<string>('');
-  searchQuery = signal('');
-  statusFilter = signal<RsvpStatus | 'all'>('all');
+  eventId = signal<string>("");
+  searchQuery = signal("");
+  statusFilter = signal<RsvpStatus | "all">("all");
 
   event = computed(() => this.eventService.getEventById(this.eventId()));
-  allGuests = computed(() => this.guestService.getGuestsByEventId(this.eventId()));
+  allGuests = computed(() =>
+    this.guestService.getGuestsByEventId(this.eventId()),
+  );
   stats = computed(() => this.guestService.getGuestStats(this.eventId()));
 
   filteredGuests = computed(() => {
     let guests = this.allGuests();
-    
+
     // Filter by status
     const status = this.statusFilter();
-    if (status !== 'all') {
+    if (status !== "all") {
       guests = guests.filter((g) => g.rsvpStatus === status);
     }
 
     // Filter by search query
     const query = this.searchQuery().toLowerCase().trim();
     if (query) {
-      guests = guests.filter((g) =>
-        g.name.toLowerCase().includes(query) ||
-        g.email?.toLowerCase().includes(query) ||
-        g.phone?.includes(query) ||
-        g.group?.toLowerCase().includes(query)
+      guests = guests.filter(
+        (g) =>
+          g.name.toLowerCase().includes(query) ||
+          g.email?.toLowerCase().includes(query) ||
+          g.phone?.includes(query) ||
+          g.group?.toLowerCase().includes(query),
       );
     }
 
@@ -149,7 +150,7 @@ export class GuestsPage implements OnInit {
   }
 
   ngOnInit() {
-    const id = this.route.snapshot.paramMap.get('id');
+    const id = this.route.snapshot.paramMap.get("id");
     if (id) {
       this.eventId.set(id);
     }
@@ -160,15 +161,15 @@ export class GuestsPage implements OnInit {
   }
 
   searchChanged(event: CustomEvent) {
-    this.searchQuery.set(event.detail.value || '');
+    this.searchQuery.set(event.detail.value || "");
   }
 
   getInitials(name: string): string {
     return name
-      .split(' ')
+      .split(" ")
       .slice(0, 2)
       .map((n) => n.charAt(0).toUpperCase())
-      .join('');
+      .join("");
   }
 
   getStatusConfig(status: RsvpStatus) {
@@ -176,37 +177,36 @@ export class GuestsPage implements OnInit {
   }
 
   navigateToAddGuest() {
-    this.router.navigate(['/events', this.eventId(), 'guests', 'new']);
+    this.router.navigate(["/events", this.eventId(), "guests", "new"]);
   }
 
   navigateToEditGuest(guest: Guest) {
-    this.router.navigate(['/events', this.eventId(), 'guests', guest.id]);
+    this.router.navigate(["/events", this.eventId(), "guests", guest.id]);
   }
 
   async updateGuestStatus(guest: Guest, newStatus: RsvpStatus) {
     await this.guestService.updateRsvpStatus(guest.id, newStatus);
-    
+
     const toast = await this.toastController.create({
       message: `Estado atualizado para: ${RSVP_STATUS_CONFIG[newStatus].label}`,
       duration: 2000,
-      color: 'success',
+      color: "success",
     });
     await toast.present();
   }
 
   async showStatusOptions(guest: Guest) {
-    const buttons = (['confirmed', 'declined', 'maybe', 'pending'] as RsvpStatus[]).map((status) => ({
+    const buttons = (
+      ["confirmed", "declined", "maybe", "pending"] as RsvpStatus[]
+    ).map((status) => ({
       text: RSVP_STATUS_CONFIG[status].label,
       icon: RSVP_STATUS_CONFIG[status].icon,
       handler: () => this.updateGuestStatus(guest, status),
     }));
 
     const actionSheet = await this.actionSheetController.create({
-      header: 'Alterar Estado RSVP',
-      buttons: [
-        ...buttons,
-        { text: 'Cancelar', role: 'cancel' },
-      ],
+      header: "Alterar Estado RSVP",
+      buttons: [...buttons, { text: "Cancelar", role: "cancel" }],
     });
 
     await actionSheet.present();
@@ -214,20 +214,20 @@ export class GuestsPage implements OnInit {
 
   async deleteGuest(guest: Guest) {
     const alert = await this.alertController.create({
-      header: 'Eliminar Convidado',
+      header: "Eliminar Convidado",
       message: `Tem a certeza que deseja eliminar "${guest.name}"?`,
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: "Cancelar", role: "cancel" },
         {
-          text: 'Eliminar',
-          role: 'destructive',
+          text: "Eliminar",
+          role: "destructive",
           handler: async () => {
             await this.guestService.deleteGuest(guest.id);
-            
+
             const toast = await this.toastController.create({
-              message: 'Convidado eliminado!',
+              message: "Convidado eliminado!",
               duration: 2000,
-              color: 'success',
+              color: "success",
             });
             await toast.present();
           },
@@ -239,42 +239,42 @@ export class GuestsPage implements OnInit {
 
   async exportGuests() {
     const csv = this.guestService.exportToCSV(this.eventId());
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(blob);
-    
-    const link = document.createElement('a');
+
+    const link = document.createElement("a");
     link.href = url;
-    link.download = `convidados_${this.event()?.title || 'evento'}.csv`;
+    link.download = `convidados_${this.event()?.title || "evento"}.csv`;
     link.click();
-    
+
     URL.revokeObjectURL(url);
 
     const toast = await this.toastController.create({
-      message: 'Lista exportada com sucesso!',
+      message: "Lista exportada com sucesso!",
       duration: 2000,
-      color: 'success',
+      color: "success",
     });
     await toast.present();
   }
 
   async addQuickGuest() {
     const alert = await this.alertController.create({
-      header: 'Adicionar Convidado',
+      header: "Adicionar Convidado",
       inputs: [
-        { name: 'name', type: 'text', placeholder: 'Nome *' },
-        { name: 'email', type: 'email', placeholder: 'Email' },
-        { name: 'phone', type: 'tel', placeholder: 'Telefone' },
+        { name: "name", type: "text", placeholder: "Nome *" },
+        { name: "email", type: "email", placeholder: "Email" },
+        { name: "phone", type: "tel", placeholder: "Telefone" },
       ],
       buttons: [
-        { text: 'Cancelar', role: 'cancel' },
+        { text: "Cancelar", role: "cancel" },
         {
-          text: 'Adicionar',
+          text: "Adicionar",
           handler: async (data) => {
             if (!data.name?.trim()) {
               const toast = await this.toastController.create({
-                message: 'O nome é obrigatório.',
+                message: "O nome é obrigatório.",
                 duration: 2000,
-                color: 'warning',
+                color: "warning",
               });
               await toast.present();
               return false;
@@ -285,16 +285,16 @@ export class GuestsPage implements OnInit {
               name: data.name.trim(),
               email: data.email?.trim() || undefined,
               phone: data.phone?.trim() || undefined,
-              rsvpStatus: 'pending',
+              rsvpStatus: "pending",
               plusOne: false,
               invitationSent: false,
               reminderSent: false,
             });
 
             const toast = await this.toastController.create({
-              message: 'Convidado adicionado!',
+              message: "Convidado adicionado!",
               duration: 2000,
-              color: 'success',
+              color: "success",
             });
             await toast.present();
             return true;
