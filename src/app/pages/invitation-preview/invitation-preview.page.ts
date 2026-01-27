@@ -18,8 +18,10 @@ import {
   IonButtons,
   IonBackButton,
   IonLabel,
-  IonSegment,
-  IonSegmentButton,
+  IonCard,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardContent,
 } from "@ionic/angular/standalone";
 import { addIcons } from "ionicons";
 import {
@@ -27,6 +29,13 @@ import {
   checkmarkCircleOutline,
   closeCircleOutline,
   helpCircleOutline,
+  personOutline,
+  peopleOutline,
+  homeOutline,
+  arrowForwardOutline,
+  arrowBackOutline,
+  createOutline,
+  eyeOutline,
 } from "ionicons/icons";
 
 import { EventService } from "@services/event.service";
@@ -36,7 +45,16 @@ import {
   DietarySelectComponent,
   DietaryValue,
 } from "@components/dietary-select/dietary-select.component";
+import { EnvelopeOpenerComponent } from "@components/envelope-opener/envelope-opener.component";
 import { formatDatePT } from "@utils/date.utils";
+
+interface PreviewConfig {
+  type: InvitationType;
+  primaryName: string;
+  secondaryName: string;
+  childrenCount: number;
+  allowPlusOne: boolean;
+}
 
 @Component({
   selector: "app-invitation-preview",
@@ -59,10 +77,13 @@ import { formatDatePT } from "@utils/date.utils";
     IonButtons,
     IonBackButton,
     IonLabel,
-    IonSegment,
-    IonSegmentButton,
+    IonCard,
+    IonCardHeader,
+    IonCardTitle,
+    IonCardContent,
     InvitationCardComponent,
     DietarySelectComponent,
+    EnvelopeOpenerComponent,
   ],
   templateUrl: "./invitation-preview.page.html",
   styleUrls: ["./invitation-preview.page.scss"],
@@ -74,23 +95,59 @@ export class InvitationPreviewPage implements OnInit {
   eventId = signal<string>("");
   event = computed(() => this.eventService.getEventById(this.eventId()));
 
-  // Preview mode selector - simulates different invitation types
-  previewMode: InvitationType = "single";
-  invitationTypes = INVITATION_TYPES;
+  // Three-phase preview: setup → envelope → preview
+  currentPhase = signal<"setup" | "envelope" | "preview">("setup");
+  
+  // Envelope opened state
+  envelopeOpened = signal(false);
 
-  // Simulated invitation data
-  simulatedPrimaryName = "Maria Silva";
-  simulatedSecondaryName = "João Costa";
-  simulatedChildrenCount = 2;
+  // Preview configuration
+  config: PreviewConfig = {
+    type: "single",
+    primaryName: "",
+    secondaryName: "",
+    childrenCount: 2,
+    allowPlusOne: true,
+  };
 
-  // RSVP preview state (local only)
+  // Template presets for quick selection
+  readonly templates = [
+    {
+      id: "single",
+      type: "single" as InvitationType,
+      icon: "person-outline",
+      label: "Individual",
+      description: "Um convidado",
+      defaults: { primaryName: "Maria Silva", secondaryName: "", childrenCount: 0, allowPlusOne: true },
+    },
+    {
+      id: "couple",
+      type: "couple" as InvitationType,
+      icon: "people-outline",
+      label: "Casal",
+      description: "Dois convidados",
+      defaults: { primaryName: "Maria Silva", secondaryName: "João Costa", childrenCount: 0, allowPlusOne: false },
+    },
+    {
+      id: "family",
+      type: "family" as InvitationType,
+      icon: "home-outline",
+      label: "Família",
+      description: "Casal + filhos",
+      defaults: { primaryName: "Maria Silva", secondaryName: "João Costa", childrenCount: 2, allowPlusOne: false },
+    },
+  ];
+
+  selectedTemplate = signal<string>("single");
+
+  // RSVP preview state (local only, for realistic preview)
   attendingPreview: "yes" | "no" | "maybe" = "yes";
   bringingPlusOnePreview = false;
   plusOneNamePreview = "";
   songRequestPreview = "";
   messagePreview = "";
 
-  // Dietary values using new component model
+  // Dietary values
   primaryDietary: DietaryValue = { choice: "none", other: "" };
   plusOneDietary: DietaryValue = { choice: "none", other: "" };
   secondaryDietary: DietaryValue = { choice: "none", other: "" };
@@ -108,6 +165,13 @@ export class InvitationPreviewPage implements OnInit {
       checkmarkCircleOutline,
       closeCircleOutline,
       helpCircleOutline,
+      personOutline,
+      peopleOutline,
+      homeOutline,
+      arrowForwardOutline,
+      arrowBackOutline,
+      createOutline,
+      eyeOutline,
     });
   }
 
@@ -116,32 +180,70 @@ export class InvitationPreviewPage implements OnInit {
     if (id) {
       this.eventId.set(id);
     }
+    // Apply default template
+    this.selectTemplate("single");
   }
 
-  // Computed helpers for preview mode
+  // Template selection
+  selectTemplate(templateId: string) {
+    const template = this.templates.find((t) => t.id === templateId);
+    if (template) {
+      this.selectedTemplate.set(templateId);
+      this.config.type = template.type;
+      this.config.primaryName = template.defaults.primaryName;
+      this.config.secondaryName = template.defaults.secondaryName;
+      this.config.childrenCount = template.defaults.childrenCount;
+      this.config.allowPlusOne = template.defaults.allowPlusOne;
+    }
+  }
+
+  // Phase navigation
+  startPreview() {
+    // Validate required fields
+    if (!this.config.primaryName.trim()) {
+      this.config.primaryName = "Convidado";
+    }
+    if (this.showSecondaryGuest() && !this.config.secondaryName.trim()) {
+      this.config.secondaryName = "Acompanhante";
+    }
+    
+    // Reset RSVP state for fresh preview
+    this.attendingPreview = "yes";
+    this.bringingPlusOnePreview = false;
+    this.secondaryAttendingPreview = true;
+    this.childrenAttendingPreview = this.config.childrenCount;
+    
+    this.currentPhase.set("envelope");
+  }
+
+  // Called when envelope animation completes
+  onEnvelopeOpened() {
+    this.envelopeOpened.set(true);
+    this.currentPhase.set("preview");
+  }
+
+  backToSetup() {
+    this.currentPhase.set("setup");
+    this.envelopeOpened.set(false);
+  }
+
+  // Computed helpers
   showSecondaryGuest(): boolean {
-    return this.previewMode === "couple" || this.previewMode === "family";
+    return this.config.type === "couple" || this.config.type === "family";
   }
 
   showPlusOneOption(): boolean {
     return (
-      this.previewMode === "single-plus-one" ||
-      (this.previewMode === "single" && (this.event()?.allowPlusOne || false))
+      this.config.type === "single" && 
+      this.config.allowPlusOne && 
+      (this.event()?.allowPlusOne || false)
     );
   }
 
   showChildrenSection(): boolean {
     return (
-      this.previewMode === "family" && (this.event()?.askChildrenInfo || false)
+      this.config.type === "family" && (this.event()?.askChildrenInfo || false)
     );
-  }
-
-  onPreviewModeChange() {
-    // Reset relevant fields when mode changes
-    this.bringingPlusOnePreview = false;
-    this.secondaryAttendingPreview = true;
-    this.childrenAttendingPreview =
-      this.previewMode === "family" ? this.simulatedChildrenCount : 0;
   }
 
   formatDate(dateStr: string): string {
@@ -149,7 +251,7 @@ export class InvitationPreviewPage implements OnInit {
   }
 
   getChildrenOptions(): number[] {
-    return [0, 1, 2, 3, 4, 5];
+    return Array.from({ length: this.config.childrenCount + 1 }, (_, i) => i);
   }
 
   shareInvitation() {
@@ -166,6 +268,27 @@ export class InvitationPreviewPage implements OnInit {
       });
     } else {
       navigator.clipboard.writeText(url);
+    }
+  }
+
+  // Get greeting text based on config
+  getGreetingNames(): string {
+    if (this.config.type === "single") {
+      return this.config.primaryName;
+    } else if (this.config.type === "couple") {
+      return `${this.config.primaryName} & ${this.config.secondaryName}`;
+    } else {
+      return `${this.config.primaryName} & ${this.config.secondaryName}`;
+    }
+  }
+
+  getGreetingSubtext(): string {
+    if (this.config.type === "single") {
+      return "Estás convidado/a para o nosso evento!";
+    } else if (this.config.type === "family" && this.config.childrenCount > 0) {
+      return `e família, estão convidados para o nosso evento!`;
+    } else {
+      return "Estão convidados para o nosso evento!";
     }
   }
 }

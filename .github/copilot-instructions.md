@@ -1,5 +1,25 @@
 # Copilot Custom Instructions - Digital RSVP App
 
+## 🧠 Modus Operandi (IMPORTANT!)
+
+**For any complex visual or structural change, ALWAYS follow this workflow:**
+
+1. **PLAN FIRST**: Before writing any code, create a clear plan with:
+   - Visual structure (HTML elements and their purpose)
+   - Z-index layering (what's on top of what)
+   - CSS approach (transforms, animations, positioning)
+   - State changes (what happens on interaction)
+
+2. **THEN EXECUTE**: Only after the plan is documented/approved, implement the code.
+
+3. **SELF-CHECK**: Before and after edits, scan the touched files for syntax/structure errors (unclosed tags/braces, broken SCSS blocks) and fix them immediately.
+
+4. **VERIFY**: Run build to check for errors before moving on.
+
+This approach prevents iterative fixes and produces better results on the first attempt.
+
+---
+
 ## 📋 Project Overview
 
 This is an **Ionic 8 + Angular 18** standalone application for digital invitations and RSVP management. The app allows users to create digital event invitations, manage guest lists, track RSVPs, and export guest data.

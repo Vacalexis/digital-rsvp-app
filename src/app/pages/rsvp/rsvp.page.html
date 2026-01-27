@@ -1,65 +1,23 @@
 @if (event(); as currentEvent) {
-<ion-content [style.--theme-color]="getThemeColor()">
+
+<!-- ==================== RSVP CONTENT ==================== -->
+<ion-content class="rsvp-content">
+  <!-- Envelope Overlay + Convite real dentro da carta -->
   @if (!submitted()) {
-  <div class="rsvp-page">
-    <!-- Event Header -->
-    <div class="event-header">
-      <div class="envelope-wrapper" aria-hidden="true">
-        <div class="open-envelope">
-          <div class="env-letter" [class.has-photo]="!!currentEvent.coverImage">
-            @if (currentEvent.coverImage) {
-            <img
-              class="env-photo"
-              [src]="currentEvent.coverImage"
-              [alt]="''"
-              loading="lazy"
-            />
-            }
-            <div class="env-letter-head">
-              <div class="env-letter-title">{{ currentEvent.title }}</div>
-              @if (currentEvent.date) {
-              <div class="env-letter-sub">
-                {{ getDisplayDate(currentEvent.date) }}
-              </div>
-              }
-            </div>
-            <div class="env-letter-mark">{{ getMonogram(currentEvent) }}</div>
-          </div>
-          <div class="env-seal">{{ getMonogram(currentEvent) }}</div>
-        </div>
-      </div>
-
-      <h1>{{ currentEvent.title }}</h1>
-      @if (currentEvent.subtitle) {
-      <p class="subtitle">{{ currentEvent.subtitle }}</p>
-      }
-    </div>
-
-    <!-- Event Details -->
-    <div class="event-info">
-      @if (currentEvent.date) {
-      <div class="info-item">
-        <ion-icon name="calendar-outline"></ion-icon>
-        <span>{{ getDisplayDate(currentEvent.date) }}</span>
-      </div>
-      } @if (getTimeLabel(currentEvent); as timeLabel) {
-      <div class="info-item">
-        <ion-icon name="time-outline"></ion-icon>
-        <span>{{ timeLabel }}</span>
-      </div>
-      } @if (currentEvent.venue.name) {
-      <div class="info-item">
-        <ion-icon name="location-outline"></ion-icon>
-        <span>
-          {{ currentEvent.venue.name }} @if (currentEvent.venue.city) {, {{
-          currentEvent.venue.city }}}
-        </span>
-      </div>
-      }
-    </div>
-
-    <!-- RSVP Form -->
-    <div class="rsvp-form">
+  <div class="envelope-overlay">
+    <app-envelope-opener
+      [event]="currentEvent"
+      (opened)="onEnvelopeOpened()"
+    >
+      <app-invitation-card
+        [event]="currentEvent"
+        [showEnvelope]="false"
+        [showCountdown]="false"
+        [showSchedule]="false"
+        [compact]="true"
+      >
+      <!-- RSVP Form projected into card -->
+      <div class="rsvp-form">
       <h2>Confirma a tua presença</h2>
 
       <!-- Personalized greeting for invitation-based RSVP -->
@@ -154,56 +112,24 @@
             >Vou levar acompanhante</ion-toggle
           >
         </ion-item>
-        } @if (bringingPlusOne || invitationType() === 'single-plus-one') { @if
-        (isLegacyMode()) {
-        <ion-input
-          [(ngModel)]="plusOneName"
-          placeholder="Nome do acompanhante"
-          fill="outline"
-          class="plus-one-input"
-        >
-        </ion-input>
-        } @if (currentEvent.askDietaryRestrictions) {
-        <div class="plus-one-dietary">
-          <label>Restrições alimentares do acompanhante</label>
-          <ion-select
-            [(ngModel)]="plusOneDietaryChoice"
-            interface="popover"
-            placeholder="Seleciona uma opção"
+        }
+        @if (bringingPlusOne || invitationType() === 'single-plus-one') {
+          @if (isLegacyMode()) {
+          <ion-input
+            [(ngModel)]="plusOneName"
+            placeholder="Nome do acompanhante"
             fill="outline"
+            class="plus-one-input"
           >
-            <ion-select-option value="none">Nenhuma</ion-select-option>
-            <ion-select-option value="Vegetariano"
-              >Vegetariano</ion-select-option
-            >
-            <ion-select-option value="Vegan">Vegan</ion-select-option>
-            <ion-select-option value="Sem glúten">Sem glúten</ion-select-option>
-            <ion-select-option value="Sem lactose"
-              >Sem lactose</ion-select-option
-            >
-            <ion-select-option value="Alergia a frutos secos"
-              >Alergia a frutos secos</ion-select-option
-            >
-            <ion-select-option value="Alergia a marisco"
-              >Alergia a marisco</ion-select-option
-            >
-            <ion-select-option value="Halal">Halal</ion-select-option>
-            <ion-select-option value="Kosher">Kosher</ion-select-option>
-            <ion-select-option value="other">Outras</ion-select-option>
-          </ion-select>
-
-          @if (plusOneDietaryChoice === 'other') {
-          <ion-textarea
-            [(ngModel)]="plusOneDietaryOther"
-            placeholder="Escreve aqui…"
-            fill="outline"
-            [autoGrow]="true"
-            rows="2"
-          >
-          </ion-textarea>
+          </ion-input>
           }
-        </div>
-        } }
+          @if (currentEvent.askDietaryRestrictions) {
+          <div class="plus-one-dietary">
+            <label>Restrições alimentares do acompanhante</label>
+            <app-dietary-select [(ngModel)]="plusOneDietary"></app-dietary-select>
+          </div>
+          }
+        }
       </div>
       }
 
@@ -221,42 +147,7 @@
         @if (secondaryAttending && currentEvent.askDietaryRestrictions) {
         <div class="secondary-dietary">
           <label>Restrições alimentares</label>
-          <ion-select
-            [(ngModel)]="secondaryDietaryChoice"
-            interface="popover"
-            placeholder="Seleciona uma opção"
-            fill="outline"
-          >
-            <ion-select-option value="none">Nenhuma</ion-select-option>
-            <ion-select-option value="Vegetariano"
-              >Vegetariano</ion-select-option
-            >
-            <ion-select-option value="Vegan">Vegan</ion-select-option>
-            <ion-select-option value="Sem glúten">Sem glúten</ion-select-option>
-            <ion-select-option value="Sem lactose"
-              >Sem lactose</ion-select-option
-            >
-            <ion-select-option value="Alergia a frutos secos"
-              >Alergia a frutos secos</ion-select-option
-            >
-            <ion-select-option value="Alergia a marisco"
-              >Alergia a marisco</ion-select-option
-            >
-            <ion-select-option value="Halal">Halal</ion-select-option>
-            <ion-select-option value="Kosher">Kosher</ion-select-option>
-            <ion-select-option value="other">Outras</ion-select-option>
-          </ion-select>
-
-          @if (secondaryDietaryChoice === 'other') {
-          <ion-textarea
-            [(ngModel)]="secondaryDietaryOther"
-            placeholder="Escreve aqui…"
-            fill="outline"
-            [autoGrow]="true"
-            rows="2"
-          >
-          </ion-textarea>
-          }
+          <app-dietary-select [(ngModel)]="secondaryDietary"></app-dietary-select>
         </div>
         }
       </div>
@@ -275,7 +166,7 @@
             interface="popover"
             fill="outline"
           >
-            @for (i of [0, 1, 2, 3, 4, 5]; track i) {
+            @for (i of getChildrenOptions(); track i) {
             <ion-select-option [value]="i">{{ i }}</ion-select-option>
             }
           </ion-select>
@@ -283,82 +174,20 @@
         @if (childrenAttending > 0 && currentEvent.askDietaryRestrictions) {
         <div class="children-dietary">
           <label>Restrições alimentares dos filhos</label>
-          <ion-select
-            [(ngModel)]="childrenDietaryChoice"
-            interface="popover"
-            placeholder="Seleciona uma opção"
-            fill="outline"
-          >
-            <ion-select-option value="none">Nenhuma</ion-select-option>
-            <ion-select-option value="Vegetariano"
-              >Vegetariano</ion-select-option
-            >
-            <ion-select-option value="Vegan">Vegan</ion-select-option>
-            <ion-select-option value="Sem glúten">Sem glúten</ion-select-option>
-            <ion-select-option value="Sem lactose"
-              >Sem lactose</ion-select-option
-            >
-            <ion-select-option value="Alergia a frutos secos"
-              >Alergia a frutos secos</ion-select-option
-            >
-            <ion-select-option value="Alergia a marisco"
-              >Alergia a marisco</ion-select-option
-            >
-            <ion-select-option value="Halal">Halal</ion-select-option>
-            <ion-select-option value="Kosher">Kosher</ion-select-option>
-            <ion-select-option value="other">Outras</ion-select-option>
-          </ion-select>
-
-          @if (childrenDietaryChoice === 'other') {
-          <ion-textarea
-            [(ngModel)]="childrenDietaryOther"
-            placeholder="Escreve aqui…"
-            fill="outline"
-            [autoGrow]="true"
-            rows="2"
-          >
-          </ion-textarea>
-          }
+          <app-dietary-select [(ngModel)]="childrenDietary"></app-dietary-select>
         </div>
         }
       </div>
-      } @if (attending === 'yes' && currentEvent.askDietaryRestrictions) {
+      }
+
+      @if (attending === 'yes' && currentEvent.askDietaryRestrictions) {
       <div class="form-group">
         <label>Restrições alimentares ou alergias</label>
-        <ion-select
-          [(ngModel)]="dietaryChoice"
-          interface="popover"
-          placeholder="Seleciona uma opção"
-          fill="outline"
-        >
-          <ion-select-option value="none">Nenhuma</ion-select-option>
-          <ion-select-option value="Vegetariano">Vegetariano</ion-select-option>
-          <ion-select-option value="Vegan">Vegan</ion-select-option>
-          <ion-select-option value="Sem glúten">Sem glúten</ion-select-option>
-          <ion-select-option value="Sem lactose">Sem lactose</ion-select-option>
-          <ion-select-option value="Alergia a frutos secos"
-            >Alergia a frutos secos</ion-select-option
-          >
-          <ion-select-option value="Alergia a marisco"
-            >Alergia a marisco</ion-select-option
-          >
-          <ion-select-option value="Halal">Halal</ion-select-option>
-          <ion-select-option value="Kosher">Kosher</ion-select-option>
-          <ion-select-option value="other">Outras</ion-select-option>
-        </ion-select>
-
-        @if (dietaryChoice === 'other') {
-        <ion-textarea
-          [(ngModel)]="dietaryOther"
-          placeholder="Escreve aqui…"
-          fill="outline"
-          [autoGrow]="true"
-          rows="2"
-        >
-        </ion-textarea>
-        }
+        <app-dietary-select [(ngModel)]="primaryDietary"></app-dietary-select>
       </div>
-      } @if (attending === 'yes' && currentEvent.askSongRequest) {
+      }
+
+      @if (attending === 'yes' && currentEvent.askSongRequest) {
       <div class="form-group">
         <label>Sugestão de música 🎵</label>
         <ion-input
@@ -391,9 +220,13 @@
         Responde até {{ formatDate(currentEvent.rsvpDeadline) }}
       </p>
       }
-    </div>
+      </div>
+    </app-invitation-card>
+    </app-envelope-opener>
   </div>
-  } @else {
+  }
+
+  @if (submitted()) {
   <!-- Thank You Message -->
   <div class="thank-you">
     <div
@@ -430,6 +263,7 @@
   </div>
   }
 </ion-content>
+
 } @else {
 <ion-content class="ion-padding">
   <div class="not-found">

@@ -20,9 +20,6 @@ import {
   checkmarkCircleOutline,
   closeCircleOutline,
   helpCircleOutline,
-  calendarOutline,
-  locationOutline,
-  timeOutline,
 } from "ionicons/icons";
 
 import { EventService } from "@services/event.service";
@@ -34,10 +31,16 @@ import {
 import {
   Event,
   RsvpStatus,
-  INVITATION_THEMES,
   Invitation,
   InvitationType,
 } from "@models/index";
+import { InvitationCardComponent } from "@components/invitation-card/invitation-card.component";
+import {
+  DietarySelectComponent,
+  DietaryValue,
+} from "@components/dietary-select/dietary-select.component";
+import { EnvelopeOpenerComponent } from "@components/envelope-opener/envelope-opener.component";
+import { formatDatePT } from "@utils/date.utils";
 
 @Component({
   selector: "app-rsvp",
@@ -54,6 +57,9 @@ import {
     IonTextarea,
     IonToggle,
     IonItem,
+    InvitationCardComponent,
+    DietarySelectComponent,
+    EnvelopeOpenerComponent,
   ],
   templateUrl: "./rsvp.page.html",
   styleUrls: ["./rsvp.page.scss"],
@@ -71,6 +77,7 @@ export class RsvpPage implements OnInit {
   submitted = signal(false);
   response = signal<RsvpStatus | null>(null);
   isLegacyMode = signal(false); // true = evento sem invitation (pedir nome, etc.)
+  envelopeOpened = signal(false); // envelope opening animation state
 
   // Computed: nome principal do convidado (do Invitation ou do form)
   primaryGuestName = computed(() => {
@@ -114,22 +121,20 @@ export class RsvpPage implements OnInit {
   attending: "yes" | "no" | "maybe" = "yes";
   bringingPlusOne = false;
   plusOneName = "";
-  dietaryChoice: string = "none";
-  dietaryOther = "";
-  plusOneDietaryChoice: string = "none";
-  plusOneDietaryOther = "";
   songRequest = "";
   message = "";
 
+  // Dietary values using DietarySelectComponent
+  primaryDietary: DietaryValue = { choice: "none", other: "" };
+  plusOneDietary: DietaryValue = { choice: "none", other: "" };
+  secondaryDietary: DietaryValue = { choice: "none", other: "" };
+  childrenDietary: DietaryValue = { choice: "none", other: "" };
+
   // Form - couple mode (second guest response)
   secondaryAttending = true;
-  secondaryDietaryChoice: string = "none";
-  secondaryDietaryOther = "";
 
   // Form - children
   childrenAttending = 0;
-  childrenDietaryChoice: string = "none";
-  childrenDietaryOther = "";
 
   constructor() {
     addIcons({
@@ -137,9 +142,6 @@ export class RsvpPage implements OnInit {
       checkmarkCircleOutline,
       closeCircleOutline,
       helpCircleOutline,
-      calendarOutline,
-      locationOutline,
-      timeOutline,
     });
   }
 
@@ -181,74 +183,16 @@ export class RsvpPage implements OnInit {
     }
   }
 
-  getThemeColor(): string {
-    const evt = this.event();
-    if (!evt) return "#8b5a5a";
-    return (
-      INVITATION_THEMES.find((t) => t.value === evt.theme)?.color || "#8b5a5a"
-    );
-  }
-
-  getMonogram(event: Event): string {
-    const hosts = (event.hosts || [])
-      .map((name) => name.trim())
-      .filter(Boolean);
-
-    if (hosts.length >= 2) {
-      const first = hosts[0].charAt(0).toUpperCase();
-      const second = hosts[1].charAt(0).toUpperCase();
-      return `${first}&${second}`;
-    }
-
-    if (hosts.length === 1) {
-      return hosts[0].charAt(0).toUpperCase();
-    }
-
-    return "♥";
-  }
-
-  getDisplayDate(dateStr?: string): string {
-    if (!dateStr) return "";
-    const formatted = this.formatDate(dateStr);
-    return formatted || dateStr;
-  }
-
-  getTimeLabel(event: Event): string | null {
-    const startFromEvent = (event.time || "").trim();
-    const startFromSchedule = (event.schedule?.[0]?.time || "").trim();
-    const start = startFromEvent || startFromSchedule;
-    const end = (event.endTime || "").trim();
-    const normalizedEnd = end === "00:00" ? "" : end;
-
-    if (start && normalizedEnd) return `${start} - ${normalizedEnd}`;
-    if (start) return start;
-    if (normalizedEnd) return `até ${normalizedEnd}`;
-    return null;
-  }
-
   formatDate(dateStr: string): string {
-    if (!dateStr) return "";
-    try {
-      // Handle ISO date strings from IonDatetime (e.g., "2026-03-14T00:00:00")
-      const datePart = dateStr.includes("T") ? dateStr.split("T")[0] : dateStr;
-      const [year, month, day] = datePart.split("-").map(Number);
+    return formatDatePT(dateStr);
+  }
 
-      if (!year || !month || !day) {
-        return dateStr;
-      }
+  onEnvelopeOpened(): void {
+    this.envelopeOpened.set(true);
+  }
 
-      const date = new Date(year, month - 1, day);
-      if (isNaN(date.getTime())) return dateStr;
-
-      return date.toLocaleDateString("pt-PT", {
-        weekday: "long",
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      });
-    } catch {
-      return dateStr;
-    }
+  getChildrenOptions(): number[] {
+    return [0, 1, 2, 3, 4, 5];
   }
 
   async submit() {
@@ -275,33 +219,21 @@ export class RsvpPage implements OnInit {
           ? "declined"
           : "maybe";
 
-    const dietaryRestrictions = this.getDietaryRestrictions(
-      this.dietaryChoice,
-      this.dietaryOther,
-    );
-    const plusOneDietaryRestrictions = this.getDietaryRestrictions(
-      this.plusOneDietaryChoice,
-      this.plusOneDietaryOther,
-    );
-    const secondaryDietaryRestrictions = this.getDietaryRestrictions(
-      this.secondaryDietaryChoice,
-      this.secondaryDietaryOther,
-    );
-    const childrenDietaryRestrictions = this.getDietaryRestrictions(
-      this.childrenDietaryChoice,
-      this.childrenDietaryOther,
-    );
+    const dietaryRestrictions = this.getDietaryRestrictions(this.primaryDietary);
+    const plusOneDietaryRestrictions = this.getDietaryRestrictions(this.plusOneDietary);
+    const secondaryDietaryRestrictions = this.getDietaryRestrictions(this.secondaryDietary);
+    const childrenDietaryRestrictions = this.getDietaryRestrictions(this.childrenDietary);
 
     // Build custom answers with all dietary info
     const customAnswers: Record<string, string> = {
-      dietaryChoice: this.dietaryChoice,
-      dietaryOther: this.dietaryOther?.trim() || "",
+      dietaryChoice: this.primaryDietary.choice,
+      dietaryOther: this.primaryDietary.other?.trim() || "",
     };
 
     if (this.bringingPlusOne || this.invitationType() === "single-plus-one") {
-      customAnswers["plusOneDietaryChoice"] = this.plusOneDietaryChoice;
+      customAnswers["plusOneDietaryChoice"] = this.plusOneDietary.choice;
       customAnswers["plusOneDietaryOther"] =
-        this.plusOneDietaryOther?.trim() || "";
+        this.plusOneDietary.other?.trim() || "";
       customAnswers["plusOneDietaryRestrictions"] =
         plusOneDietaryRestrictions || "";
     }
@@ -311,9 +243,9 @@ export class RsvpPage implements OnInit {
       customAnswers["secondaryAttending"] = this.secondaryAttending
         ? "yes"
         : "no";
-      customAnswers["secondaryDietaryChoice"] = this.secondaryDietaryChoice;
+      customAnswers["secondaryDietaryChoice"] = this.secondaryDietary.choice;
       customAnswers["secondaryDietaryOther"] =
-        this.secondaryDietaryOther?.trim() || "";
+        this.secondaryDietary.other?.trim() || "";
       customAnswers["secondaryDietaryRestrictions"] =
         secondaryDietaryRestrictions || "";
     }
@@ -321,9 +253,9 @@ export class RsvpPage implements OnInit {
     if (this.hasChildren()) {
       customAnswers["childrenAttending"] = String(this.childrenAttending);
       customAnswers["childrenNames"] = (inv?.childrenNames || []).join(", ");
-      customAnswers["childrenDietaryChoice"] = this.childrenDietaryChoice;
+      customAnswers["childrenDietaryChoice"] = this.childrenDietary.choice;
       customAnswers["childrenDietaryOther"] =
-        this.childrenDietaryOther?.trim() || "";
+        this.childrenDietary.other?.trim() || "";
       customAnswers["childrenDietaryRestrictions"] =
         childrenDietaryRestrictions || "";
     }
@@ -364,8 +296,9 @@ export class RsvpPage implements OnInit {
     this.submitted.set(true);
   }
 
-  private getDietaryRestrictions(choice: string, otherText: string): string {
-    const normalizedOther = (otherText || "").trim();
+  private getDietaryRestrictions(dietary: DietaryValue): string {
+    const { choice, other } = dietary;
+    const normalizedOther = (other || "").trim();
 
     if (!choice || choice === "none") return "";
     if (choice === "other") return normalizedOther;

@@ -1,9 +1,78 @@
 /**
  * InvitationPreview Page Styles
  * 
- * Contains only RSVP form styles since the invitation card visual
- * is now handled by InvitationCardComponent.
+ * Contains RSVP form styles and envelope/preview phase layouts.
  */
+
+// ============================================
+// HEADER - sempre visível acima do envelope
+// ============================================
+
+ion-header {
+  position: relative;
+  z-index: 200; // Acima do envelope (z-index: 100)
+}
+
+// ============================================
+// PREVIEW CONTENT (envelope + invitation)
+// ============================================
+
+.preview-content {
+  --background: linear-gradient(135deg, #faf5f0 0%, #f3eae1 50%, #ebe0d5 100%);
+  position: relative;
+}
+
+// Badge sempre visível
+.preview-badge {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: rgba(59, 130, 246, 0.1);
+  border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+  
+  ion-icon {
+    font-size: 1rem;
+    color: #3b82f6;
+  }
+  
+  span {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #3b82f6;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  &.fade-in {
+    animation: fadeIn 400ms ease-out;
+  }
+}
+
+// Envelope overlay
+.envelope-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+}
+
+// Invitation wrapper removido (convite real está dentro do envelope)
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+// ============================================
+// RSVP Form Styles
+// ============================================
 
 // RSVP Form Styles (projected into InvitationCardComponent via ng-content)
 .rsvp-form {
@@ -260,3 +329,184 @@
     transition: none;
   }
 }
+
+// ==================== SETUP PHASE STYLES ====================
+.setup-phase {
+  --background: linear-gradient(
+    180deg,
+    rgba(250, 245, 240, 1) 0%,
+    rgba(255, 255, 255, 1) 100%
+  );
+}
+
+.setup-container {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 24px 20px 40px;
+}
+
+.setup-header {
+  text-align: center;
+  margin-bottom: 32px;
+
+  .header-icon {
+    font-size: 48px;
+    color: var(--ion-color-primary);
+    margin-bottom: 16px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--ion-color-dark);
+    margin: 0 0 8px;
+  }
+
+  p {
+    font-size: 0.9375rem;
+    color: var(--ion-color-medium);
+    margin: 0;
+    line-height: 1.5;
+  }
+}
+
+.template-section,
+.names-section {
+  margin-bottom: 28px;
+
+  h2 {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--ion-color-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 16px;
+  }
+}
+
+.template-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+
+  @media (max-width: 380px) {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+}
+
+.template-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 12px;
+  background: white;
+  border: 2px solid rgba(31, 41, 55, 0.1);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: rgba(139, 90, 90, 0.3);
+    transform: translateY(-2px);
+  }
+
+  &.selected {
+    border-color: var(--ion-color-primary);
+    background: rgba(139, 90, 90, 0.06);
+    box-shadow: 0 4px 16px rgba(139, 90, 90, 0.15);
+
+    ion-icon {
+      color: var(--ion-color-primary);
+    }
+  }
+
+  ion-icon {
+    font-size: 32px;
+    color: var(--ion-color-medium);
+    margin-bottom: 8px;
+    transition: color 0.2s ease;
+  }
+
+  .template-label {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    margin-bottom: 2px;
+  }
+
+  .template-desc {
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.names-section {
+  .form-group {
+    margin-bottom: 16px;
+
+    label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+      margin-bottom: 8px;
+    }
+
+    ion-input,
+    ion-select {
+      --border-radius: 12px;
+      --background: white;
+      --border-color: rgba(31, 41, 55, 0.15);
+      --highlight-color-focused: var(--ion-color-primary);
+    }
+  }
+
+  .toggle-item {
+    --background: transparent;
+    --padding-start: 0;
+    margin-top: 8px;
+  }
+}
+
+.action-section {
+  margin-top: 32px;
+
+  .preview-button {
+    --background: var(--ion-color-primary);
+    --border-radius: 14px;
+    --box-shadow: 0 8px 24px rgba(139, 90, 90, 0.25);
+    height: 52px;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .hint {
+    text-align: center;
+    font-size: 0.8125rem;
+    color: var(--ion-color-medium);
+    margin: 16px 0 0;
+  }
+}
+
+// ==================== PREVIEW PHASE STYLES ====================
+.preview-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: rgba(139, 90, 90, 0.1);
+  border-bottom: 1px dashed rgba(139, 90, 90, 0.3);
+  color: var(--ion-color-primary);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+
+  ion-icon {
+    font-size: 16px;
+  }
+}
+

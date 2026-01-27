@@ -5,28 +5,32 @@
   [attr.data-theme]="evt.theme"
   [class.compact]="compact"
 >
-  <!-- Opened envelope (decorative) -->
+  <!-- Envelope Animation -->
   @if (showEnvelope) {
-  <div class="envelope-wrapper" aria-hidden="true">
-    <div class="open-envelope">
-      <div class="env-letter" [class.has-photo]="!!evt.coverImage">
-        @if (evt.coverImage) {
-        <img
-          class="env-photo"
-          [src]="evt.coverImage"
-          alt=""
-          loading="lazy"
-        />
-        }
-        <div class="env-letter-head">
-          <div class="env-letter-title">{{ evt.title }}</div>
+  <div class="envelope-scene">
+    <div class="envelope">
+      <!-- Back of envelope -->
+      <div class="env-back"></div>
+      
+      <!-- Letter that slides up -->
+      <div class="env-letter">
+        <div class="env-letter-content">
+          <span class="env-letter-title">{{ evt.title }}</span>
           @if (evt.date) {
-          <div class="env-letter-sub">{{ getDisplayDate(evt.date) }}</div>
+          <span class="env-letter-date">{{ getDisplayDate(evt.date) }}</span>
           }
         </div>
-        <div class="env-letter-mark">{{ monogram() }}</div>
       </div>
-      <div class="env-seal">{{ monogram() }}</div>
+      
+      <!-- Front pocket (V shape) -->
+      <div class="env-front"></div>
+      
+      <!-- Flap with seal (rotates on hover) -->
+      <div class="env-flap-wrapper">
+        <div class="env-flap">
+          <div class="env-seal">{{ monogram() }}</div>
+        </div>
+      </div>
     </div>
   </div>
   }

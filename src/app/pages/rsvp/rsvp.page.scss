@@ -1,355 +1,71 @@
-ion-content {
-  --theme-color: #8b5a5a;
-  --rsvp-text: #1f2937;
-  --rsvp-body: #4b5563;
-  --rsvp-muted: #6b7280;
-  --rsvp-divider: rgba(31, 41, 55, 0.14);
-  --rsvp-card-border: rgba(31, 41, 55, 0.08);
-  --rsvp-soft: #faf5f0;
-  --rsvp-soft-2: #f3eae1;
-  --background:
-    radial-gradient(
-      1200px 600px at 10% -10%,
-      rgba(139, 90, 90, 0.1),
-      transparent 55%
-    ),
-    radial-gradient(
-      900px 450px at 110% 10%,
-      rgba(139, 90, 90, 0.08),
-      transparent 55%
-    ),
-    linear-gradient(135deg, var(--rsvp-soft) 0%, var(--rsvp-soft-2) 100%);
+/**
+ * RSVP Page Styles
+ * 
+ * Contains RSVP form styles and envelope/content layouts.
+ */
+
+// ============================================
+// RSVP CONTENT (envelope + form)
+// ============================================
+
+.rsvp-content {
+  --background: linear-gradient(135deg, #faf5f0 0%, #f3eae1 50%, #ebe0d5 100%);
+  position: relative;
 }
 
-.rsvp-page {
-  max-width: 500px;
-  margin: 0 auto;
-  padding: 28px 16px 52px;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+// Envelope overlay
+.envelope-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
 }
 
-.event-header {
-  text-align: center;
-  margin-bottom: 32px;
-
-  .envelope-wrapper {
-    display: flex;
-    justify-content: center;
-    margin: 8px 0 18px;
-    padding-bottom: 36px; // Espaço para o selo não ficar cortado
-  }
-
-  .open-envelope {
-    width: 176px;
-    height: 116px;
-    position: relative;
-    border-radius: 16px;
-    border: 1px solid rgba(31, 41, 55, 0.08);
-    background: linear-gradient(180deg, #f7efe8 0%, #efe2d7 100%);
-    box-shadow:
-      0 18px 38px rgba(31, 41, 55, 0.12),
-      0 6px 14px rgba(31, 41, 55, 0.08);
-    isolation: isolate;
-    overflow: visible; // Permitir que o selo saia do envelope
-
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border-radius: 16px;
-      background: linear-gradient(180deg, #f3e7dd 0%, #e8d6c9 100%);
-      clip-path: polygon(0 100%, 0 38%, 50% 70%, 100% 38%, 100% 100%);
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
-      z-index: 3;
-    }
-
-    &::after {
-      content: "";
-      position: absolute;
-      left: -1px;
-      right: -1px;
-      top: -1px;
-      height: 66px;
-      background: linear-gradient(180deg, #fbf3ed 0%, #efe2d7 100%);
-      clip-path: polygon(0 0, 100% 0, 50% 76%);
-      transform-origin: top center;
-      transform: perspective(700px) rotateX(180deg) translateY(-6px);
-      box-shadow: 0 10px 18px rgba(31, 41, 55, 0.12);
-      z-index: 4;
-      animation: rsvp-env-flap-open 720ms cubic-bezier(0.2, 0.9, 0.2, 1) both;
-    }
-
-    .env-letter {
-      position: absolute;
-      left: 12px;
-      right: 12px;
-      top: 12px;
-      height: 96px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid rgba(31, 41, 55, 0.08);
-      box-shadow:
-        0 18px 44px rgba(31, 41, 55, 0.14),
-        0 8px 18px rgba(31, 41, 55, 0.08);
-      z-index: 2;
-      overflow: hidden;
-      transform: translateY(28px);
-      animation: rsvp-env-letter-slide 780ms cubic-bezier(0.2, 0.9, 0.2, 1) 60ms
-        both;
-
-      &.has-photo {
-        background: rgba(255, 255, 255, 0.96);
-      }
-
-      .env-photo {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        object-position: center;
-        display: block;
-        filter: saturate(1.04) contrast(1.02);
-        transform: scale(1.02);
-      }
-
-      .env-letter-mark {
-        position: absolute;
-        right: 12px;
-        bottom: 10px;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.86);
-        border: 1px solid rgba(31, 41, 55, 0.1);
-        color: var(--rsvp-text);
-        font-weight: 700;
-        letter-spacing: 0.6px;
-        font-size: 0.82rem;
-      }
-
-      .env-letter-head {
-        position: absolute;
-        left: 12px;
-        right: 12px;
-        top: 10px;
-        padding: 10px 10px 12px;
-        border-radius: 12px;
-        background: rgba(255, 255, 255, 0.82);
-        border: 1px solid rgba(31, 41, 55, 0.1);
-        backdrop-filter: blur(6px);
-        opacity: 0;
-        transform: translateY(-6px);
-        transition:
-          opacity 220ms ease,
-          transform 220ms ease;
-
-        .env-letter-title {
-          font-weight: 750;
-          color: var(--rsvp-text);
-          font-size: 0.92rem;
-          line-height: 1.15;
-          letter-spacing: -0.2px;
-          text-wrap: balance;
-        }
-
-        .env-letter-sub {
-          margin-top: 6px;
-          color: rgba(31, 41, 55, 0.72);
-          font-size: 0.78rem;
-          line-height: 1.2;
-        }
-      }
-    }
-
-    .env-seal {
-      position: absolute;
-      left: 50%;
-      top: 66px;
-      transform: translateX(-50%);
-      width: 54px;
-      height: 54px;
-      border-radius: 50%;
-      background: var(--theme-color);
-      color: #fff;
-      display: grid;
-      place-items: center;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 1px;
-      box-shadow:
-        0 10px 22px rgba(31, 41, 55, 0.22),
-        inset 0 1px 0 rgba(255, 255, 255, 0.35);
-      z-index: 5;
-    }
-
-    &:hover {
-      .env-letter {
-        transform: translateY(14px);
-      }
-
-      .env-letter .env-letter-head {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-  }
-
-  h1 {
-    font-size: clamp(1.65rem, 5.2vw, 2.2rem);
-    font-weight: 750;
-    color: var(--theme-color);
-    margin: 0 0 8px;
-    line-height: 1.12;
-    letter-spacing: -0.4px;
-    text-wrap: balance;
-  }
-
-  .subtitle {
-    font-size: 1rem;
-    color: var(--rsvp-muted);
-    font-style: italic;
-    margin: 0;
-  }
-}
-
-@keyframes rsvp-env-flap-open {
-  0% {
-    transform: perspective(700px) rotateX(0deg) translateY(0);
-  }
-
-  100% {
-    transform: perspective(700px) rotateX(180deg) translateY(-6px);
-  }
-}
-
-@keyframes rsvp-env-letter-slide {
-  0% {
-    transform: translateY(36px);
-  }
-
-  70% {
-    transform: translateY(16px);
-  }
-
-  100% {
-    transform: translateY(22px);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .event-header .open-envelope::after,
-  .event-header .open-envelope .env-letter {
-    animation: none;
-  }
-
-  .event-header .open-envelope .env-letter {
-    transform: translateY(22px);
-  }
-
-  .event-header .open-envelope:hover .env-letter {
-    transform: translateY(22px);
-  }
-
-  .event-header .open-envelope .env-letter .env-letter-head {
-    transition: none;
+// RSVP wrapper com fade in
+.rsvp-wrapper {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 600ms ease-out, transform 600ms ease-out;
+  pointer-events: none;
+  
+  &.visible {
     opacity: 1;
-    transform: none;
+    transform: translateY(0);
+    pointer-events: auto;
   }
 }
 
-.event-info {
-  background: white;
-  border-radius: 18px;
-  padding: 18px;
-  margin-bottom: 32px;
-  border: 1px solid var(--rsvp-card-border);
-  box-shadow:
-    0 18px 44px rgba(31, 41, 55, 0.1),
-    0 8px 18px rgba(31, 41, 55, 0.06);
+// ============================================
+// RSVP Form Styles
+// ============================================
 
-  .info-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
-    min-height: 28px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    ion-icon {
-      width: 28px;
-      height: 28px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 18px;
-      color: var(--theme-color);
-      flex-shrink: 0;
-      background: rgba(139, 90, 90, 0.1);
-      border: 1px solid rgba(139, 90, 90, 0.12);
-      border-radius: 999px;
-    }
-
-    span {
-      font-size: 0.96rem;
-      color: var(--rsvp-text);
-      line-height: 1.4;
-    }
-  }
-}
-
+// RSVP Form Styles (projected into InvitationCardComponent via ng-content)
 .rsvp-form {
-  background: white;
-  border-radius: 18px;
-  padding: 22px;
-  border: 1px solid var(--rsvp-card-border);
-  box-shadow:
-    0 18px 44px rgba(31, 41, 55, 0.1),
-    0 8px 18px rgba(31, 41, 55, 0.06);
+  padding-top: 24px;
+  margin-top: 18px;
+  border-top: 1px solid var(--invitation-divider, rgba(31, 41, 55, 0.14));
+  text-align: left;
 
   h2 {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 650;
     text-align: center;
-    margin: 0 0 24px;
-    color: var(--theme-color);
-  }
-
-  // Guest greeting for invitation-based RSVP
-  .guest-greeting {
-    text-align: center;
-    margin-bottom: 24px;
-    padding: 16px;
-    background: rgba(139, 90, 90, 0.06);
-    border-radius: 14px;
-    border: 1px solid rgba(139, 90, 90, 0.1);
-
-    .greeting-name {
-      font-size: 1.15rem;
-      font-weight: 700;
-      color: var(--theme-color);
-      margin: 0;
-      letter-spacing: -0.2px;
-    }
-
-    .greeting-sub {
-      font-size: 0.9rem;
-      color: var(--rsvp-muted);
-      margin: 4px 0 0;
-      font-style: italic;
-    }
+    margin: 0 0 18px;
+    color: var(--theme-color, #8b5a5a);
+    letter-spacing: -0.2px;
   }
 
   .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 
     label {
       display: block;
       font-size: 0.875rem;
       font-weight: 600;
       margin-bottom: 8px;
-      color: var(--rsvp-text);
+      color: var(--invitation-text, #1f2937);
     }
 
     ion-input,
@@ -358,9 +74,9 @@ ion-content {
       --border-radius: 12px;
       --background: rgba(255, 255, 255, 0.78);
       --border-color: rgba(31, 41, 55, 0.14);
-      --color: var(--rsvp-text);
+      --color: var(--invitation-text, #1f2937);
       --placeholder-color: rgba(107, 114, 128, 0.85);
-      --highlight-color-focused: var(--theme-color);
+      --highlight-color-focused: var(--theme-color, #8b5a5a);
     }
 
     ion-select {
@@ -378,54 +94,12 @@ ion-content {
       label {
         margin-top: 14px;
       }
-
-      ion-textarea {
-        margin-top: 10px;
-      }
     }
 
     .toggle-item {
       --padding-start: 0;
       --inner-padding-end: 0;
       --background: transparent;
-    }
-
-    // Couple section
-    &.couple-section,
-    &.children-section {
-      padding-top: 18px;
-      border-top: 1px solid var(--rsvp-divider);
-
-      .section-header {
-        margin-bottom: 12px;
-
-        .section-title {
-          font-size: 1rem;
-          font-weight: 600;
-          color: var(--theme-color);
-        }
-      }
-
-      .secondary-dietary,
-      .children-dietary,
-      .children-count {
-        margin-top: 12px;
-
-        label {
-          margin-top: 14px;
-          margin-bottom: 8px;
-        }
-
-        ion-textarea {
-          margin-top: 10px;
-        }
-      }
-
-      .children-count {
-        ion-select {
-          width: 100px;
-        }
-      }
     }
   }
 
@@ -451,7 +125,7 @@ ion-content {
 
       &.selected {
         background: rgba(139, 90, 90, 0.1);
-        border-color: color-mix(in srgb, var(--theme-color) 65%, #000);
+        border-color: color-mix(in srgb, var(--theme-color, #8b5a5a) 65%, #000);
       }
 
       ion-icon {
@@ -461,101 +135,181 @@ ion-content {
 
       span {
         font-size: 0.9375rem;
-        color: var(--rsvp-text);
+        color: var(--invitation-text, #1f2937);
         font-weight: 500;
       }
     }
   }
 
   .submit-button {
-    --background: var(--theme-color);
+    --background: var(--theme-color, #8b5a5a);
     --border-radius: 12px;
     --color: #fff;
     --box-shadow: 0 14px 26px rgba(139, 90, 90, 0.28);
     height: 48px;
-    margin-top: 24px;
+    margin-top: 18px;
+    font-weight: 600;
   }
 
   .deadline {
     text-align: center;
     font-size: 0.75rem;
-    color: var(--rsvp-muted);
-    margin: 16px 0 0;
+    color: var(--invitation-muted, #6b7280);
+    margin: 14px 0 0;
     font-style: italic;
   }
 }
 
+// Guest Greeting
+.guest-greeting {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: rgba(139, 90, 90, 0.05);
+  border-radius: 12px;
+  border: 1px solid rgba(139, 90, 90, 0.1);
+
+  .greeting-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--theme-color, #8b5a5a);
+    margin: 0;
+  }
+
+  .greeting-sub {
+    font-size: 0.9375rem;
+    color: var(--invitation-muted, #6b7280);
+    margin: 4px 0 0;
+  }
+}
+
+// Couple Section
+.couple-section {
+  padding: 16px;
+  background: rgba(139, 90, 90, 0.04);
+  border-radius: 12px;
+
+  .section-header {
+    margin-bottom: 12px;
+
+    .section-title {
+      font-weight: 600;
+      color: var(--theme-color, #8b5a5a);
+    }
+  }
+
+  .secondary-dietary {
+    margin-top: 14px;
+  }
+}
+
+// Children Section
+.children-section {
+  padding: 16px;
+  background: rgba(201, 169, 98, 0.08);
+  border-radius: 12px;
+
+  .section-header {
+    margin-bottom: 12px;
+
+    .section-title {
+      font-weight: 600;
+      color: var(--theme-color, #8b5a5a);
+    }
+  }
+
+  .children-count {
+    margin-bottom: 14px;
+  }
+
+  .children-dietary {
+    margin-top: 14px;
+  }
+}
+
+// Thank You Page
 .thank-you {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100%;
-  padding: 48px 24px;
+  padding: 32px 24px;
   text-align: center;
+  background: linear-gradient(
+    135deg,
+    var(--invitation-soft, #faf5f0) 0%,
+    var(--invitation-soft-2, #f3eae1) 100%
+  );
 
   .icon-wrapper {
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     border-radius: 50%;
-    background: rgba(107, 114, 128, 0.18);
-    color: white;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 24px;
+    background: rgba(139, 90, 90, 0.1);
 
     ion-icon {
-      font-size: 56px;
+      font-size: 48px;
+      color: var(--theme-color, #8b5a5a);
     }
 
     &.confirmed {
-      background: rgba(40, 167, 69, 0.9);
+      background: rgba(90, 139, 90, 0.1);
+
+      ion-icon {
+        color: var(--ion-color-success);
+      }
     }
 
     &.declined {
-      background: rgba(194, 80, 80, 0.92);
+      background: rgba(194, 80, 80, 0.1);
+
+      ion-icon {
+        color: var(--ion-color-danger);
+      }
     }
   }
 
   h1 {
-    font-size: 1.75rem;
+    font-size: 1.5rem;
     font-weight: 700;
+    color: var(--theme-color, #8b5a5a);
     margin: 0 0 12px;
-    color: var(--theme-color);
   }
 
   p {
     font-size: 1rem;
-    color: var(--rsvp-body);
-    margin: 0 0 32px;
+    color: var(--invitation-body, #4b5563);
+    margin: 0 0 24px;
     max-width: 320px;
   }
 
   .event-reminder {
-    background: white;
+    padding: 20px;
+    background: rgba(255, 255, 255, 0.8);
     border-radius: 16px;
-    padding: 24px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(31, 41, 55, 0.1);
 
     h3 {
-      font-size: 1rem;
+      font-size: 1.1rem;
       font-weight: 600;
+      color: var(--invitation-text, #1f2937);
       margin: 0 0 8px;
-      color: var(--theme-color);
     }
 
     p {
-      margin: 0 0 4px;
-      font-size: 0.875rem;
-
-      &:last-child {
-        margin: 0;
-      }
+      font-size: 0.9375rem;
+      color: var(--invitation-muted, #6b7280);
+      margin: 4px 0;
     }
   }
 }
 
+// Not Found
 .not-found {
   display: flex;
   flex-direction: column;
@@ -565,12 +319,18 @@ ion-content {
   text-align: center;
 
   h1 {
-    font-size: 1.5rem;
+    font-size: 1.25rem;
+    color: var(--ion-color-danger);
     margin: 0 0 12px;
   }
 
   p {
-    color: var(--rsvp-muted);
-    margin: 0;
+    color: var(--invitation-muted, #6b7280);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .radio-option {
+    transition: none;
   }
 }

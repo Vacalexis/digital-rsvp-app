@@ -8,6 +8,26 @@
   }
 }
 
+// Fix segment button text visibility
+ion-segment {
+  --background: var(--ion-color-light);
+
+  ion-segment-button {
+    --indicator-color: var(--ion-color-primary);
+    --color: var(--ion-color-dark);
+    --color-checked: white;
+    min-height: 36px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+
+    ion-label {
+      margin: 0;
+    }
+  }
+}
+
 .loading-state {
   display: flex;
   flex-direction: column;

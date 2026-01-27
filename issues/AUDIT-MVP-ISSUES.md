@@ -2,7 +2,8 @@
 
 > **Data**: 26 Janeiro 2026  
 > **Objetivo**: MVP coerente e coeso aplicando DRY, SOLID, YAGNI  
-> **Branch**: development
+> **Branch**: development  
+> **Última Atualização**: 26 Janeiro 2026
 
 ---
 
@@ -18,57 +19,54 @@
 | YAGNI (código não usado) | 3 | 🟢 Baixo |
 | UX/Funcionalidade incompleta | 4 | 🟡 Médio |
 
+### Progresso
+
+| Issue | Status | Data |
+|-------|--------|------|
+| ISSUE-001 | ✅ Resolvido | 26/01/2026 |
+| ISSUE-002 | ⏳ Pendente | - |
+| ISSUE-003 | ⏳ Pendente | - |
+
 ---
 
 ## 🔴 PRIORIDADE CRÍTICA (P0) - Bloqueia MVP
 
-### ISSUE-001: Unificar Preview e RSVP - Violação DRY Crítica
+### ✅ ISSUE-001: Unificar Preview e RSVP - Violação DRY Crítica
 
-**Problema**: `invitation-preview.page` e `rsvp.page` têm ~70% de código duplicado:
-- HTML do envelope duplicado (100+ linhas cada)
-- SCSS do envelope duplicado (200+ linhas cada)
-- Lógica de formatação de datas duplicada
-- Opções de restrições alimentares duplicadas
-- Computed helpers duplicados (`getMonogram`, `getThemeColor`, `formatDate`, `getTimeLabel`)
+**Status**: ✅ **RESOLVIDO**
 
-**Ficheiros Afetados**:
-- [invitation-preview.page.ts](../src/app/pages/invitation-preview/invitation-preview.page.ts)
-- [invitation-preview.page.html](../src/app/pages/invitation-preview/invitation-preview.page.html)
-- [invitation-preview.page.scss](../src/app/pages/invitation-preview/invitation-preview.page.scss)
-- [rsvp.page.ts](../src/app/pages/rsvp/rsvp.page.ts)
-- [rsvp.page.html](../src/app/pages/rsvp/rsvp.page.html)
-- [rsvp.page.scss](../src/app/pages/rsvp/rsvp.page.scss)
+**Solução Implementada**:
+- Criado `InvitationCardComponent` em `src/app/components/invitation-card/`
+- Criado `DietarySelectComponent` em `src/app/components/dietary-select/`
+- Criado `src/app/utils/` com `date.utils.ts` e `event.utils.ts`
+- Criado `src/app/models/dietary.model.ts` com `DIETARY_OPTIONS`
+- Refatorado `invitation-preview.page` para usar componentes partilhados
+- Refatorado `rsvp.page` para usar componentes partilhados
+- SCSS reduzido de ~1600 linhas (ambas páginas) para ~500 linhas
 
-**Solução Proposta**:
-```
-OPÇÃO A (Recomendada): Componentes Partilhados
-├── src/app/components/
-│   ├── invitation-card/          # Visual do convite (envelope, crest, detalhes)
-│   │   ├── invitation-card.component.ts
-│   │   ├── invitation-card.component.html
-│   │   └── invitation-card.component.scss
-│   ├── rsvp-form/                # Formulário RSVP reutilizável
-│   │   ├── rsvp-form.component.ts
-│   │   ├── rsvp-form.component.html
-│   │   └── rsvp-form.component.scss
-│   └── dietary-select/           # Select de restrições alimentares
-│       └── dietary-select.component.ts
+**Métricas de Melhoria**:
+| Chunk | Antes | Depois | Redução |
+|-------|-------|--------|---------|
+| invitation-preview-page | 63.65 kB | 19.47 kB | **-69%** |
+| rsvp-page | 37.98 kB | 22.23 kB | **-41%** |
+| Chunk partilhado (novo) | - | 26.21 kB | Reutilizado |
 
-OPÇÃO B: Preview como modo do RSVP
-- rsvp.page com @Input() previewMode: boolean
-- Preview = RSVP com dados simulados + sem submit real
-```
-
-**Benefícios**:
-- Elimina ~800 linhas de código duplicado
-- Alterações visuais aplicam-se automaticamente aos dois
-- Facilita testes (testar componente = testar ambos contextos)
-
-**Esforço**: 4-6h
+**Ficheiros Criados**:
+- `src/app/components/invitation-card/invitation-card.component.ts`
+- `src/app/components/invitation-card/invitation-card.component.html`
+- `src/app/components/invitation-card/invitation-card.component.scss`
+- `src/app/components/dietary-select/dietary-select.component.ts`
+- `src/app/components/index.ts`
+- `src/app/utils/date.utils.ts`
+- `src/app/utils/event.utils.ts`
+- `src/app/utils/index.ts`
+- `src/app/models/dietary.model.ts`
 
 ---
 
 ### ISSUE-002: Modelo de Dados Inconsistente - children vs childrenNames
+
+**Status**: ⏳ Pendente
 
 **Problema**: Dois campos para a mesma informação:
 ```typescript
@@ -78,15 +76,9 @@ children?: InvitedChild[];     // ✅ Novo formato
 ```
 
 **Impacto**:
-- [invitation-form-modal.component.ts](../src/app/pages/invitations/invitation-form-modal.component.ts#L465) guarda ambos para "backwards compatibility"
+- invitation-form-modal.component.ts guarda ambos para "backwards compatibility"
 - API não valida qual usar
 - RSVP page usa `childrenNames` em vez de `children`
-
-**Ficheiros Afetados**:
-- [event.model.ts](../src/app/models/event.model.ts#L47-48)
-- [invitation-form-modal.component.ts](../src/app/pages/invitations/invitation-form-modal.component.ts#L461-465)
-- [rsvp.page.ts](../src/app/pages/rsvp/rsvp.page.ts#L298)
-- [api/invitations/index.ts](../api/invitations/index.ts)
 
 **Solução**:
 1. Remover `childrenNames` do modelo (breaking change)
@@ -98,6 +90,8 @@ children?: InvitedChild[];     // ✅ Novo formato
 ---
 
 ### ISSUE-003: RSVP Não Pede Idade dos Filhos
+
+**Status**: ⏳ Pendente
 
 **Problema**: Se o Host não preencher a idade no convite, o RSVP não pergunta.
 
