@@ -26,10 +26,13 @@ export class EnvelopeOpenerComponent {
 
   private _event = signal<Event | null>(null);
 
-  // Simple state: spinning -> opened (peek) -> revealing (full card)
+  // Simple state: spinning -> opened (peek) -> revealing -> envelopeDown -> envelopeHidden -> fullScreen
   isSpinning = signal(false);
   isOpened = signal(false);
   isRevealing = signal(false);
+  isEnvelopeDown = signal(false);
+  isEnvelopeHidden = signal(false);
+  isFullScreen = signal(false);
 
   // Computed values
   currentEvent = computed(() => this._event());
@@ -62,9 +65,27 @@ export class EnvelopeOpenerComponent {
       this.isRevealing.set(true);
     }, 1200);
     
-    // Step 4: Emit opened event
+    // Step 4: Envelope slides down, letter stays in place
+    setTimeout(() => {
+      this.isEnvelopeDown.set(true);
+    }, 1800);
+    
+    // Step 5: Emit opened event
     setTimeout(() => {
       this.opened.emit();
-    }, 2000);
+    }, 2400);
+  }
+
+  expandLetter(): void {
+    // Only expand if envelope is already down and not already expanding
+    if (!this.isEnvelopeDown() || this.isEnvelopeHidden()) return;
+    
+    // Step 1: Envelope exits screen, letter compensates
+    this.isEnvelopeHidden.set(true);
+    
+    // Step 2: After envelope is gone, letter expands to full screen
+    setTimeout(() => {
+      // this.isFullScreen.set(true);
+    }, 600);
   }
 }

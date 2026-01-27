@@ -4,6 +4,9 @@
   [style.--theme-color]="themeColor()"
   [class.opened]="isOpened()"
   [class.revealing]="isRevealing()"
+  [class.envelope-down]="isEnvelopeDown()"
+  [class.envelope-hidden]="isEnvelopeHidden()"
+  [class.full-screen]="isFullScreen()"
 >
   <!-- Background -->
   <div class="backdrop"></div>
@@ -44,7 +47,10 @@
     </button>
     
     <!-- Letter (emerges from envelope) -->
-    <div class="letter">
+    <div class="letter" (click)="expandLetter()" [class.clickable]="isEnvelopeDown() && !isEnvelopeHidden()">
+      <div class="letter-tap-hint" [class.visible]="isEnvelopeDown() && !isEnvelopeHidden()">
+        <span>Toca para ver o convite</span>
+      </div>
       <ng-content></ng-content>
     </div>
   </div>
