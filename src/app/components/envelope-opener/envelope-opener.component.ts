@@ -1,8 +1,9 @@
 /**
  * EnvelopeOpenerComponent
  *
- * Fullscreen envelope animation that opens on seal click.
- * Used as an opening experience for invitation preview and RSVP pages.
+ * Simple envelope animation that opens on seal click.
+ * Adapted from CodePen: https://codepen.io/Coding-Star/pen/WNpbvwB
+ * With floral seal that rotates before opening.
  */
 import { Component, Input, Output, EventEmitter, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
@@ -25,8 +26,10 @@ export class EnvelopeOpenerComponent {
 
   private _event = signal<Event | null>(null);
 
-  // Animation phase: closed -> opening -> expanding -> completed
-  phase = signal<'closed' | 'opening' | 'expanding' | 'completed'>('closed');
+  // Simple state: spinning -> opened (peek) -> revealing (full card)
+  isSpinning = signal(false);
+  isOpened = signal(false);
+  isRevealing = signal(false);
 
   // Computed values
   currentEvent = computed(() => this._event());
@@ -44,38 +47,24 @@ export class EnvelopeOpenerComponent {
   }
 
   openEnvelope(): void {
-    if (this.phase() !== 'closed') return;
+    if (this.isOpened() || this.isSpinning()) return;
     
-    // FASE 1: Opening - aba sobe, carta começa a sair
-    this.phase.set('opening');
+    // Step 1: Spin the seal
+    this.isSpinning.set(true);
     
-    // FASE 2: Expanding - revela mais altura (após 1000ms)
+    // Step 2: Open envelope, letter peeks out
     setTimeout(() => {
-      this.phase.set('expanding');
-    }, 1000);
+      this.isOpened.set(true);
+    }, 600);
     
-    // FASE 3: Completed - conclui animação e emite evento (após 2600ms)
+    // Step 3: Letter rises more, revealing full content
     setTimeout(() => {
-      this.phase.set('completed');
+      this.isRevealing.set(true);
+    }, 1200);
+    
+    // Step 4: Emit opened event
+    setTimeout(() => {
       this.opened.emit();
-    }, 2600);
-  }
-
-  advancePhase(): void {
-    const current = this.phase();
-    if (current === 'closed') {
-      this.phase.set('opening');
-      return;
-    }
-    if (current === 'opening') {
-      this.phase.set('expanding');
-      return;
-    }
-    if (current === 'expanding') {
-      this.phase.set('completed');
-      this.opened.emit();
-      return;
-    }
-    this.phase.set('closed');
+    }, 2000);
   }
 }
