@@ -85,7 +85,7 @@ export class EnvelopeOpenerComponent {
     
     // Step 2: After envelope is gone, letter expands to full screen
     setTimeout(() => {
-      // this.isFullScreen.set(true);
+      this.isFullScreen.set(true);
     }, 600);
   }
 }

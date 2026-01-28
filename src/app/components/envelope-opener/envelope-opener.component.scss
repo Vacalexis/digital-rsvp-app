@@ -370,14 +370,18 @@
 
 .letter {
   position: absolute;
+  // Use left: 50% + translateX(-50%) from the start for horizontal centering
+  // This way full-screen doesn't need to change left, avoiding flicker
+  left: 50%;
   top: 0;
+  transform: translateX(-50%);
   width: 90%;
   height: 85%;
   background-color: white;
   border-radius: 12px;
   z-index: 2;
   transition: transform 0.5s ease, height 0.5s ease, width 0.5s ease, 
-              border-radius 0.5s ease, left 0.5s ease;
+              border-radius 0.5s ease;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   
@@ -392,29 +396,29 @@
   
   // Phase 1: Letter peeks out slightly
   .opened & {
-    transform: translateY(-60px);
+    transform: translate(-50%, -60px);
     height: calc(85% + 60px);
     transition-delay: 0.5s;
   }
   
   // Phase 2: Letter rises more, reveals full content
   .revealing & {
-    transform: translateY(-220px);
+    transform: translate(-50%, -220px);
     height: calc(85% + 220px);
     transition-delay: 0s;
     
     @media (min-width: 480px) {
-      transform: translateY(-280px);
+      transform: translate(-50%, -280px);
       height: calc(85% + 280px);
     }
     
     @media (min-width: 768px) {
-      transform: translateY(-340px);
+      transform: translate(-50%, -340px);
       height: calc(85% + 340px);
     }
     
     @media (min-width: 1024px) {
-      transform: translateY(-400px);
+      transform: translate(-50%, -400px);
       height: calc(85% + 400px);
     }
   }
@@ -422,21 +426,21 @@
   // Phase 3: Envelope slides down, letter compensates to stay in place
   .envelope-down & {
     // translateY = revealing + wrapper down compensation
-    transform: translateY(-500px); // -220px + -280px
+    transform: translate(-50%, -500px); // -220px + -280px
     height: calc(85% + 500px);
     
     @media (min-width: 480px) {
-      transform: translateY(-600px); // -280px + -320px
+      transform: translate(-50%, -600px); // -280px + -320px
       height: calc(85% + 600px);
     }
     
     @media (min-width: 768px) {
-      transform: translateY(-720px); // -340px + -380px
+      transform: translate(-50%, -720px); // -340px + -380px
       height: calc(85% + 720px);
     }
     
     @media (min-width: 1024px) {
-      transform: translateY(-820px); // -400px + -420px
+      transform: translate(-50%, -820px); // -400px + -420px
       height: calc(85% + 820px);
     }
   }
@@ -446,42 +450,59 @@
     // Envelope moves from envelope-down position to 2000px
     // Mobile: was -500px, envelope goes from 280px to 2000px = +1720px more
     // Total = -500px - 1720px = -2220px
-    transform: translateY(-2220px);
+    transform: translate(-50%, -2220px);
     height: calc(85% + 2220px);
     
     @media (min-width: 480px) {
       // was -600px, envelope 320px to 2000px = +1680px more
-      transform: translateY(-2280px);
+      transform: translate(-50%, -2280px);
       height: calc(85% + 2280px);
     }
     
     @media (min-width: 768px) {
       // was -720px, envelope 380px to 2000px = +1620px more
-      transform: translateY(-2340px);
+      transform: translate(-50%, -2340px);
       height: calc(85% + 2340px);
     }
     
     @media (min-width: 1024px) {
       // was -820px, envelope 420px to 2000px = +1580px more
-      transform: translateY(-2400px);
+      transform: translate(-50%, -2400px);
       height: calc(85% + 2400px);
     }
   }
   
-  // Phase 5: Full screen - letter fills viewport
-  // This happens AFTER envelope-hidden, so we animate from the compensated position
+  // Phase 5: Full screen - letter fills viewport using counter-translation
+  // left: 50% is already set from base, no change = no flicker
+  // Wrapper is centered then translateY(2000px)
+  // Wrapper top = 50vh - wrapperHeight/2 + 2000px
+  // Letter top = wrapper top (since letter has top: 0)
+  // To move letter top to 0: translateY = -(50vh - wrapperHeight/2 + 2000px)
+  // = -50vh + wrapperHeight/2 - 2000px
   .full-screen & {
-    // Use viewport units to fill the screen
-    // We need to calculate the exact position
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    transform: translateY(0);
     border-radius: 0;
-    z-index: 200;
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    // Mobile: wrapper height = 220px, half = 110px
+    transform: translate(-50%, calc(-50vh + 110px - 2000px));
+    
+    @media (min-width: 480px) {
+      // wrapper height = 260px, half = 130px
+      transform: translate(-50%, calc(-50vh + 130px - 2000px));
+    }
+    
+    @media (min-width: 768px) {
+      // wrapper height = 320px, half = 160px
+      transform: translate(-50%, calc(-50vh + 160px - 2000px));
+    }
+    
+    @media (min-width: 1024px) {
+      // wrapper height = 360px, half = 180px
+      transform: translate(-50%, calc(-50vh + 180px - 2000px));
+    }
   }
 }
 
