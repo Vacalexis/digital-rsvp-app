@@ -295,88 +295,6 @@
 }
 
 // ============================================
-// FLORAL SEAL (spins before opening)
-// ============================================
-
-.seal {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: var(--theme-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  z-index: 10;
-  box-shadow: 
-    0 6px 25px rgba(0, 0, 0, 0.25),
-    0 3px 10px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 0.2);
-  transition: transform 400ms ease, box-shadow 300ms ease, opacity 400ms ease;
-  
-  @media (min-width: 480px) {
-    width: 80px;
-    height: 80px;
-  }
-  
-  @media (min-width: 768px) {
-    width: 90px;
-    height: 90px;
-  }
-  
-  @media (min-width: 1024px) {
-    width: 100px;
-    height: 100px;
-  }
-  
-  .flower-icon {
-    width: 65%;
-    height: 65%;
-  }
-  
-  &:hover:not(.spinning) {
-    transform: translate(-50%, -50%) scale(1.08);
-    box-shadow: 
-      0 8px 30px rgba(0, 0, 0, 0.3),
-      0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-  
-  &:active:not(.spinning) {
-    transform: translate(-50%, -50%) scale(0.95);
-  }
-  
-  // Spinning animation before envelope opens
-  &.spinning {
-    animation: spin-seal 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-    pointer-events: none;
-  }
-  
-  .opened & {
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
-@keyframes spin-seal {
-  0% {
-    transform: translate(-50%, -50%) rotate(0deg) scale(1);
-  }
-  50% {
-    transform: translate(-50%, -50%) rotate(180deg) scale(1.1);
-  }
-  100% {
-    transform: translate(-50%, -50%) rotate(360deg) scale(0.5);
-    opacity: 0;
-  }
-}
-
-// ============================================
 // LETTER (emerges from envelope)
 // ============================================
 
@@ -526,7 +444,7 @@
   position: absolute;
   bottom: 20px;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, 0);
   padding: 10px 20px;
   background: var(--theme-color);
   color: white;

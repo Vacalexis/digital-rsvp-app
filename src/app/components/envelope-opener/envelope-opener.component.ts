@@ -7,13 +7,14 @@
  */
 import { Component, Input, Output, EventEmitter, signal, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
+import { EnvelopeSealComponent } from "@components/index";
 import { Event } from "@models/index";
 import { getMonogram, getThemeColor, formatDatePT } from "@utils/index";
 
 @Component({
   selector: "app-envelope-opener",
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EnvelopeSealComponent],
   templateUrl: "./envelope-opener.component.html",
   styleUrls: ["./envelope-opener.component.scss"],
 })
@@ -85,6 +86,7 @@ export class EnvelopeOpenerComponent {
     
     // Step 2: After envelope is gone, letter expands to full screen
     setTimeout(() => {
+      console.log("Expanding to fullscreen");
       this.isFullScreen.set(true);
     }, 600);
   }

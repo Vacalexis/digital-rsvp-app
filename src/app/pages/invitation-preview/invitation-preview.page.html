@@ -18,7 +18,9 @@
     <div class="setup-header">
       <ion-icon name="eye-outline" class="header-icon"></ion-icon>
       <h1>Pré-visualizar Convite</h1>
-      <p>Configure como quer visualizar o convite antes de enviar aos convidados.</p>
+      <p>
+        Configure como quer visualizar o convite antes de enviar aos convidados.
+      </p>
     </div>
 
     <!-- Template Selection -->
@@ -42,7 +44,7 @@
     <!-- Names Configuration -->
     <div class="names-section">
       <h2>Personalizar Nomes</h2>
-      
+
       <div class="form-group">
         <label>Nome principal *</label>
         <ion-input
@@ -61,9 +63,7 @@
           fill="outline"
         ></ion-input>
       </div>
-      }
-
-      @if (config.type === 'family') {
+      } @if (config.type === 'family') {
       <div class="form-group">
         <label>Número de filhos</label>
         <ion-select
@@ -78,9 +78,7 @@
           <ion-select-option [value]="5">5 filhos</ion-select-option>
         </ion-select>
       </div>
-      }
-
-      @if (config.type === 'single' && currentEvent.allowPlusOne) {
+      } @if (config.type === 'single' && currentEvent.allowPlusOne) {
       <ion-item lines="none" class="toggle-item">
         <ion-toggle [(ngModel)]="config.allowPlusOne">
           Simular com opção de acompanhante
@@ -91,14 +89,16 @@
 
     <!-- Preview Button -->
     <div class="action-section">
-      <ion-button expand="block" (click)="startPreview()" class="preview-button">
+      <ion-button
+        expand="block"
+        (click)="startPreview()"
+        class="preview-button"
+      >
         <ion-icon slot="start" name="eye-outline"></ion-icon>
         Ver Pré-visualização
       </ion-button>
-      
-      <p class="hint">
-        Poderá voltar a editar estes dados a qualquer momento.
-      </p>
+
+      <p class="hint">Poderá voltar a editar estes dados a qualquer momento.</p>
     </div>
   </div>
 </ion-content>
@@ -108,7 +108,13 @@
 @if (currentPhase() === 'envelope' || currentPhase() === 'preview') {
 <ion-content class="preview-content">
   <!-- Botão voltar discreto -->
-  <ion-button class="preview-back-button" fill="clear" size="small" (click)="backToSetup()">
+  <ion-button
+    class="preview-back-button"
+    fill="solid"
+    shape="round"
+    size="small"
+    (click)="backToSetup()"
+  >
     <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
   </ion-button>
 
@@ -120,220 +126,237 @@
 
   <!-- Envelope Overlay + Convite real dentro da carta -->
   <div class="envelope-overlay">
-    <app-envelope-opener
-      [event]="currentEvent"
-      (opened)="onEnvelopeOpened()"
-    >
+    <app-envelope-opener [event]="currentEvent" (opened)="onEnvelopeOpened()">
       <app-invitation-card
         [event]="currentEvent"
         [showEnvelope]="false"
         [showCountdown]="true"
         [showSchedule]="true"
       >
-      <!-- RSVP Form - Real experience -->
-      <div class="rsvp-form">
-      <h2>Confirma a tua presença</h2>
+        <!-- RSVP Form - Real experience -->
+        <div class="rsvp-form">
+          <h2>Confirma a tua presença</h2>
 
-      <!-- Personalized Greeting -->
-      <div class="personalized-greeting">
-        <p class="greeting">
-          Olá <strong>{{ getGreetingNames() }}</strong>,
-        </p>
-        <p class="greeting-sub">{{ getGreetingSubtext() }}</p>
-      </div>
+          <!-- Personalized Greeting -->
+          <div class="personalized-greeting">
+            <p class="greeting">
+              Olá <strong>{{ getGreetingNames() }}</strong>,
+            </p>
+            <p class="greeting-sub">{{ getGreetingSubtext() }}</p>
+          </div>
 
-      <!-- RSVP Form for Couple/Family -->
-      @if (showSecondaryGuest()) {
-      <div class="couple-rsvp-section">
-        <div class="guest-card">
-          <h4>{{ config.primaryName }}</h4>
-          <div class="radio-options compact">
-            <div
-              class="radio-option"
-              [class.selected]="attendingPreview === 'yes'"
-              (click)="attendingPreview = 'yes'"
-            >
-              <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
-              <span>Sim</span>
+          <!-- RSVP Form for Couple/Family -->
+          @if (showSecondaryGuest()) {
+          <div class="couple-rsvp-section">
+            <div class="guest-card">
+              <h4>{{ config.primaryName }}</h4>
+              <div class="radio-options compact">
+                <div
+                  class="radio-option"
+                  [class.selected]="attendingPreview === 'yes'"
+                  (click)="attendingPreview = 'yes'"
+                >
+                  <ion-icon
+                    name="checkmark-circle-outline"
+                    color="success"
+                  ></ion-icon>
+                  <span>Sim</span>
+                </div>
+                <div
+                  class="radio-option"
+                  [class.selected]="attendingPreview === 'no'"
+                  (click)="attendingPreview = 'no'"
+                >
+                  <ion-icon
+                    name="close-circle-outline"
+                    color="danger"
+                  ></ion-icon>
+                  <span>Não</span>
+                </div>
+              </div>
             </div>
-            <div
-              class="radio-option"
-              [class.selected]="attendingPreview === 'no'"
-              (click)="attendingPreview = 'no'"
-            >
-              <ion-icon name="close-circle-outline" color="danger"></ion-icon>
-              <span>Não</span>
+
+            <div class="guest-card">
+              <h4>{{ config.secondaryName }}</h4>
+              <div class="radio-options compact">
+                <div
+                  class="radio-option"
+                  [class.selected]="secondaryAttendingPreview"
+                  (click)="secondaryAttendingPreview = true"
+                >
+                  <ion-icon
+                    name="checkmark-circle-outline"
+                    color="success"
+                  ></ion-icon>
+                  <span>Sim</span>
+                </div>
+                <div
+                  class="radio-option"
+                  [class.selected]="!secondaryAttendingPreview"
+                  (click)="secondaryAttendingPreview = false"
+                >
+                  <ion-icon
+                    name="close-circle-outline"
+                    color="danger"
+                  ></ion-icon>
+                  <span>Não</span>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-
-        <div class="guest-card">
-          <h4>{{ config.secondaryName }}</h4>
-          <div class="radio-options compact">
-            <div
-              class="radio-option"
-              [class.selected]="secondaryAttendingPreview"
-              (click)="secondaryAttendingPreview = true"
-            >
-              <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
-              <span>Sim</span>
+          } @else {
+          <!-- Single Mode -->
+          <div class="form-group">
+            <label>Vai poder estar presente?</label>
+            <div class="radio-options">
+              <div
+                class="radio-option"
+                [class.selected]="attendingPreview === 'yes'"
+                (click)="attendingPreview = 'yes'"
+              >
+                <ion-icon
+                  name="checkmark-circle-outline"
+                  color="success"
+                ></ion-icon>
+                <span>Sim, estarei presente!</span>
+              </div>
+              <div
+                class="radio-option"
+                [class.selected]="attendingPreview === 'no'"
+                (click)="attendingPreview = 'no'"
+              >
+                <ion-icon name="close-circle-outline" color="danger"></ion-icon>
+                <span>Infelizmente não poderei</span>
+              </div>
+              <div
+                class="radio-option"
+                [class.selected]="attendingPreview === 'maybe'"
+                (click)="attendingPreview = 'maybe'"
+              >
+                <ion-icon name="help-circle-outline" color="medium"></ion-icon>
+                <span>Ainda não sei</span>
+              </div>
             </div>
-            <div
-              class="radio-option"
-              [class.selected]="!secondaryAttendingPreview"
-              (click)="secondaryAttendingPreview = false"
-            >
-              <ion-icon name="close-circle-outline" color="danger"></ion-icon>
-              <span>Não</span>
-            </div>
           </div>
-        </div>
-      </div>
-      } @else {
-      <!-- Single Mode -->
-      <div class="form-group">
-        <label>Vai poder estar presente?</label>
-        <div class="radio-options">
-          <div
-            class="radio-option"
-            [class.selected]="attendingPreview === 'yes'"
-            (click)="attendingPreview = 'yes'"
-          >
-            <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
-            <span>Sim, estarei presente!</span>
-          </div>
-          <div
-            class="radio-option"
-            [class.selected]="attendingPreview === 'no'"
-            (click)="attendingPreview = 'no'"
-          >
-            <ion-icon name="close-circle-outline" color="danger"></ion-icon>
-            <span>Infelizmente não poderei</span>
-          </div>
-          <div
-            class="radio-option"
-            [class.selected]="attendingPreview === 'maybe'"
-            (click)="attendingPreview = 'maybe'"
-          >
-            <ion-icon name="help-circle-outline" color="medium"></ion-icon>
-            <span>Ainda não sei</span>
-          </div>
-        </div>
-      </div>
-      }
-
-      <!-- Dietary for couple mode -->
-      @if (showSecondaryGuest() && currentEvent.askDietaryRestrictions) {
-        @if (attendingPreview === 'yes') {
-        <div class="form-group">
-          <label>Restrições alimentares de {{ config.primaryName }}</label>
-          <app-dietary-select [(ngModel)]="primaryDietary"></app-dietary-select>
-        </div>
-        }
-        @if (secondaryAttendingPreview) {
-        <div class="form-group">
-          <label>Restrições alimentares de {{ config.secondaryName }}</label>
-          <app-dietary-select [(ngModel)]="secondaryDietary"></app-dietary-select>
-        </div>
-        }
-      }
-
-      <!-- Plus One (for single type) -->
-      @if (attendingPreview === 'yes' && showPlusOneOption()) {
-      <div class="form-group">
-        <ion-item lines="none" class="toggle-item">
-          <ion-toggle [(ngModel)]="bringingPlusOnePreview">
-            Vou levar acompanhante
-          </ion-toggle>
-        </ion-item>
-        @if (bringingPlusOnePreview) {
-        <ion-input
-          [(ngModel)]="plusOneNamePreview"
-          placeholder="Nome do acompanhante"
-          fill="outline"
-          class="plus-one-input"
-        ></ion-input>
-
-        @if (currentEvent.askDietaryRestrictions) {
-        <div class="plus-one-dietary">
-          <label>Restrições alimentares do acompanhante</label>
-          <app-dietary-select [(ngModel)]="plusOneDietary"></app-dietary-select>
-        </div>
-        }
-        }
-      </div>
-      }
-
-      <!-- Children Section -->
-      @if (showChildrenSection()) {
-      <div class="form-group children-section">
-        <label>Quantos filhos vão estar presentes?</label>
-        <ion-select
-          [(ngModel)]="childrenAttendingPreview"
-          interface="popover"
-          fill="outline"
-        >
-          @for (i of getChildrenOptions(); track i) {
-          <ion-select-option [value]="i">{{ i }}</ion-select-option>
           }
-        </ion-select>
 
-        @if (childrenAttendingPreview > 0 && currentEvent.askDietaryRestrictions) {
-        <div class="children-dietary">
-          <label>Restrições alimentares das crianças</label>
-          <app-dietary-select [(ngModel)]="childrenDietary"></app-dietary-select>
+          <!-- Dietary for couple mode -->
+          @if (showSecondaryGuest() && currentEvent.askDietaryRestrictions) {
+          @if (attendingPreview === 'yes') {
+          <div class="form-group">
+            <label>Restrições alimentares de {{ config.primaryName }}</label>
+            <app-dietary-select
+              [(ngModel)]="primaryDietary"
+            ></app-dietary-select>
+          </div>
+          } @if (secondaryAttendingPreview) {
+          <div class="form-group">
+            <label>Restrições alimentares de {{ config.secondaryName }}</label>
+            <app-dietary-select
+              [(ngModel)]="secondaryDietary"
+            ></app-dietary-select>
+          </div>
+          } }
+
+          <!-- Plus One (for single type) -->
+          @if (attendingPreview === 'yes' && showPlusOneOption()) {
+          <div class="form-group">
+            <ion-item lines="none" class="toggle-item">
+              <ion-toggle [(ngModel)]="bringingPlusOnePreview">
+                Vou levar acompanhante
+              </ion-toggle>
+            </ion-item>
+            @if (bringingPlusOnePreview) {
+            <ion-input
+              [(ngModel)]="plusOneNamePreview"
+              placeholder="Nome do acompanhante"
+              fill="outline"
+              class="plus-one-input"
+            ></ion-input>
+
+            @if (currentEvent.askDietaryRestrictions) {
+            <div class="plus-one-dietary">
+              <label>Restrições alimentares do acompanhante</label>
+              <app-dietary-select
+                [(ngModel)]="plusOneDietary"
+              ></app-dietary-select>
+            </div>
+            } }
+          </div>
+          }
+
+          <!-- Children Section -->
+          @if (showChildrenSection()) {
+          <div class="form-group children-section">
+            <label>Quantos filhos vão estar presentes?</label>
+            <ion-select
+              [(ngModel)]="childrenAttendingPreview"
+              interface="popover"
+              fill="outline"
+            >
+              @for (i of getChildrenOptions(); track i) {
+              <ion-select-option [value]="i">{{ i }}</ion-select-option>
+              }
+            </ion-select>
+
+            @if (childrenAttendingPreview > 0 &&
+            currentEvent.askDietaryRestrictions) {
+            <div class="children-dietary">
+              <label>Restrições alimentares das crianças</label>
+              <app-dietary-select
+                [(ngModel)]="childrenDietary"
+              ></app-dietary-select>
+            </div>
+            }
+          </div>
+          }
+
+          <!-- Primary Dietary (single mode) -->
+          @if (attendingPreview === 'yes' && currentEvent.askDietaryRestrictions
+          && !showSecondaryGuest()) {
+          <div class="form-group">
+            <label>Restrições alimentares ou alergias</label>
+            <app-dietary-select
+              [(ngModel)]="primaryDietary"
+            ></app-dietary-select>
+          </div>
+          } @if (attendingPreview === 'yes' && currentEvent.askSongRequest) {
+          <div class="form-group">
+            <label>Sugestão de música 🎵</label>
+            <ion-input
+              [(ngModel)]="songRequestPreview"
+              placeholder="Qual música não pode faltar?"
+              fill="outline"
+            ></ion-input>
+          </div>
+          }
+
+          <div class="form-group">
+            <label>Mensagem para os anfitriões</label>
+            <ion-textarea
+              [(ngModel)]="messagePreview"
+              placeholder="Deixe uma mensagem..."
+              fill="outline"
+              [autoGrow]="true"
+              rows="3"
+            ></ion-textarea>
+          </div>
+
+          <ion-button expand="block" class="submit-button" disabled>
+            Confirmar Resposta (pré-visualização)
+          </ion-button>
+
+          @if (currentEvent.rsvpDeadline) {
+          <p class="deadline">
+            Responde até {{ formatDate(currentEvent.rsvpDeadline) }}
+          </p>
+          }
         </div>
-        }
-      </div>
-      }
-
-      <!-- Primary Dietary (single mode) -->
-      @if (attendingPreview === 'yes' && currentEvent.askDietaryRestrictions && !showSecondaryGuest()) {
-      <div class="form-group">
-        <label>Restrições alimentares ou alergias</label>
-        <app-dietary-select [(ngModel)]="primaryDietary"></app-dietary-select>
-      </div>
-      }
-
-      @if (attendingPreview === 'yes' && currentEvent.askSongRequest) {
-      <div class="form-group">
-        <label>Sugestão de música 🎵</label>
-        <ion-input
-          [(ngModel)]="songRequestPreview"
-          placeholder="Qual música não pode faltar?"
-          fill="outline"
-        ></ion-input>
-      </div>
-      }
-
-      <div class="form-group">
-        <label>Mensagem para os anfitriões</label>
-        <ion-textarea
-          [(ngModel)]="messagePreview"
-          placeholder="Deixe uma mensagem..."
-          fill="outline"
-          [autoGrow]="true"
-          rows="3"
-        ></ion-textarea>
-      </div>
-
-      <ion-button expand="block" class="submit-button" disabled>
-        Confirmar Resposta (pré-visualização)
-      </ion-button>
-
-      @if (currentEvent.rsvpDeadline) {
-      <p class="deadline">
-        Responde até {{ formatDate(currentEvent.rsvpDeadline) }}
-      </p>
-      }
-      </div>
-    </app-invitation-card>
+      </app-invitation-card>
     </app-envelope-opener>
   </div>
 </ion-content>
-}
-
-} @else {
+} } @else {
 <!-- Event not found -->
 <ion-header class="ion-no-border">
   <ion-toolbar>

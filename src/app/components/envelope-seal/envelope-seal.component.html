@@ -1,0 +1,89 @@
+<button
+  class="seal"
+  [attr.aria-label]="ariaLabel"
+  [class.spinning]="spinning"
+  [class.opened]="opened"
+  [style.--seal-color]="color || null"
+  (click)="handleClick()"
+>
+  <ng-container [ngSwitch]="variant">
+    <svg
+      *ngSwitchCase="'floral'"
+      class="flower-icon"
+      viewBox="0 0 100 100"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <ellipse
+        cx="50"
+        cy="22"
+        rx="16"
+        ry="20"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <ellipse
+        cx="50"
+        cy="78"
+        rx="16"
+        ry="20"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <ellipse
+        cx="22"
+        cy="50"
+        rx="20"
+        ry="16"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <ellipse
+        cx="78"
+        cy="50"
+        rx="20"
+        ry="16"
+        fill="currentColor"
+        opacity="0.9"
+      />
+      <ellipse
+        cx="29"
+        cy="29"
+        rx="14"
+        ry="18"
+        fill="currentColor"
+        opacity="0.85"
+        transform="rotate(-45 29 29)"
+      />
+      <ellipse
+        cx="71"
+        cy="29"
+        rx="14"
+        ry="18"
+        fill="currentColor"
+        opacity="0.85"
+        transform="rotate(45 71 29)"
+      />
+      <ellipse
+        cx="29"
+        cy="71"
+        rx="14"
+        ry="18"
+        fill="currentColor"
+        opacity="0.85"
+        transform="rotate(45 29 71)"
+      />
+      <ellipse
+        cx="71"
+        cy="71"
+        rx="14"
+        ry="18"
+        fill="currentColor"
+        opacity="0.85"
+        transform="rotate(-45 71 71)"
+      />
+      <circle cx="50" cy="50" r="14" fill="rgba(255,255,255,0.95)" />
+      <circle cx="50" cy="50" r="6" fill="currentColor" opacity="0.5" />
+    </svg>
+    <span *ngSwitchDefault></span>
+  </ng-container>
+</button>

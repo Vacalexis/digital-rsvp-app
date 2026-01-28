@@ -28,15 +28,29 @@ ion-header {
   top: calc(env(safe-area-inset-top) + 10px);
   left: 10px;
   z-index: 120;
-  --padding-start: 6px;
-  --padding-end: 6px;
-  --padding-top: 6px;
-  --padding-bottom: 6px;
-  --border-radius: 999px;
+
+  /* Make it a circle */
+  width: 40px;
+  height: 40px;
+
+  /* Remove padding so the circle stays a circle */
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 0;
+
+  /* Ionic variables (use these instead of plain box-shadow on host) */
+  --border-radius: 9999px;
   --background: rgba(255, 255, 255, 0.85);
   --color: #6b7280;
-  backdrop-filter: blur(8px);
-  box-shadow: 0 8px 18px rgba(31, 41, 55, 0.12);
+  --box-shadow: 0 8px 18px rgba(31, 41, 55, 0.12);
+}
+
+/* Apply clipping/blur/shadow to the actual rendered surface */
+.preview-back-button::part(native) {
+  border-radius: 9999px;
+  overflow: hidden; /* IMPORTANT: clips the blur/shadow to round shape */
+  backdrop-filter: blur(8px); /* blur belongs here */
 }
 
 // Badge sempre visível
@@ -51,12 +65,12 @@ ion-header {
   padding: 8px 16px;
   background: rgba(59, 130, 246, 0.1);
   border-bottom: 1px solid rgba(59, 130, 246, 0.2);
-  
+
   ion-icon {
     font-size: 1rem;
     color: #3b82f6;
   }
-  
+
   span {
     font-size: 0.75rem;
     font-weight: 600;
@@ -64,7 +78,7 @@ ion-header {
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  
+
   &.fade-in {
     animation: fadeIn 400ms ease-out;
   }
@@ -83,8 +97,12 @@ ion-header {
 // Invitation wrapper removido (convite real está dentro do envelope)
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 // ============================================
@@ -526,4 +544,3 @@ ion-header {
     font-size: 16px;
   }
 }
-
