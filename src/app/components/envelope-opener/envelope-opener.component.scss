@@ -29,6 +29,11 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  
+  // Reserve space for scrollbar in full-screen to prevent content shift
+  &.full-screen {
+    scrollbar-gutter: stable;
+  }
 }
 
 // ============================================
@@ -39,10 +44,17 @@
   position: absolute;
   inset: 0;
   background: linear-gradient(135deg, #faf5f0 0%, #f3eae1 50%, #ebe0d5 100%);
+  transition: opacity 600ms ease-out;
   
   .opened & {
     opacity: 0;
-    transition: opacity 600ms ease-out 800ms;
+    transition-delay: 800ms;
+  }
+  
+  // Keep backdrop visible longer until full-screen transition completes
+  .full-screen & {
+    opacity: 0;
+    transition-delay: 0ms;
   }
 }
 
@@ -380,8 +392,8 @@
   background-color: white;
   border-radius: 12px;
   z-index: 2;
-  transition: transform 0.5s ease, height 0.5s ease, width 0.5s ease, 
-              border-radius 0.5s ease;
+  transition: transform 0.5s ease, height 0.5s ease, width 0.5s ease,
+              border-radius 0.5s ease, background-color 0.5s ease;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   
@@ -484,8 +496,11 @@
     height: 100vh;
     height: 100dvh;
     border-radius: 0;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     -webkit-overflow-scrolling: touch;
+    // Use same background as backdrop for smooth transition
+    // background-color: #faf5f0;
     // Mobile: wrapper height = 220px, half = 110px
     transform: translate(-50%, calc(-50vh + 110px - 2000px));
     
