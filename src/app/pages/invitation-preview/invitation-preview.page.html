@@ -1,30 +1,15 @@
 @if (event(); as currentEvent) {
-<!-- ==================== HEADER - SEMPRE VISÍVEL ==================== -->
+<!-- ==================== HEADER - SÓ NA CONFIGURAÇÃO ==================== -->
+@if (currentPhase() === 'setup') {
 <ion-header class="ion-no-border">
   <ion-toolbar>
     <ion-buttons slot="start">
-      @if (currentPhase() === 'setup') {
       <ion-back-button [defaultHref]="'/events/' + eventId()"></ion-back-button>
-      } @else {
-      <ion-button (click)="backToSetup()">
-        <ion-icon slot="start" name="arrow-back-outline"></ion-icon>
-        Editar
-      </ion-button>
-      }
     </ion-buttons>
-    <ion-title>
-      @if (currentPhase() === 'setup') { Configurar Preview } @else {
-      Pré-visualização }
-    </ion-title>
-    <ion-buttons slot="end">
-      @if (currentPhase() === 'preview') {
-      <ion-button (click)="shareInvitation()">
-        <ion-icon slot="icon-only" name="share-outline"></ion-icon>
-      </ion-button>
-      }
-    </ion-buttons>
+    <ion-title>Configurar Preview</ion-title>
   </ion-toolbar>
 </ion-header>
+}
 
 <!-- ==================== PHASE 1: SETUP ==================== -->
 @if (currentPhase() === 'setup') {
@@ -122,6 +107,11 @@
 <!-- ==================== PHASES 2 & 3: ENVELOPE + PREVIEW ==================== -->
 @if (currentPhase() === 'envelope' || currentPhase() === 'preview') {
 <ion-content class="preview-content">
+  <!-- Botão voltar discreto -->
+  <ion-button class="preview-back-button" fill="clear" size="small" (click)="backToSetup()">
+    <ion-icon slot="icon-only" name="arrow-back-outline"></ion-icon>
+  </ion-button>
+
   <!-- Preview Badge - sempre visível -->
   <div class="preview-badge" [class.fade-in]="currentPhase() === 'preview'">
     <ion-icon name="eye-outline"></ion-icon>
