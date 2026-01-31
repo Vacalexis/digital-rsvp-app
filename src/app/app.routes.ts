@@ -2,10 +2,11 @@ import { Routes } from "@angular/router";
 import { authGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
+  // Public landing page (default)
   {
     path: "",
-    redirectTo: "events",
-    pathMatch: "full",
+    loadComponent: () =>
+      import("./pages/landing/landing.page").then((m) => m.LandingPage),
   },
   {
     path: "login",

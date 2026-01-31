@@ -194,8 +194,9 @@ export class InvitationsPage implements OnInit {
     if (inv.secondaryGuest?.name) {
       names += ` & ${inv.secondaryGuest.name}`;
     }
-    if (inv.childrenCount && inv.childrenCount > 0) {
-      names += ` (+${inv.childrenCount} filho${inv.childrenCount > 1 ? "s" : ""})`;
+    const childrenCount = inv.children?.length || 0;
+    if (childrenCount > 0) {
+      names += ` (+${childrenCount} filho${childrenCount > 1 ? "s" : ""})`;
     }
     return names;
   }

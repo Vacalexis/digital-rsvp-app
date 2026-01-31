@@ -43,9 +43,7 @@ export interface Invitation {
   primaryGuest: InvitedPerson;
   secondaryGuest?: InvitedPerson; // Para casais
   allowPlusOne: boolean; // Sobrepõe o default do evento
-  childrenCount?: number; // Número de filhos incluídos
-  childrenNames?: string[]; // Nomes dos filhos (legacy, deprecated)
-  children?: InvitedChild[]; // Dados completos dos filhos
+  children?: InvitedChild[]; // Dados completos dos filhos (nome + idade opcional)
 
   // Estado
   rsvpSubmitted: boolean;

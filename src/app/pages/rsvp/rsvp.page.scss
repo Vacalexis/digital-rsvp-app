@@ -218,6 +218,26 @@
     }
   }
 
+  .children-ages {
+    margin-bottom: 16px;
+    
+    label {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      color: var(--invitation-text, #1f2937);
+    }
+    
+    .child-age-input {
+      margin-bottom: 10px;
+      
+      ion-input {
+        --border-radius: 10px;
+        --background: rgba(255, 255, 255, 0.9);
+      }
+    }
+  }
+
   .children-count {
     margin-bottom: 14px;
   }

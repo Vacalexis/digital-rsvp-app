@@ -159,6 +159,29 @@
         <div class="section-header">
           <span class="section-title">Filhos</span>
         </div>
+        
+        <!-- If host didn't fill ages, ask for them -->
+        @if (hasChildrenWithoutAge()) {
+        <div class="children-ages">
+          <label>Por favor, indica as idades dos filhos:</label>
+          @for (child of childrenWithoutAge(); track child.name) {
+          <div class="child-age-input">
+            <ion-input
+              type="number"
+              [label]="child.name"
+              labelPlacement="floating"
+              fill="outline"
+              min="0"
+              max="18"
+              placeholder="Idade"
+              [(ngModel)]="childAges[child.name]"
+            >
+            </ion-input>
+          </div>
+          }
+        </div>
+        }
+        
         <div class="children-count">
           <label>Quantos filhos vão estar presentes?</label>
           <ion-select

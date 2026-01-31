@@ -1,0 +1,242 @@
+<ion-content class="landing-content">
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-background">
+      <div class="hero-decoration"></div>
+    </div>
+    
+    <div class="hero-content">
+      <div class="logo-badge">
+        <ion-icon name="heart-outline"></ion-icon>
+        <span>Digital RSVP</span>
+      </div>
+      
+      <h1 class="hero-title">
+        Convites Digitais<br />
+        <span class="highlight">Instantâneos</span>
+      </h1>
+      
+      <p class="hero-subtitle">
+        Personalize, visualize e envie em minutos.<br />
+        Enquanto outros demoram dias, nós entregamos <strong>agora</strong>.
+      </p>
+      
+      <div class="hero-actions">
+        <ion-button 
+          expand="block" 
+          size="large" 
+          class="cta-primary"
+          (click)="navigateToThemes()"
+        >
+          Ver Temas
+          <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+        </ion-button>
+        
+        <ion-button 
+          expand="block" 
+          size="large" 
+          fill="outline"
+          class="cta-secondary"
+          (click)="scrollToSection('how-it-works')"
+        >
+          Como Funciona
+        </ion-button>
+      </div>
+      
+      <div class="hero-stats">
+        <div class="stat">
+          <ion-icon name="time-outline"></ion-icon>
+          <span><strong>Entrega</strong> instantânea</span>
+        </div>
+        <div class="stat">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <span><strong>RSVP</strong> integrado</span>
+        </div>
+        <div class="stat">
+          <ion-icon name="sparkles-outline"></ion-icon>
+          <span><strong>8 temas</strong> elegantes</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features" id="features">
+    <div class="section-header">
+      <h2>Tudo o que Precisas</h2>
+      <p>Uma solução completa para os teus convites digitais</p>
+    </div>
+    
+    <div class="features-grid">
+      @for (feature of features; track feature.icon) {
+      <div class="feature-card">
+        <div class="feature-icon">
+          <ion-icon [name]="feature.icon"></ion-icon>
+        </div>
+        <h3>{{ feature.title }}</h3>
+        <p>{{ feature.description }}</p>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Theme Preview Section -->
+  <section class="themes-preview">
+    <div class="section-header">
+      <h2>Temas Elegantes</h2>
+      <p>Escolhe o estilo perfeito para o teu evento</p>
+    </div>
+    
+    <div class="themes-carousel">
+      @for (theme of themes; track theme.value) {
+      <div 
+        class="theme-card"
+        [attr.data-theme]="theme.value"
+        [style.--theme-color]="theme.color"
+        (click)="navigateToPreview(theme.value)"
+      >
+        <div class="theme-preview">
+          <div class="theme-crest">
+            <span class="crest-icon"></span>
+          </div>
+          <h3>{{ theme.label }}</h3>
+        </div>
+        <div class="theme-footer">
+          <ion-chip [style.--background]="theme.color">
+            {{ theme.label }}
+          </ion-chip>
+        </div>
+      </div>
+      }
+    </div>
+    
+    <div class="themes-cta">
+      <ion-button 
+        expand="block" 
+        size="large"
+        (click)="navigateToThemes()"
+      >
+        Ver Todos os Temas
+        <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="how-it-works" id="how-it-works">
+    <div class="section-header">
+      <h2>Como Funciona</h2>
+      <p>Simples, rápido e eficiente</p>
+    </div>
+    
+    <div class="steps-container">
+      @for (step of steps; track step.number) {
+      <div class="step">
+        <div class="step-number">{{ step.number }}</div>
+        <div class="step-content">
+          <h3>{{ step.title }}</h3>
+          <p>{{ step.description }}</p>
+        </div>
+      </div>
+      }
+    </div>
+  </section>
+
+  <!-- Pricing Section -->
+  <section class="pricing" id="pricing">
+    <div class="section-header">
+      <h2>Preço Simples e Transparente</h2>
+      <p>Tudo incluído, sem surpresas</p>
+    </div>
+    
+    <div class="pricing-card">
+      <div class="pricing-header">
+        <h3>Convite Digital Completo</h3>
+        <div class="price">
+          <span class="currency">€</span>
+          <span class="amount">29</span>
+        </div>
+        <p class="price-subtitle">Pagamento único</p>
+      </div>
+      
+      <div class="pricing-features">
+        <div class="pricing-feature">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <span>1 evento com convite personalizado</span>
+        </div>
+        <div class="pricing-feature">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <span>Convidados ilimitados</span>
+        </div>
+        <div class="pricing-feature">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <span>RSVP e gestão completa</span>
+        </div>
+        <div class="pricing-feature">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <span>Estatísticas em tempo real</span>
+        </div>
+        <div class="pricing-feature">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <span>Acesso durante 1 ano</span>
+        </div>
+        <div class="pricing-feature">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          <span>Suporte por email</span>
+        </div>
+      </div>
+      
+      <ion-button 
+        expand="block" 
+        size="large"
+        class="cta-primary"
+        (click)="navigateToThemes()"
+      >
+        Começar Agora
+        <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+      </ion-button>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="final-cta">
+    <h2>Pronto para Criar o Teu Convite?</h2>
+    <p>Junta-te a dezenas de casais que já escolheram a forma mais rápida e moderna de enviar convites.</p>
+    
+    <ion-button 
+      expand="block" 
+      size="large"
+      class="cta-primary"
+      (click)="navigateToThemes()"
+    >
+      Ver Temas Disponíveis
+      <ion-icon slot="end" name="arrow-forward-outline"></ion-icon>
+    </ion-button>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <ion-icon name="heart-outline"></ion-icon>
+        <span>Digital RSVP</span>
+      </div>
+      
+      <p class="footer-tagline">
+        Convites digitais instantâneos para o teu dia especial
+      </p>
+      
+      <div class="footer-links">
+        <a href="mailto:suporte@digitalrsvp.pt">Contacto</a>
+        <span class="separator">•</span>
+        <a href="#">Política de Privacidade</a>
+        <span class="separator">•</span>
+        <a href="#">Termos de Serviço</a>
+      </div>
+      
+      <p class="footer-copyright">
+        © {{ currentYear }} Digital RSVP. Todos os direitos reservados.
+      </p>
+    </div>
+  </footer>
+</ion-content>

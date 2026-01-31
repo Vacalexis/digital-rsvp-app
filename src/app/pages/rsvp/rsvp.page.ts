@@ -109,8 +109,18 @@ export class RsvpPage implements OnInit {
   // Computed: tem filhos no convite?
   hasChildren = computed(() => {
     const inv = this.invitation();
-    return (inv?.childrenCount || 0) > 0;
+    return (inv?.children || []).length > 0;
   });
+
+  // Computed: filhos sem idade preenchida
+  childrenWithoutAge = computed(() => {
+    const inv = this.invitation();
+    if (!inv?.children) return [];
+    return inv.children.filter(child => !child.age);
+  });
+
+  // Computed: tem filhos sem idade?
+  hasChildrenWithoutAge = computed(() => this.childrenWithoutAge().length > 0);
 
   // Form - legacy mode only
   guestName = "";
@@ -135,6 +145,7 @@ export class RsvpPage implements OnInit {
 
   // Form - children
   childrenAttending = 0;
+  childAges: { [childName: string]: number | undefined } = {};
 
   constructor() {
     addIcons({
@@ -161,8 +172,14 @@ export class RsvpPage implements OnInit {
           this.isLegacyMode.set(false);
 
           // Pre-fill children count from invitation
-          if (result.invitation.childrenCount) {
-            this.childrenAttending = result.invitation.childrenCount;
+          if (result.invitation.children && result.invitation.children.length > 0) {
+            this.childrenAttending = result.invitation.children.length;
+            // Initialize childAges for children without ages
+            result.invitation.children.forEach(child => {
+              if (!child.age) {
+                this.childAges[child.name] = undefined;
+              }
+            });
           }
         } else if (result.type === "event" && result.event) {
           // Legacy: event-level shareCode
@@ -252,7 +269,18 @@ export class RsvpPage implements OnInit {
 
     if (this.hasChildren()) {
       customAnswers["childrenAttending"] = String(this.childrenAttending);
-      customAnswers["childrenNames"] = (inv?.childrenNames || []).join(", ");
+      customAnswers["childrenNames"] = (inv?.children || [])
+        .map((c) => c.name)
+        .join(", ");
+      
+      // Add children ages if collected
+      const childrenWithAges = (inv?.children || []).map(child => ({
+        name: child.name,
+        age: this.childAges[child.name] ?? child.age
+      }));
+      if (childrenWithAges.some(c => c.age !== undefined)) {
+        customAnswers["childrenAges"] = JSON.stringify(childrenWithAges);
+      }
       customAnswers["childrenDietaryChoice"] = this.childrenDietary.choice;
       customAnswers["childrenDietaryOther"] =
         this.childrenDietary.other?.trim() || "";

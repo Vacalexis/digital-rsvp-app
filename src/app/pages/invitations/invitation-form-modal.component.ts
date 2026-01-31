@@ -386,12 +386,9 @@ export class InvitationFormModalComponent implements OnInit {
     this.secondaryGuestName = inv.secondaryGuest?.name || "";
     this.secondaryGuestEmail = inv.secondaryGuest?.email || "";
     this.allowPlusOne = inv.allowPlusOne;
-    // Load children - support both new format and legacy
+    // Load children
     if (inv.children && inv.children.length > 0) {
       this.childrenList = inv.children.map((c) => ({ ...c }));
-    } else if (inv.childrenNames && inv.childrenNames.length > 0) {
-      // Legacy format - convert to new format
-      this.childrenList = inv.childrenNames.map((name) => ({ name }));
     } else {
       this.childrenList = [];
     }
@@ -458,10 +455,7 @@ export class InvitationFormModalComponent implements OnInit {
             age: c.age ?? undefined,
           }));
         if (validChildren.length > 0) {
-          data.childrenCount = validChildren.length;
           data.children = validChildren;
-          // Also set legacy field for backwards compatibility
-          data.childrenNames = validChildren.map((c) => c.name);
         }
       }
 
