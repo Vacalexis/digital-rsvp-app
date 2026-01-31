@@ -188,19 +188,17 @@
     </div>
 
     <div class="modal-content">
-      <p class="modal-hint">
-        ✨ É assim que os seus convidados vão receber e abrir o convite digital
-      </p>
-      
       <div class="animation-container">
         <app-envelope-opener
           [event]="eventWithTheme()"
           (opened)="onEnvelopeOpened()"
-        ></app-envelope-opener>
-      </div>
-
-      <div class="modal-instructions">
-        <p>👆 Clique no selo para abrir o envelope</p>
+        >
+          <app-invitation-card
+            [event]="eventWithTheme()"
+            [showEnvelope]="false"
+            [showCountdown]="true"
+          ></app-invitation-card>
+        </app-envelope-opener>
       </div>
     </div>
 

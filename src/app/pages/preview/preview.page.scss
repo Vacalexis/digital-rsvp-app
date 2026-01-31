@@ -34,7 +34,11 @@
 
     ion-segment-button {
       --indicator-color: var(--ion-color-primary);
+      --color: var(--text-dark);
+      --color-checked: white;
+      --background-checked: var(--ion-color-primary);
       font-size: 0.85rem;
+      min-height: 48px;
 
       ion-icon {
         font-size: 1.3rem;
@@ -516,45 +520,24 @@
   }
 
   .modal-content {
-    padding: 24px;
+    padding: 0;
     background: var(--background-cream);
-    min-height: calc(100% - 200px);
+    min-height: calc(100% - 140px);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
 
-    .modal-hint {
-      text-align: center;
-      font-size: 1rem;
-      color: var(--text-muted);
-      margin: 0 0 24px;
-      padding: 12px 20px;
-      background: white;
-      border-radius: 12px;
-      box-shadow: var(--card-shadow);
-    }
-
     .animation-container {
       width: 100%;
-      max-width: 500px;
-      margin: 0 auto;
-      min-height: 400px;
+      height: 100%;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-
-    .modal-instructions {
-      margin-top: 24px;
-      text-align: center;
-
-      p {
-        font-size: 1.1rem;
-        font-weight: 600;
-        color: var(--ion-color-primary);
-        margin: 0;
-        animation: pulse 2s ease-in-out infinite;
+      
+      app-envelope-opener {
+        width: 100%;
+        height: 100%;
       }
     }
   }
@@ -568,17 +551,5 @@
       --border-radius: 12px;
       font-weight: 600;
     }
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.7;
-    transform: scale(0.98);
   }
 }

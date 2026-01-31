@@ -106,7 +106,46 @@ npm start           # Servidor de desenvolvimento
 npm run build       # Build de produção
 npm run lint        # Verificação de código
 npm run test        # Testes unitários
+npm run get-my-ip   # Obter IP público (para referência)
 ```
+
+## 🔐 Proteção de Staging
+
+O projeto inclui autenticação integrada para proteger o site em staging.
+
+### Credenciais Padrão
+
+**Username:** `admin`  
+**Password:** `rsvp2024`
+
+⚠️ **Mudar antes de fazer deploy!**
+
+### Como Funciona
+
+- **Staging/Produção:** `environment.prod.ts` → `requireAuth: true` → **Todas as rotas** protegidas
+- **Desenvolvimento:** `environment.ts` → `requireAuth: false` → Acesso livre
+- **Única rota pública:** `/login` (todas as outras requerem autenticação)
+
+⚠️ **Nota**: Em staging, até o RSVP está protegido para máxima segurança. Em produção, pode desativar via `requireAuth: false` se quiser RSVP público.
+
+### Mudar Password
+
+```bash
+# Gerar hash
+node generate-hash.js admin nova-password
+
+# Atualizar em src/app/services/auth.service.ts
+private readonly VALID_HASH = 'hash-gerado';
+```
+
+**Documentação completa:** [docs/IP-WHITELIST-SETUP.md](docs/IP-WHITELIST-SETUP.md)
+
+### Características
+
+- ✅ Grátis (sem planos pagos necessários)
+- ✅ Rate limiting (5 tentativas → bloqueio 5min)
+- ✅ Credenciais hasheadas (SHA-256)
+- ✅ Sessão em sessionStorage (expira ao fechar tab)
 
 ## 🚀 Deployment
 
@@ -133,13 +172,22 @@ O ficheiro `vercel.json` está configurado com:
 
 ## 🔐 Variáveis de Ambiente
 
-Para funcionalidades futuras (APIs, autenticação):
+### Desenvolvimento Local
 
 ```bash
-# .env (não incluir no git)
-FIREBASE_API_KEY=xxx
-FIREBASE_PROJECT_ID=xxx
+# .env.local (não incluir no git)
+ALLOWED_IPS=127.0.0.1,::1  # IPs permitidos (localhost)
+MONGODB_URI=mongodb+srv://...
 ```
+
+### Vercel (Produção/Staging)
+
+Configurar em **Settings → Environment Variables**:
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `ALLOWED_IPS` | IPs permitidos (opcional) | `123.45.67.89,98.76.54.32` |
+| `MONGODB_URI` | Connection string MongoDB | `mongodb+srv://...` |
 
 ## 📱 Mobile Apps
 

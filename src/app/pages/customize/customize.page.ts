@@ -16,7 +16,6 @@ import {
   IonToggle,
   IonItem,
   IonLabel,
-  IonList,
   IonButtons,
   IonBackButton,
   IonCard,
@@ -24,9 +23,7 @@ import {
   IonCardTitle,
   IonCardContent,
   IonChip,
-  IonDatetimeButton,
   IonModal,
-  IonDatetime,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -38,10 +35,16 @@ import {
   arrowForwardOutline,
   heartOutline,
   checkmarkCircleOutline,
+  playCircleOutline,
+  closeOutline,
+  addOutline,
+  trashOutline,
+  timeOutline,
 } from 'ionicons/icons';
 
 import { InvitationCardComponent } from '@components/invitation-card/invitation-card.component';
-import { Event, InvitationTheme, EventType, Venue } from '@models/index';
+import { EnvelopeOpenerComponent } from '@components/envelope-opener/envelope-opener.component';
+import { Event, InvitationTheme, EventType, Venue, ScheduleItem } from '@models/index';
 
 interface CustomizationForm {
   eventType: EventType;
@@ -51,10 +54,12 @@ interface CustomizationForm {
   description: string;
   date: string;
   time: string;
+  endTime: string;
   venueName: string;
   venueAddress: string;
   venueCity: string;
   venueCountry: string;
+  scheduleItems: ScheduleItem[];
   allowPlusOne: boolean;
   askDietaryRestrictions: boolean;
   askSongRequest: boolean;
@@ -80,7 +85,6 @@ interface CustomizationForm {
     IonToggle,
     IonItem,
     IonLabel,
-    IonList,
     IonButtons,
     IonBackButton,
     IonCard,
@@ -88,16 +92,16 @@ interface CustomizationForm {
     IonCardTitle,
     IonCardContent,
     IonChip,
-    IonDatetimeButton,
     IonModal,
-    IonDatetime,
     InvitationCardComponent,
+    EnvelopeOpenerComponent,
   ],
   templateUrl: './customize.page.html',
   styleUrls: ['./customize.page.scss'],
 })
 export class CustomizePage implements OnInit {
   theme = signal<InvitationTheme>('elegant');
+  showAnimationModal = signal(false);
   
   // Form data (signal para reatividade)
   form = signal<CustomizationForm>({
@@ -108,10 +112,17 @@ export class CustomizePage implements OnInit {
     description: '',
     date: '',
     time: '15:00',
+    endTime: '',
     venueName: '',
     venueAddress: '',
     venueCity: '',
     venueCountry: 'Portugal',
+    scheduleItems: [
+      { id: '1', time: '15:00', title: 'Cerimónia', description: '', icon: 'heart' },
+      { id: '2', time: '16:30', title: 'Cocktail', description: '', icon: 'wine' },
+      { id: '3', time: '18:00', title: 'Jantar', description: '', icon: 'restaurant' },
+      { id: '4', time: '21:00', title: 'Festa', description: '', icon: 'musical-notes' },
+    ],
     allowPlusOne: true,
     askDietaryRestrictions: true,
     askSongRequest: true,
@@ -139,6 +150,9 @@ export class CustomizePage implements OnInit {
 
   get time() { return this.form().time; }
   set time(value: string) { this.form.update(f => ({ ...f, time: value })); }
+
+  get endTime() { return this.form().endTime; }
+  set endTime(value: string) { this.form.update(f => ({ ...f, endTime: value })); }
 
   get venueName() { return this.form().venueName; }
   set venueName(value: string) { this.form.update(f => ({ ...f, venueName: value })); }
@@ -216,10 +230,12 @@ export class CustomizePage implements OnInit {
       eventType: formData.eventType,
       date: formData.date || new Date().toISOString().split('T')[0],
       time: formData.time || '15:00',
+      endTime: formData.endTime,
       venue,
       hosts: formData.hosts.filter(h => h.trim() !== ''),
       theme: this.theme(),
       language: 'pt',
+      schedule: formData.scheduleItems.length > 0 ? formData.scheduleItems : undefined,
       allowPlusOne: formData.allowPlusOne,
       askDietaryRestrictions: formData.askDietaryRestrictions,
       askSongRequest: formData.askSongRequest,
@@ -252,6 +268,11 @@ export class CustomizePage implements OnInit {
       arrowForwardOutline,
       heartOutline,
       checkmarkCircleOutline,
+      playCircleOutline,
+      closeOutline,
+      addOutline,
+      trashOutline,
+      timeOutline,
     });
   }
 
@@ -333,6 +354,68 @@ export class CustomizePage implements OnInit {
         },
       },
     });
+  }
+
+  // Schedule management methods
+  addScheduleItem() {
+    this.form.update(current => ({
+      ...current,
+      scheduleItems: [
+        ...current.scheduleItems,
+        {
+          id: `item-${Date.now()}`,
+          time: '',
+          title: '',
+          description: '',
+        }
+      ]
+    }));
+  }
+
+  removeScheduleItem(index: number) {
+    this.form.update(current => ({
+      ...current,
+      scheduleItems: current.scheduleItems.filter((_, i) => i !== index)
+    }));
+  }
+
+  updateScheduleItemTime(index: number, value: string) {
+    this.form.update(current => ({
+      ...current,
+      scheduleItems: current.scheduleItems.map((item, i) => 
+        i === index ? { ...item, time: value } : item
+      )
+    }));
+  }
+
+  updateScheduleItemTitle(index: number, value: string) {
+    this.form.update(current => ({
+      ...current,
+      scheduleItems: current.scheduleItems.map((item, i) => 
+        i === index ? { ...item, title: value } : item
+      )
+    }));
+  }
+
+  updateScheduleItemDescription(index: number, value: string) {
+    this.form.update(current => ({
+      ...current,
+      scheduleItems: current.scheduleItems.map((item, i) => 
+        i === index ? { ...item, description: value } : item
+      )
+    }));
+  }
+
+  openAnimationModal() {
+    this.showAnimationModal.set(true);
+  }
+
+  closeAnimationModal() {
+    this.showAnimationModal.set(false);
+  }
+
+  onEnvelopeOpened() {
+    console.log('Envelope animation completed');
   }
 
   goBack() {
