@@ -1,5 +1,12 @@
 # Copilot Custom Instructions - Digital RSVP App
 
+> **See Also**: For comprehensive agent documentation, check:
+> - [agents.md](./agents.md) - Main agent configuration
+> - [prompts/](./prompts/) - Task-specific prompts (MVP, component, bugfix, refactor)
+> - [AGENT-HANDBOOK.md](../docs/AGENT-HANDBOOK.md) - Complete patterns and examples
+
+---
+
 ## 🧠 Modus Operandi (IMPORTANT!)
 
 **For any complex visual or structural change, ALWAYS follow this workflow:**
