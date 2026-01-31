@@ -1,75 +1,53 @@
 @if (currentEvent(); as evt) {
-<div 
-  class="envelope-opener" 
-  [style.--theme-color]="themeColor()"
-  [class.opening]="phase() === 'opening' || phase() === 'expanding' || phase() === 'completed'"
-  [class.expanding]="phase() === 'expanding' || phase() === 'completed'"
-  [class.completed]="phase() === 'completed'"
->
-  <!-- Background -->
-  <div class="backdrop">
-    <div class="pattern"></div>
-  </div>
-  
-  <!-- Tap hint -->
-  <div class="tap-hint" [class.hidden]="phase() !== 'closed'">
-    <span>Toca na flor para abrir</span>
-  </div>
+  <div
+    class="envelope-opener"
+    [style.--theme-color]="themeColor()"
+    [class.opened]="isOpened()"
+    [class.revealing]="isRevealing()"
+    [class.envelope-down]="isEnvelopeDown()"
+    [class.envelope-hidden]="isEnvelopeHidden()"
+    [class.full-screen]="isFullScreen()"
+  >
+    <!-- Background -->
+    <div class="backdrop"></div>
 
-  <!-- Debug controls (temporário) -->
-  <div class="debug-controls">
-    <span class="debug-label">Fase: {{ phase() }}</span>
-    <button type="button" class="debug-button" (click)="advancePhase()">
-      Avançar fase
-    </button>
-  </div>
-  
-  <!-- Envelope Container -->
-  <div class="envelope-container">
-    <!-- Envelope structure -->
-    <div class="envelope">
-      <!-- Corpo do envelope (SEM a carta) -->
-      <div class="env-body"></div>
-
-      <!-- Pocket planes -->
-      <div class="env-pocket env-pocket--left"></div>
-      <div class="env-pocket env-pocket--right"></div>
-      <div class="env-pocket env-pocket--bottom"></div>
-
-      <div class="env-liner"></div>
-      
-      <!-- Aba fechada (por cima do corpo) -->
-      <div class="env-flap"></div>
-      
-      <!-- Selo de flor -->
-      <button 
-        class="env-seal" 
-        (click)="openEnvelope()"
-        [attr.aria-label]="'Abrir convite'"
-      >
-        <svg class="flower-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-          <ellipse cx="50" cy="22" rx="16" ry="20" fill="currentColor" opacity="0.9"/>
-          <ellipse cx="50" cy="78" rx="16" ry="20" fill="currentColor" opacity="0.9"/>
-          <ellipse cx="22" cy="50" rx="20" ry="16" fill="currentColor" opacity="0.9"/>
-          <ellipse cx="78" cy="50" rx="20" ry="16" fill="currentColor" opacity="0.9"/>
-          <ellipse cx="29" cy="29" rx="14" ry="18" fill="currentColor" opacity="0.85" transform="rotate(-45 29 29)"/>
-          <ellipse cx="71" cy="29" rx="14" ry="18" fill="currentColor" opacity="0.85" transform="rotate(45 71 29)"/>
-          <ellipse cx="29" cy="71" rx="14" ry="18" fill="currentColor" opacity="0.85" transform="rotate(45 29 71)"/>
-          <ellipse cx="71" cy="71" rx="14" ry="18" fill="currentColor" opacity="0.85" transform="rotate(-45 71 71)"/>
-          <circle cx="50" cy="50" r="14" fill="rgba(255,255,255,0.95)"/>
-          <circle cx="50" cy="50" r="6" fill="currentColor" opacity="0.5"/>
-        </svg>
-      </button>
+    <!-- Tap hint -->
+    <div class="tap-hint" [class.hidden]="isOpened()">
+      <span>Toca na flor para abrir</span>
     </div>
-  </div>
 
-  <!-- CARTA FORA DO ENVELOPE (pode expandir livremente) -->
-  <div class="letter-clip">
-    <div class="env-letter">
-      <div class="env-letter-content">
+    <!-- Envelope Wrapper -->
+    <div class="wrapper">
+      <!-- Lid front (visible when closed) -->
+      <div class="lid one"></div>
+      <!-- Lid back (visible when opened) -->
+      <div class="lid two"></div>
+      <!-- Envelope body (front triangles) -->
+      <div class="envelope"></div>
+
+      <!-- Floral seal (rotates before opening) -->
+      <app-envelope-seal
+        [variant]="'floral'"
+        [ariaLabel]="'Abrir convite'"
+        [spinning]="isSpinning()"
+        [opened]="isOpened()"
+        [color]="themeColor()"
+        (sealClick)="openEnvelope()"
+      ></app-envelope-seal>
+
+      <!-- Letter (emerges from envelope) -->
+      <div
+        class="letter"
+        (click)="expandLetter()"
+        [class.clickable]="isEnvelopeDown() && !isEnvelopeHidden()"
+      >
+        @if (isEnvelopeDown() && !isEnvelopeHidden() && !isFullScreen()) {
+          <div class="letter-tap-hint visible">
+            <span>Toca para ver o convite</span>
+          </div>
+        }
         <ng-content></ng-content>
       </div>
     </div>
   </div>
-</div>
 }

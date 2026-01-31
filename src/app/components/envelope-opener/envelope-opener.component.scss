@@ -1,33 +1,26 @@
 /**
  * EnvelopeOpenerComponent Styles
  * 
- * NOVA ESTRUTURA:
- * - envelope-container
- *   ├── envelope
- *   │   ├── env-body (corpo vazio)
- *   │   ├── env-flap (aba triangular)
- *   │   └── env-seal (flor clicável)
- *   └── env-letter (FORA do envelope, pode expandir)
+ * Simple envelope animation adapted from:
+ * https://codepen.io/Coding-Star/pen/WNpbvwB
  * 
- * FASES:
- * 1. closed: carta atrás do envelope (z-index: 0)
- * 2. opening: aba sobe, carta sobe e vem para frente
- * 3. expanding: carta expande para fullscreen
- * 4. completed: fade out
+ * With floral seal that spins before opening.
  */
 
 :host {
   display: block;
   position: absolute;
   inset: 0;
-  z-index: 100;  // Acima do conteúdo, abaixo de modais
+  z-index: 100;
 }
 
 .envelope-opener {
   --theme-color: #8b5a5a;
-  --envelope-cream: #f5ebe3;
-  --envelope-cream-dark: #e8dcd0;
-  --envelope-flap: #ebe0d5;
+  --envelope-body: #e8dcd0;
+  --envelope-lid-front: #f5ebe3;
+  --envelope-lid-back: #e8dcd0;
+  --envelope-front-light: #f5ebe3;
+  --envelope-front-dark: #e8dcd0;
   
   position: absolute;
   inset: 0;
@@ -37,8 +30,9 @@
   justify-content: center;
   overflow: hidden;
   
-  &.completed {
-    pointer-events: auto;
+  // Reserve space for scrollbar in full-screen to prevent content shift
+  &.full-screen {
+    scrollbar-gutter: stable;
   }
 }
 
@@ -49,26 +43,18 @@
 .backdrop {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    135deg,
-    #faf5f0 0%,
-    #f3eae1 50%,
-    #ebe0d5 100%
-  );
+  background: linear-gradient(135deg, #faf5f0 0%, #f3eae1 50%, #ebe0d5 100%);
+  transition: opacity 600ms ease-out;
   
-  .pattern {
-    position: absolute;
-    inset: 0;
-    opacity: 0.25;
-    background-image: 
-      radial-gradient(circle at 25% 25%, var(--theme-color) 1px, transparent 1px),
-      radial-gradient(circle at 75% 75%, var(--theme-color) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  .completed & {
+  .opened & {
     opacity: 0;
-    transition: opacity 400ms ease-out;
+    transition-delay: 800ms;
+  }
+  
+  // Keep backdrop visible longer until full-screen transition completes
+  .full-screen & {
+    opacity: 0;
+    transition-delay: 0ms;
   }
 }
 
@@ -101,617 +87,390 @@
   }
 }
 
-// ============================================
-// DEBUG CONTROLS
-// ============================================
-
-.debug-controls {
-  position: absolute;
-  right: 16px;
-  bottom: 16px;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 8px 12px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.9);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
-  font-size: 0.85rem;
-}
-
-.debug-label {
-  color: var(--theme-color);
-  font-weight: 600;
-}
-
-.debug-button {
-  border: none;
-  background: var(--theme-color);
-  color: #fff;
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
 @keyframes pulse-hint {
   0%, 100% { transform: translateX(-50%) scale(1); }
   50% { transform: translateX(-50%) scale(1.03); }
 }
 
 // ============================================
-// ENVELOPE CONTAINER
+// ENVELOPE WRAPPER (main container)
 // ============================================
 
-.envelope-container {
+.wrapper {
   position: relative;
-  z-index: 5;
+  // Mobile: envelope takes most of screen width
+  width: calc(100vw - 40px);
+  max-width: 340px;
+  height: 220px;
+  background-color: var(--envelope-body);
   display: flex;
-  align-items: center;
   justify-content: center;
-}
-
-.letter-clip {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 320px;
-  height: 220px;
-  overflow: hidden;
-
-  @media (min-width: 400px) {
-    width: 380px;
-    height: 260px;
-  }
-
-  @media (min-width: 600px) {
-    width: 440px;
-    height: 300px;
-  }
-
-  @media (min-width: 768px) {
-    width: 500px;
-    height: 340px;
-  }
-
-}
-
-.envelope {
-  position: relative;
-  width: 320px;
-  height: 220px;
-  perspective: 900px;
-  transform-style: preserve-3d;
-  
-  @media (min-width: 400px) {
-    width: 380px;
-    height: 260px;
-  }
-  
-  @media (min-width: 600px) {
-    width: 440px;
-    height: 300px;
-  }
-  
-  @media (min-width: 768px) {
-    width: 500px;
-    height: 340px;
-  }
-
-  .completed & {
-    transform: none;
-    transition: none;
-    pointer-events: none;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    left: 6%;
-    right: 6%;
-    top: 12%;
-    height: 14%;
-    border-radius: 10px;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 7;
-    background:
-      linear-gradient(to bottom, rgba(255,255,255,0.40), rgba(255,255,255,0.05)),
-      radial-gradient(120% 80% at 50% 0%, rgba(0,0,0,0.20), transparent 70%);
-    filter: blur(0.3px);
-    transition: opacity 500ms ease;
-  }
-
-  .opening &::after {
-    opacity: 1;
-  }
-
-  &::before {
-    content: "";
-    position: absolute;
-    left: 6%;
-    right: 6%;
-    top: 6%;
-    height: 30%;
-    border-radius: 10px;
-    pointer-events: none;
-    opacity: 0;
-    z-index: 2;
-    background: radial-gradient(120% 80% at 50% 0%, rgba(0,0,0,0.16), transparent 65%);
-    transition: opacity 600ms ease;
-  }
-
-  .opening &::before {
-    opacity: 1;
-  }
-}
-
-// ============================================
-// ENVELOPE VISUALS (env-body + pockets)
-// ============================================
-
-.env-body {
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
   z-index: 1;
-  background: linear-gradient(
-    180deg,
-    var(--envelope-cream) 0%,
-    var(--envelope-cream-dark) 100%
-  );
+  border-radius: 4px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
   overflow: hidden;
-  border: 1px solid rgba(0, 0, 0, 0.045);
-  box-shadow:
-    0 30px 60px rgba(0, 0, 0, 0.12),
-    0 15px 30px rgba(0, 0, 0, 0.08);
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    background:
-      linear-gradient(
-        135deg,
-        transparent 49.4%,
-        rgba(0, 0, 0, 0.10) 50%,
-        transparent 50.8%
-      ),
-      linear-gradient(
-        225deg,
-        transparent 49.4%,
-        rgba(0, 0, 0, 0.10) 50%,
-        transparent 50.8%
-      ),
-      radial-gradient(circle at 50% 60%, rgba(0, 0, 0, 0.10), transparent 52%),
-      radial-gradient(140% 120% at 50% 60%, rgba(0, 0, 0, 0.08), transparent 62%),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.18), transparent 40%),
-      linear-gradient(to top, rgba(0, 0, 0, 0.12), transparent 60%),
-      radial-gradient(140% 120% at 50% 60%, transparent 52%, rgba(245, 235, 227, 0.65) 78%, rgba(245, 235, 227, 0.95) 100%);
-    filter: blur(0.55px);
-    opacity: 0.82;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-    opacity: 1;
-    background:
-      radial-gradient(120% 70% at 50% 0%, rgba(0, 0, 0, 0.12), transparent 55%),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.12), transparent 45%);
-  }
-}
-
-.opening .env-body::before {
-  opacity: 0.30;
-  filter: blur(0.8px);
-}
-
-.env-pocket {
-  position: absolute;
-  inset: 0;
-  border-radius: 12px;
-  pointer-events: none;
-  overflow: hidden;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10);
-}
-
-.env-pocket--left {
-  z-index: 4;
-  clip-path: polygon(0 100%, 0 42%, 50% 58%);
-  background:
-    linear-gradient(90deg, rgba(0, 0, 0, 0.10), transparent 65%),
-    radial-gradient(circle at 70% 60%, rgba(255, 255, 255, 0.12), transparent 55%);
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(
-      45deg,
-      transparent 49.2%,
-      rgba(0, 0, 0, 0.10) 50%,
-      transparent 51%
-    );
-    filter: blur(0.6px);
-    opacity: 0.85;
-  }
-}
-
-.env-pocket--right {
-  z-index: 4;
-  clip-path: polygon(100% 100%, 50% 58%, 100% 42%);
-  background:
-    linear-gradient(270deg, rgba(0, 0, 0, 0.10), transparent 65%),
-    radial-gradient(circle at 30% 60%, rgba(255, 255, 255, 0.12), transparent 55%);
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(
-      315deg,
-      transparent 49.2%,
-      rgba(0, 0, 0, 0.10) 50%,
-      transparent 51%
-    );
-    filter: blur(0.6px);
-    opacity: 0.85;
-  }
-}
-
-.env-pocket--bottom {
-  z-index: 5;
-  clip-path: polygon(0 100%, 100% 100%, 50% 58%);
-  background:
-    linear-gradient(to top, rgba(0, 0, 0, 0.14), transparent 70%),
-    radial-gradient(120% 80% at 50% 58%, rgba(255, 255, 255, 0.10), transparent 60%);
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      to bottom,
-      rgba(255, 255, 255, 0.14),
-      transparent 26%
-    );
-    opacity: 0.9;
-  }
-}
-
-.opening .env-pocket--left,
-.opening .env-pocket--right,
-.opening .env-pocket--bottom {
-  opacity: 0.6;
-}
-
-.env-liner {
-  position: absolute;
-  left: 6%;
-  right: 6%;
-  top: 6%;
-  height: 52%;
-  z-index: 3;
-  border-radius: 10px 10px 0 0;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-  pointer-events: none;
-  opacity: 0;
-  background:
-    radial-gradient(120% 90% at 50% 0%, rgba(0,0,0,0.18), transparent 65%),
-    linear-gradient(180deg, rgba(255,255,255,0.10), rgba(0,0,0,0.05));
-}
-
-.opening .env-liner {
-  opacity: 1;
-  transition: opacity 450ms ease 120ms;
-}
-
-// ============================================
-// ABA TRIANGULAR
-// ============================================
-
-.env-flap {
-  position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 60%;
-  z-index: 6;
-  border-radius: 12px 12px 0 0;
-  clip-path: polygon(0 0, 100% 0, 50% 100%);
-
-  background: linear-gradient(
-    180deg,
-    var(--envelope-cream) 0%,
-    var(--envelope-flap) 100%
-  );
-
-  transform-origin: top center;
-  transform-style: preserve-3d;
-  backface-visibility: visible;
-
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.10);
-  transition:
-    transform 900ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    filter 600ms ease,
-    box-shadow 600ms ease;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    clip-path: inherit;
-    border-radius: inherit;
-    pointer-events: none;
-    background:
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.16), transparent 45%),
-      radial-gradient(120% 70% at 50% 100%, rgba(0, 0, 0, 0.14), transparent 62%);
-    opacity: 0.95;
-    transform: translateZ(0.5px);
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    clip-path: inherit;
-    border-radius: inherit;
-    pointer-events: none;
-    background:
-      radial-gradient(120% 80% at 50% 0%, rgba(0, 0, 0, 0.16), transparent 60%),
-      linear-gradient(180deg, rgba(255, 255, 255, 0.06) 0%, rgba(0, 0, 0, 0.06) 100%);
-    transform: rotateY(180deg) translateZ(0.5px);
-    backface-visibility: visible;
-    opacity: 1;
-  }
-
-  .opening & {
-    transform: rotateX(180deg);
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
-    filter: saturate(0.98);
-  }
-}
-
-.opening .env-flap::after {
-  background:
-    radial-gradient(140% 120% at 50% 10%, rgba(0,0,0,0.18), transparent 62%),
-    radial-gradient(120% 80% at 50% 90%, rgba(255,255,255,0.10), transparent 60%),
-    linear-gradient(180deg, rgba(255,255,255,0.06) 0%, rgba(0,0,0,0.06) 100%);
-}
-// ============================================
-
-.env-seal {
-  position: absolute;
-  left: 50%;
-  top: 55%;
-  transform: translate(-50%, -50%);
-  width: 70px;
-  height: 70px;
-  border-radius: 50%;
-  background: var(--theme-color);
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  cursor: pointer;
-  z-index: 10;
-  box-shadow: 
-    0 6px 25px rgba(0, 0, 0, 0.25),
-    0 3px 10px rgba(0, 0, 0, 0.15),
-    inset 0 2px 0 rgba(255, 255, 255, 0.2);
-  transition: transform 600ms cubic-bezier(0.4, 0, 0.2, 1),
-              box-shadow 300ms ease,
-              opacity 600ms ease-out;
+  transition: transform 0.5s ease;
   
-  @media (min-width: 400px) {
-    width: 80px;
-    height: 80px;
+  // Tablet
+  @media (min-width: 480px) {
+    max-width: 400px;
+    height: 260px;
   }
   
-  @media (min-width: 600px) {
-    width: 90px;
-    height: 90px;
-  }
-  
+  // Desktop
   @media (min-width: 768px) {
-    width: 100px;
-    height: 100px;
+    max-width: 480px;
+    height: 320px;
   }
   
-  .flower-icon {
-    width: 65%;
-    height: 65%;
+  // Large desktop
+  @media (min-width: 1024px) {
+    max-width: 540px;
+    height: 360px;
   }
   
-  &:hover {
-    transform: translate(-50%, -50%) scale(1.08);
-    box-shadow: 
-      0 8px 30px rgba(0, 0, 0, 0.3),
-      0 4px 12px rgba(0, 0, 0, 0.2),
-      inset 0 2px 0 rgba(255, 255, 255, 0.2);
+  // When opened, allow letter to peek out
+  .opened & {
+    overflow: visible;
   }
   
-  &:active {
-    transform: translate(-50%, -50%) scale(0.95);
-  }
-  
-  .opening & {
-    transform: translate(-50%, -50%) translateX(200px) rotate(48deg) scale(0.85);
-    opacity: 0;
-    pointer-events: none;
-  }
-}
-
-// ============================================
-// CARTA (FORA do envelope - pode expandir!)
-// ============================================
-
-.env-letter {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  // Posição inicial: centrada atrás do envelope
-  width: calc(100% - 24px);
-  height: calc(100% - 90px);
-  background: transparent;
-  border-radius: 8px;
-  border: 1px solid rgba(0, 0, 0, 0.04);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-  
-  // FECHADO: atrás do envelope
-  z-index: 2;
-  transform: translate(-50%, -50%) translateY(40px);
-  opacity: 1;
-  
-  transition: 
-    transform 900ms cubic-bezier(0.4, 0, 0.2, 1),
-    height 900ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-radius 400ms ease,
-    box-shadow 400ms ease;
-  
-  
-  // FASE 2: Opening - sobe acima do envelope
-  .opening & {
-    z-index: 10;
-    height: calc(100% + 120px);
-    transform: translate(-50%, -50%) translateY(-120px);
+  // When envelope-down, slide envelope down
+  .envelope-down & {
+    transform: translateY(280px);
     
-    @media (min-width: 600px) {
-      height: calc(100% + 160px);
-      transform: translate(-50%, -50%) translateY(-160px);
+    @media (min-width: 480px) {
+      transform: translateY(320px);
     }
     
     @media (min-width: 768px) {
-      height: calc(100% + 200px);
-      transform: translate(-50%, -50%) translateY(-200px);
+      transform: translateY(380px);
+    }
+    
+    @media (min-width: 1024px) {
+      transform: translateY(420px);
     }
   }
-
-  // FASE 3: Expanding - revela mais altura
-  .expanding & {
-    z-index: 10;
-    height: calc(100% + 260px);
-    transform: translate(-50%, -50%) translateY(-210px);
-  }
-
-  // Completed mantém a carta na posição de abertura
-  .completed & {
-    z-index: 10;
-    height: calc(100% + 260px);
-    transform: translate(-50%, -50%) translateY(-210px);
+  
+  // Envelope hidden: envelope exits screen completely
+  .envelope-hidden & {
+    transform: translateY(2000px);
   }
 }
 
-.env-letter-content {
+// ============================================
+// LIDS (the triangular flaps)
+// Uses calc() to be responsive with wrapper
+// ============================================
+
+.lid {
   position: absolute;
-  inset: 0;
-  display: block;
-  padding: 0;
-  background: transparent;
-  border-radius: inherit;
-  overflow: hidden;
-}
-
-
-.env-letter-content > app-invitation-card {
-  display: block;
-  width: 100%;
   height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  // Half of wrapper width for left/right, ~half of height for bottom
+  border-right: calc((100vw - 40px) / 2) solid transparent;
+  border-bottom: 110px solid transparent;
+  border-left: calc((100vw - 40px) / 2) solid transparent;
+  transform-origin: top;
+  transition: transform 0.25s linear;
+  
+  @media (min-width: 340px) {
+    border-right-width: 170px;
+    border-left-width: 170px;
+  }
+  
+  @media (min-width: 480px) {
+    border-right-width: 200px;
+    border-bottom-width: 130px;
+    border-left-width: 200px;
+  }
+  
+  @media (min-width: 768px) {
+    border-right-width: 240px;
+    border-bottom-width: 160px;
+    border-left-width: 240px;
+  }
+  
+  @media (min-width: 1024px) {
+    border-right-width: 270px;
+    border-bottom-width: 180px;
+    border-left-width: 270px;
+  }
 }
 
-.env-letter-crest {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
+// Lid front (visible when closed)
+.lid.one {
+  border-top: 110px solid var(--envelope-lid-front);
+  transform: rotateX(0deg);
+  z-index: 3;
+  transition-delay: 0.75s;
+  
+  @media (min-width: 480px) {
+    border-top-width: 130px;
+  }
+  
+  @media (min-width: 768px) {
+    border-top-width: 160px;
+  }
+  
+  @media (min-width: 1024px) {
+    border-top-width: 180px;
+  }
+  
+  .opened & {
+    transform: rotateX(90deg);
+    transition-delay: 0s;
+  }
+}
+
+// Lid back (shows when lid opens)
+.lid.two {
+  border-top: 110px solid var(--envelope-lid-back);
+  transform: rotateX(90deg);
+  z-index: 1;
+  transition-delay: 0.5s;
+  
+  @media (min-width: 480px) {
+    border-top-width: 130px;
+  }
+  
+  @media (min-width: 768px) {
+    border-top-width: 160px;
+  }
+  
+  @media (min-width: 1024px) {
+    border-top-width: 180px;
+  }
+  
+  .opened & {
+    transform: rotateX(180deg);
+    transition-delay: 0.25s;
+  }
+}
+
+// ============================================
+// ENVELOPE BODY (front triangular flaps)
+// ============================================
+
+.envelope {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  // Half of wrapper width for left/right
+  border-top: 110px solid transparent;
+  border-right: calc((100vw - 40px) / 2) solid var(--envelope-front-light);
+  border-bottom: 110px solid var(--envelope-front-light);
+  border-left: calc((100vw - 40px) / 2) solid var(--envelope-front-dark);
+  z-index: 3;
+  border-radius: 4px;
+  
+  @media (min-width: 340px) {
+    border-right-width: 170px;
+    border-left-width: 170px;
+  }
+  
+  @media (min-width: 480px) {
+    border-top-width: 130px;
+    border-right-width: 200px;
+    border-bottom-width: 130px;
+    border-left-width: 200px;
+  }
+  
+  @media (min-width: 768px) {
+    border-top-width: 160px;
+    border-right-width: 240px;
+    border-bottom-width: 160px;
+    border-left-width: 240px;
+  }
+  
+  @media (min-width: 1024px) {
+    border-top-width: 180px;
+    border-right-width: 270px;
+    border-bottom-width: 180px;
+    border-left-width: 270px;
+  }
+}
+
+// ============================================
+// LETTER (emerges from envelope)
+// ============================================
+
+.letter {
+  position: absolute;
+  // Use left: 50% + translateX(-50%) from the start for horizontal centering
+  // This way full-screen doesn't need to change left, avoiding flicker
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 85%;
+  background-color: white;
+  border-radius: 12px;
+  z-index: 2;
+  transition: transform 0.5s ease, height 0.5s ease, width 0.5s ease,
+              border-radius 0.5s ease, background-color 0.5s ease;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  
+  // Clickable state
+  &.clickable {
+    cursor: pointer;
+    
+    &:hover {
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    }
+  }
+  
+  // Phase 1: Letter peeks out slightly
+  .opened & {
+    transform: translate(-50%, -60px);
+    height: calc(85% + 60px);
+    transition-delay: 0.5s;
+  }
+  
+  // Phase 2: Letter rises more, reveals full content
+  .revealing & {
+    transform: translate(-50%, -220px);
+    height: calc(85% + 220px);
+    transition-delay: 0s;
+    
+    @media (min-width: 480px) {
+      transform: translate(-50%, -280px);
+      height: calc(85% + 280px);
+    }
+    
+    @media (min-width: 768px) {
+      transform: translate(-50%, -340px);
+      height: calc(85% + 340px);
+    }
+    
+    @media (min-width: 1024px) {
+      transform: translate(-50%, -400px);
+      height: calc(85% + 400px);
+    }
+  }
+  
+  // Phase 3: Envelope slides down, letter compensates to stay in place
+  .envelope-down & {
+    // translateY = revealing + wrapper down compensation
+    transform: translate(-50%, -500px); // -220px + -280px
+    height: calc(85% + 500px);
+    
+    @media (min-width: 480px) {
+      transform: translate(-50%, -600px); // -280px + -320px
+      height: calc(85% + 600px);
+    }
+    
+    @media (min-width: 768px) {
+      transform: translate(-50%, -720px); // -340px + -380px
+      height: calc(85% + 720px);
+    }
+    
+    @media (min-width: 1024px) {
+      transform: translate(-50%, -820px); // -400px + -420px
+      height: calc(85% + 820px);
+    }
+  }
+  
+  // Phase 4: Envelope exits screen (2000px down), letter compensates
+  .envelope-hidden & {
+    // Envelope moves from envelope-down position to 2000px
+    // Mobile: was -500px, envelope goes from 280px to 2000px = +1720px more
+    // Total = -500px - 1720px = -2220px
+    transform: translate(-50%, -2220px);
+    height: calc(85% + 2220px);
+    
+    @media (min-width: 480px) {
+      // was -600px, envelope 320px to 2000px = +1680px more
+      transform: translate(-50%, -2280px);
+      height: calc(85% + 2280px);
+    }
+    
+    @media (min-width: 768px) {
+      // was -720px, envelope 380px to 2000px = +1620px more
+      transform: translate(-50%, -2340px);
+      height: calc(85% + 2340px);
+    }
+    
+    @media (min-width: 1024px) {
+      // was -820px, envelope 420px to 2000px = +1580px more
+      transform: translate(-50%, -2400px);
+      height: calc(85% + 2400px);
+    }
+  }
+  
+  // Phase 5: Full screen - letter fills viewport using counter-translation
+  // left: 50% is already set from base, no change = no flicker
+  // Wrapper is centered then translateY(2000px)
+  // Wrapper top = 50vh - wrapperHeight/2 + 2000px
+  // Letter top = wrapper top (since letter has top: 0)
+  // To move letter top to 0: translateY = -(50vh - wrapperHeight/2 + 2000px)
+  // = -50vh + wrapperHeight/2 - 2000px
+  .full-screen & {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    border-radius: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    // Use same background as backdrop for smooth transition
+    // background-color: #faf5f0;
+    // Mobile: wrapper height = 220px, half = 110px
+    transform: translate(-50%, calc(-50vh + 110px - 2000px));
+    
+    @media (min-width: 480px) {
+      // wrapper height = 260px, half = 130px
+      transform: translate(-50%, calc(-50vh + 130px - 2000px));
+    }
+    
+    @media (min-width: 768px) {
+      // wrapper height = 320px, half = 160px
+      transform: translate(-50%, calc(-50vh + 160px - 2000px));
+    }
+    
+    @media (min-width: 1024px) {
+      // wrapper height = 360px, half = 180px
+      transform: translate(-50%, calc(-50vh + 180px - 2000px));
+    }
+  }
+}
+
+// Tap hint for letter
+.letter-tap-hint {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translate(-50%, 0);
+  padding: 10px 20px;
   background: var(--theme-color);
   color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
-  font-weight: 700;
-  margin-bottom: 12px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 10;
+  white-space: nowrap;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  animation: pulse-letter-hint 2s ease-in-out infinite;
   
-  transition: width 400ms ease 600ms, 
-              height 400ms ease 600ms, 
-              font-size 400ms ease 600ms,
-              margin-bottom 400ms ease 600ms;
-  
-  .expanding & {
-    width: 80px;
-    height: 80px;
-    font-size: 1.5rem;
-    margin-bottom: 20px;
+  &.visible {
+    opacity: 1;
   }
   
-  @media (min-width: 600px) {
-    width: 60px;
-    height: 60px;
-    font-size: 1.2rem;
-    
-    .expanding & {
-      width: 100px;
-      height: 100px;
-      font-size: 1.8rem;
-      margin-bottom: 24px;
-    }
+  .envelope-hidden &,
+  .full-screen & {
+    opacity: 0;
   }
 }
 
-.env-letter-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1f2937;
-  line-height: 1.3;
-  margin-bottom: 6px;
-  
-  transition: font-size 400ms ease 600ms, margin-bottom 400ms ease 600ms;
-  
-  .expanding & {
-    font-size: 1.6rem;
-    margin-bottom: 12px;
-  }
-  
-  @media (min-width: 600px) {
-    font-size: 1.4rem;
-    
-    .expanding & {
-      font-size: 2rem;
-      margin-bottom: 16px;
-    }
-  }
+@keyframes pulse-letter-hint {
+  0%, 100% { transform: translateX(-50%) scale(1); }
+  50% { transform: translateX(-50%) scale(1.03); }
 }
 
-.env-letter-date {
-  font-size: 0.9rem;
-  color: #6b7280;
-  margin-bottom: 4px;
-  
-  transition: font-size 400ms ease 600ms;
-  
-  .expanding & {
-    font-size: 1.2rem;
-    margin-bottom: 8px;
-  }
-}
-
-.env-letter-venue {
-  font-size: 0.8rem;
-  color: #9ca3af;
-  
-  transition: font-size 400ms ease 600ms;
-  
-  .expanding & {
-    font-size: 1.1rem;
-  }
-}
