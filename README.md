@@ -106,7 +106,32 @@ npm start           # Servidor de desenvolvimento
 npm run build       # Build de produção
 npm run lint        # Verificação de código
 npm run test        # Testes unitários
+npm run get-my-ip   # Obter IP público (para whitelist)
 ```
+
+## 🔐 Proteção por IP (Staging)
+
+O projeto inclui middleware de proteção por IP para ambientes de staging.
+
+### Como configurar
+
+1. **Obter o seu IP:**
+   ```bash
+   npm run get-my-ip
+   ```
+
+2. **Configurar no Vercel:**
+   - Dashboard → Settings → Environment Variables
+   - Nome: `ALLOWED_IPS`
+   - Valor: `seu-ip-aqui` (ou múltiplos IPs separados por vírgula)
+   - Scope: `Preview` (para staging) ou `Production`
+
+3. **Re-deploy:**
+   - Push para o branch → Vercel redeploy automático
+
+**Documentação completa:** [docs/IP-WHITELIST-SETUP.md](docs/IP-WHITELIST-SETUP.md)
+
+💡 **Dica:** Deixe `ALLOWED_IPS` vazio para desativar a proteção.
 
 ## 🚀 Deployment
 
@@ -133,13 +158,22 @@ O ficheiro `vercel.json` está configurado com:
 
 ## 🔐 Variáveis de Ambiente
 
-Para funcionalidades futuras (APIs, autenticação):
+### Desenvolvimento Local
 
 ```bash
-# .env (não incluir no git)
-FIREBASE_API_KEY=xxx
-FIREBASE_PROJECT_ID=xxx
+# .env.local (não incluir no git)
+ALLOWED_IPS=127.0.0.1,::1  # IPs permitidos (localhost)
+MONGODB_URI=mongodb+srv://...
 ```
+
+### Vercel (Produção/Staging)
+
+Configurar em **Settings → Environment Variables**:
+
+| Variável | Descrição | Exemplo |
+|----------|-----------|---------|
+| `ALLOWED_IPS` | IPs permitidos (opcional) | `123.45.67.89,98.76.54.32` |
+| `MONGODB_URI` | Connection string MongoDB | `mongodb+srv://...` |
 
 ## 📱 Mobile Apps
 

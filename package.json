@@ -15,7 +15,8 @@
     "test": "ng test",
     "lint": "ng lint",
     "ionic:serve": "ionic serve",
-    "ionic:build": "ionic build"
+    "ionic:build": "ionic build",
+    "get-my-ip": "node get-my-ip.js"
   },
   "dependencies": {
     "@angular/animations": "^18.2.0",
