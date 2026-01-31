@@ -22,10 +22,12 @@ Este projeto usa **Angular Auth Guard** para proteger todo o site em staging com
 - `/customize` - Personalização
 - `/payment` - Pagamento
 - `/events/*` - BackOffice completo
+- `/rsvp/:code` - Formulário RSVP ⚠️ **NOTA**: Também protegido em staging
 
 ### Rotas Públicas (sem login)
-- `/login` - Página de login
-- `/rsvp/:code` - Formulário RSVP (convidados)
+- `/login` - Página de login (única rota pública)
+
+⚠️ **IMPORTANTE**: Em staging, **TODAS** as rotas estão protegidas, incluindo RSVP. Isto é intencional para evitar acesso não autorizado durante desenvolvimento. Em produção, pode desativar via `requireAuth: false`.
 
 ---
 

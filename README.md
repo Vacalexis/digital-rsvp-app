@@ -122,9 +122,11 @@ O projeto inclui autenticação integrada para proteger o site em staging.
 
 ### Como Funciona
 
-- **Staging/Produção:** `environment.prod.ts` → `requireAuth: true` → Site protegido
+- **Staging/Produção:** `environment.prod.ts` → `requireAuth: true` → **Todas as rotas** protegidas
 - **Desenvolvimento:** `environment.ts` → `requireAuth: false` → Acesso livre
-- **RSVP Público:** Rota `/rsvp/:code` sempre acessível (convidados)
+- **Única rota pública:** `/login` (todas as outras requerem autenticação)
+
+⚠️ **Nota**: Em staging, até o RSVP está protegido para máxima segurança. Em produção, pode desativar via `requireAuth: false` se quiser RSVP público.
 
 ### Mudar Password
 

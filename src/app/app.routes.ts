@@ -2,19 +2,20 @@ import { Routes } from "@angular/router";
 import { authGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
-  // Login page (unprotected)
+  // Login page (unprotected - only public route)
   {
     path: "login",
     loadComponent: () =>
       import("./pages/login/login.page").then((m) => m.LoginPage),
   },
-  // Public RSVP form (unprotected - guests need access without login)
+  // All other routes require authentication (including public RSVP)
+  // RSVP form now protected for full staging security
   {
     path: "rsvp/:code",
     loadComponent: () =>
       import("./pages/rsvp/rsvp.page").then((m) => m.RsvpPage),
+    canActivate: [authGuard],
   },
-  // All other routes require authentication in staging
   // Public landing page (protected in staging via environment.requireAuth)
   {
     path: "",
