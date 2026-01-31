@@ -7,13 +7,48 @@
 
 ## 🎯 Mission Statement
 
-You are working on **Digital RSVP App** - an MVP for digital wedding/event invitations with RSVP management. The goal is to **ship a polished, functional MVP quickly** while maintaining code quality.
+You are working on **Digital RSVP App** - an MVP for digital wedding/event invitations with RSVP management. 
+
+### Business Context
+**Problem**: Wedding invitation suppliers take days/weeks to deliver even digital designs.
+**Solution**: INSTANT digital invitations - preview, customize, purchase in minutes.
+
+**Customer Flow**:
+```
+Ads → Landing Page → Preview Themes → Customize → Purchase (Stripe) → BackOffice (manage guests, RSVPs)
+```
+
+### MVP Goal
+Ship a **polished, functional MVP** that allows customers to:
+1. **Browse** invitation themes (public, no auth)
+2. **Preview** how invitations look for single/couple/family
+3. **Customize** event details (names, date, venue)
+4. **Purchase** via Stripe
+5. **Manage** guest list and collect RSVPs in BackOffice
 
 ### Core Values
 1. **Ship Fast, Ship Clean** - MVP first, perfect later
 2. **DRY** - Don't Repeat Yourself (consolidate duplications)
 3. **SOLID** - Single responsibility, clean interfaces
 4. **YAGNI** - You Ain't Gonna Need It (remove unused code)
+
+---
+
+## 📋 Current Sprint Focus
+
+**See**: [MVP-IMPLEMENTATION-PLAN.md](../docs/MVP-IMPLEMENTATION-PLAN.md) for full roadmap.
+
+**Priority P0 (Blocking MVP)**:
+- Fix `children` vs `childrenNames` data model inconsistency
+- RSVP form: ask children ages when host didn't fill
+- Create Landing Page for public access
+- Create Theme Gallery for browsing
+- Stripe payment integration
+
+**Priority P1 (Important)**:
+- Dietary options constant (remove duplication)
+- Share link tools (copy, WhatsApp)
+- User registration flow
 
 ---
 

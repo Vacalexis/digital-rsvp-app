@@ -1,0 +1,584 @@
+/**
+ * Public Preview Page Styles
+ * 
+ * Theme preview with invitation type toggle
+ */
+
+:host {
+  --background-cream: #faf5f0;
+  --background-soft: #f3eae1;
+  --text-dark: #1f2937;
+  --text-muted: #6b7280;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.preview-content {
+  --background: var(--background-cream);
+}
+
+// ============================================
+// TYPE TOOLBAR
+// ============================================
+
+.type-toolbar {
+  --background: white;
+  --border-color: rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+
+  ion-segment {
+    max-width: 500px;
+    margin: 0 auto;
+
+    ion-segment-button {
+      --indicator-color: var(--ion-color-primary);
+      font-size: 0.85rem;
+
+      ion-icon {
+        font-size: 1.3rem;
+        margin-bottom: 4px;
+      }
+
+      ion-label {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// ============================================
+// THEME INFO BANNER
+// ============================================
+
+.theme-info {
+  padding: 20px 16px 16px;
+  text-align: center;
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  .theme-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(
+      135deg,
+      var(--ion-color-primary) 0%,
+      var(--ion-color-secondary) 100%
+    );
+    color: white;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    box-shadow: var(--card-shadow);
+
+    ion-icon {
+      font-size: 1.2rem;
+    }
+
+    strong {
+      font-weight: 700;
+    }
+  }
+
+  .theme-hint {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
+// ============================================
+// TYPE DESCRIPTION CARD
+// ============================================
+
+.type-description {
+  margin: 16px;
+  box-shadow: var(--card-shadow);
+  border-radius: 12px;
+
+  .type-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    .type-icon {
+      font-size: 2.5rem;
+      color: var(--ion-color-primary);
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0 0 4px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+  }
+}
+
+// ============================================
+// INVITATION PREVIEW
+// ============================================
+
+.invitation-preview-container {
+  padding: 24px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  // Override invitation card styles for centered preview
+  app-invitation-card {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+// ============================================
+// SAMPLE NOTICE
+// ============================================
+
+.sample-notice {
+  padding: 0 16px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  ion-card {
+    margin: 0;
+    background: rgba(201, 169, 98, 0.1);
+    border: 1px solid rgba(201, 169, 98, 0.3);
+    box-shadow: none;
+    border-radius: 12px;
+
+    ion-card-content {
+      padding: 16px;
+
+      p {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        margin: 0;
+        line-height: 1.5;
+
+        strong {
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// CTA SECTION
+// ============================================
+
+.cta-section {
+  padding: 24px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .cta-card {
+    margin: 0;
+    background: white;
+    box-shadow: var(--card-shadow-hover);
+    border-radius: 16px;
+    border: 2px solid var(--ion-color-primary);
+  }
+
+  .cta-content {
+    padding: 8px;
+    text-align: center;
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin: 0 0 12px;
+    }
+
+    > p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0 0 24px;
+
+      strong {
+        color: var(--ion-color-primary);
+        font-weight: 800;
+        font-size: 1.15rem;
+      }
+    }
+  }
+
+  .cta-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: var(--background-cream);
+    border-radius: 12px;
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+
+      ion-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      span {
+        text-align: left;
+      }
+    }
+  }
+
+  .customize-button {
+    --border-radius: 12px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+
+    ion-icon {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+// ============================================
+// VARIATIONS HINT
+// ============================================
+
+.variations-hint {
+  padding: 0 16px 32px;
+  text-align: center;
+
+  p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    display: inline-block;
+
+    strong {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE - TABLET & UP
+// ============================================
+
+@media (min-width: 768px) {
+  .type-toolbar {
+    ion-segment {
+      ion-segment-button {
+        font-size: 0.95rem;
+
+        ion-icon {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+
+  .theme-info {
+    padding: 28px 16px 20px;
+
+    .theme-badge {
+      font-size: 1.05rem;
+      padding: 10px 20px;
+
+      ion-icon {
+        font-size: 1.4rem;
+      }
+    }
+
+    .theme-hint {
+      font-size: 1rem;
+    }
+  }
+
+  .invitation-preview-container {
+    padding: 32px 16px;
+  }
+
+  .cta-section {
+    padding: 32px 16px;
+
+    .cta-content {
+      h2 {
+        font-size: 2rem;
+      }
+
+      > p {
+        font-size: 1.125rem;
+      }
+    }
+
+    .cta-features {
+      flex-direction: row;
+      justify-content: space-around;
+      padding: 24px;
+
+      .feature {
+        flex-direction: column;
+        text-align: center;
+
+        span {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .invitation-preview-container {
+    max-width: 700px;
+  }
+
+  .cta-section,
+  .sample-notice {
+    max-width: 700px;
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.type-description,
+.invitation-preview-container,
+.sample-notice,
+.cta-section {
+  animation: fadeIn 400ms ease-out backwards;
+}
+
+.type-description {
+  animation-delay: 100ms;
+}
+
+.invitation-preview-container {
+  animation-delay: 200ms;
+}
+
+.sample-notice {
+  animation-delay: 300ms;
+}
+
+.cta-section {
+  animation-delay: 400ms;
+}
+
+// ============================================
+// THEME CONTROLS
+// ============================================
+
+.theme-controls {
+  padding: 16px;
+
+  .controls-card {
+    box-shadow: var(--card-shadow);
+    border-radius: 12px;
+    border: 2px solid var(--ion-color-secondary);
+
+    .controls-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-bottom: 12px;
+
+      @media (min-width: 768px) {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .theme-selector {
+      flex: 1;
+
+      ion-label {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin-bottom: 8px;
+        font-size: 0.95rem;
+
+        ion-icon {
+          font-size: 1.2rem;
+          color: var(--ion-color-primary);
+        }
+      }
+
+      ion-select {
+        width: 100%;
+        --background: var(--background-soft);
+        --padding-start: 12px;
+        --padding-end: 12px;
+        border-radius: 8px;
+      }
+    }
+
+    .animation-button {
+      --border-radius: 12px;
+      height: 44px;
+      font-weight: 600;
+
+      @media (min-width: 768px) {
+        min-width: 220px;
+      }
+    }
+
+    .controls-hint {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin: 0;
+      text-align: center;
+    }
+  }
+}
+
+.theme-chip {
+  margin-right: 8px;
+}
+
+// ============================================
+// ANIMATION MODAL
+// ============================================
+
+.animation-modal {
+  --width: 100%;
+  --height: 100%;
+  --border-radius: 0;
+
+  @media (min-width: 768px) {
+    --width: 90%;
+    --height: 90%;
+    --max-width: 800px;
+    --max-height: 90vh;
+    --border-radius: 20px;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(
+      135deg,
+      var(--ion-color-primary) 0%,
+      var(--ion-color-secondary) 100%
+    );
+    color: white;
+
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .close-button {
+      --color: white;
+      --background-hover: rgba(255, 255, 255, 0.1);
+      font-size: 1.5rem;
+    }
+  }
+
+  .modal-content {
+    padding: 24px;
+    background: var(--background-cream);
+    min-height: calc(100% - 200px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .modal-hint {
+      text-align: center;
+      font-size: 1rem;
+      color: var(--text-muted);
+      margin: 0 0 24px;
+      padding: 12px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .animation-container {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto;
+      min-height: 400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-instructions {
+      margin-top: 24px;
+      text-align: center;
+
+      p {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--ion-color-primary);
+        margin: 0;
+        animation: pulse 2s ease-in-out infinite;
+      }
+    }
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+    ion-button {
+      --border-radius: 12px;
+      font-weight: 600;
+    }
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.98);
+  }
+}

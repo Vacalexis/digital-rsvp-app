@@ -31,6 +31,14 @@ This approach prevents iterative fixes and produces better results on the first 
 
 This is an **Ionic 8 + Angular 18** standalone application for digital invitations and RSVP management. The app allows users to create digital event invitations, manage guest lists, track RSVPs, and export guest data.
 
+### Business Model
+**INSTANT digital wedding invitations** - Customers preview themes, customize details, purchase via Stripe, and manage guests in a BackOffice. Competitors take days/weeks; we deliver instantly.
+
+### Customer Flow
+```
+Landing Page → Browse Themes → Preview → Customize → Purchase (Stripe) → BackOffice
+```
+
 ### Core Purpose
 - **Event Management**: Create and manage events with customizable invitations
 - **Guest Lists**: Import/export guests, track dietary restrictions, plus-ones
@@ -46,7 +54,8 @@ This is an **Ionic 8 + Angular 18** standalone application for digital invitatio
 - **Components**: Standalone components (no NgModules)
 - **State Management**: Angular Signals
 - **Styling**: SCSS with CSS custom properties
-- **Storage**: LocalStorage (can be extended to backend API)
+- **Backend**: Vercel Serverless Functions + MongoDB Atlas
+- **Deploy**: Vercel (branch: `development`)
 - **Language**: TypeScript with strict mode
 
 ### Folder Structure

@@ -2,15 +2,40 @@ import { Routes } from "@angular/router";
 import { authGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
+  // Public landing page (default)
   {
     path: "",
-    redirectTo: "events",
-    pathMatch: "full",
+    loadComponent: () =>
+      import("./pages/landing/landing.page").then((m) => m.LandingPage),
   },
   {
     path: "login",
     loadComponent: () =>
       import("./pages/login/login.page").then((m) => m.LoginPage),
+  },
+  // Public theme gallery
+  {
+    path: "themes",
+    loadComponent: () =>
+      import("./pages/themes/themes.page").then((m) => m.ThemesPage),
+  },
+  // Public theme preview
+  {
+    path: "preview/:theme",
+    loadComponent: () =>
+      import("./pages/preview/preview.page").then((m) => m.PreviewPage),
+  },
+  // Public customization flow
+  {
+    path: "customize",
+    loadComponent: () =>
+      import("./pages/customize/customize.page").then((m) => m.CustomizePage),
+  },
+  // Mock payment page (public)
+  {
+    path: "payment",
+    loadComponent: () =>
+      import("./pages/payment/payment.page").then((m) => m.PaymentPage),
   },
   {
     path: "events",

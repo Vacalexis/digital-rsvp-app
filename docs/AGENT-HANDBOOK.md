@@ -8,11 +8,19 @@
 ## 🎯 Visão Geral do Projeto
 
 ### O que é?
-Uma aplicação para gestão de convites digitais e RSVPs para eventos (casamentos, batizados, festas). Permite criar convites personalizados, enviar a convidados, e recolher confirmações.
+Plataforma de convites digitais INSTANTÂNEOS para casamentos e eventos. Os clientes podem pré-visualizar temas, personalizar os seus convites, comprar via Stripe, e gerir RSVPs através de um BackOffice.
 
-### Fluxo Principal
+### Problema que Resolvemos
+Fornecedores tradicionais demoram dias/semanas a entregar designs digitais. Nós entregamos **instantaneamente** - o cliente vê, personaliza, e compra em minutos.
+
+### Fluxo do Cliente
 ```
-Host cria Evento → Host cria Convites → Convidado recebe link → Convidado faz RSVP → Host vê estatísticas
+Landing Page → Ver Temas → Preview (single/couple/family) → Personalizar → Pagar (Stripe) → BackOffice
+```
+
+### Fluxo do Convidado
+```
+Recebe link → Abre convite animado → Responde RSVP (presença, refeição, +1, filhos)
 ```
 
 ### Stack Técnico
@@ -21,6 +29,9 @@ Host cria Evento → Host cria Convites → Convidado recebe link → Convidado 
 - **Backend**: Vercel Serverless Functions (TypeScript)
 - **Database**: MongoDB Atlas
 - **Deploy**: Vercel (branch: `development`)
+
+### 📋 MVP Roadmap
+Ver [MVP-IMPLEMENTATION-PLAN.md](./MVP-IMPLEMENTATION-PLAN.md) para o plano completo.
 
 ---
 

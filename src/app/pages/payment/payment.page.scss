@@ -1,0 +1,427 @@
+/**
+ * Payment Page Styles
+ * 
+ * Mock payment checkout page
+ */
+
+:host {
+  --background-cream: #faf5f0;
+  --background-soft: #f3eae1;
+  --text-dark: #1f2937;
+  --text-muted: #6b7280;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.payment-content {
+  --background: var(--background-cream);
+}
+
+// ============================================
+// SUCCESS STATE
+// ============================================
+
+.success-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+}
+
+.success-content {
+  text-align: center;
+  max-width: 400px;
+
+  .success-icon {
+    font-size: 6rem;
+    color: var(--ion-color-success);
+    margin-bottom: 24px;
+    animation: scaleIn 500ms ease-out;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0 0 12px;
+  }
+
+  p {
+    font-size: 1.125rem;
+    color: var(--text-muted);
+    margin: 0 0 24px;
+  }
+
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+
+  .redirect-message {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+// ============================================
+// PAYMENT LAYOUT
+// ============================================
+
+.payment-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+h2 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--text-dark);
+  margin: 0 0 16px;
+  padding: 0 4px;
+}
+
+// ============================================
+// ORDER SECTION
+// ============================================
+
+.order-section {
+  flex: 1;
+}
+
+.summary-card {
+  margin-bottom: 16px;
+  box-shadow: var(--card-shadow);
+  border-radius: 12px;
+
+  ion-card-header {
+    padding: 16px;
+
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-dark);
+
+      ion-icon {
+        font-size: 1.5rem;
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+
+  ion-list {
+    background: transparent;
+    padding: 0;
+
+    ion-item {
+      --background: transparent;
+      --padding-start: 16px;
+      --inner-padding-end: 16px;
+      margin-bottom: 8px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      ion-icon {
+        font-size: 1.3rem;
+        color: var(--ion-color-primary);
+        margin-right: 12px;
+      }
+
+      p {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        margin: 0 0 4px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+
+      h3 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-dark);
+        margin: 0;
+      }
+    }
+  }
+}
+
+// ============================================
+// FEATURES CARD
+// ============================================
+
+.features-card {
+  margin-bottom: 16px;
+  box-shadow: var(--card-shadow);
+  border-radius: 12px;
+
+  ion-card-header {
+    padding: 16px;
+
+    ion-card-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+  }
+
+  .features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+
+      ion-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+    }
+  }
+}
+
+// ============================================
+// PRICE CARD
+// ============================================
+
+.price-card {
+  background: linear-gradient(
+    135deg,
+    var(--ion-color-primary) 0%,
+    var(--ion-color-secondary) 100%
+  );
+  color: white;
+  box-shadow: var(--card-shadow);
+  border-radius: 12px;
+  margin-bottom: 0;
+
+  .price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    font-size: 1rem;
+
+    &:not(:last-of-type) {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    &.total {
+      font-weight: 700;
+      font-size: 1.25rem;
+      padding-top: 16px;
+      border-top: 2px solid rgba(255, 255, 255, 0.3);
+      margin-top: 8px;
+    }
+
+    .price {
+      font-weight: 700;
+      font-size: 1.5rem;
+    }
+  }
+
+  .price-note {
+    font-size: 0.85rem;
+    margin: 16px 0 0;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    text-align: center;
+  }
+}
+
+// ============================================
+// PAYMENT SECTION
+// ============================================
+
+.payment-section {
+  flex: 1;
+}
+
+.payment-card {
+  box-shadow: var(--card-shadow);
+  border-radius: 12px;
+  border: 2px solid var(--ion-color-success);
+
+  .mock-payment-info {
+    text-align: center;
+    padding: 24px 0;
+
+    .payment-icon {
+      font-size: 3rem;
+      color: var(--ion-color-primary);
+      margin-bottom: 16px;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0 0 12px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      line-height: 1.5;
+      color: var(--text-muted);
+      margin: 0;
+    }
+  }
+
+  .security-badges {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin: 24px 0;
+    padding: 16px;
+    background: var(--background-soft);
+    border-radius: 8px;
+
+    .badge {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      font-weight: 600;
+
+      ion-icon {
+        font-size: 2rem;
+        color: var(--ion-color-success);
+      }
+    }
+  }
+
+  .pay-button {
+    --border-radius: 12px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+
+    ion-spinner {
+      margin-right: 8px;
+    }
+  }
+
+  .disclaimer {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-align: center;
+    margin: 16px 0 0;
+    line-height: 1.5;
+
+    a {
+      color: var(--ion-color-primary);
+      text-decoration: none;
+      font-weight: 600;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE - TABLET & UP
+// ============================================
+
+@media (min-width: 768px) {
+  .payment-container {
+    flex-direction: row;
+    padding: 32px 24px;
+    gap: 32px;
+  }
+
+  .order-section,
+  .payment-section {
+    flex: 1;
+    max-width: 500px;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    margin-bottom: 20px;
+  }
+
+  .summary-card {
+    ion-card-header {
+      ion-card-title {
+        font-size: 1.375rem;
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .order-section {
+    max-width: 550px;
+  }
+
+  .payment-section {
+    max-width: 550px;
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.summary-card,
+.features-card,
+.price-card,
+.payment-card {
+  animation: fadeIn 300ms ease-out backwards;
+}
+
+.summary-card {
+  animation-delay: 100ms;
+}
+
+.features-card {
+  animation-delay: 200ms;
+}
+
+.price-card {
+  animation-delay: 300ms;
+}
+
+.payment-card {
+  animation-delay: 400ms;
+}

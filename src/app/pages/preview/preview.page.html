@@ -1,0 +1,216 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/themes'"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pré-visualizar Tema</ion-title>
+    <ion-buttons slot="end">
+      <ion-chip color="secondary" class="theme-chip">
+        <ion-icon name="heart-outline"></ion-icon>
+        <ion-label>{{ themeNames[theme()] }}</ion-label>
+      </ion-chip>
+    </ion-buttons>
+  </ion-toolbar>
+
+  <!-- Type Selector -->
+  <ion-toolbar class="type-toolbar">
+    <ion-segment
+      [value]="invitationType()"
+      (ionChange)="onTypeChange($event)"
+      mode="ios"
+    >
+      @for (type of types; track type.value) {
+        <ion-segment-button [value]="type.value">
+          <ion-icon [name]="type.icon"></ion-icon>
+          <ion-label>{{ type.label }}</ion-label>
+        </ion-segment-button>
+      }
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="preview-content">
+  <!-- Theme Selector & Animation Button -->
+  <div class="theme-controls">
+    <ion-card class="controls-card">
+      <ion-card-content>
+        <div class="controls-layout">
+          <div class="theme-selector">
+            <ion-label>
+              <ion-icon name="heart-outline"></ion-icon>
+              Escolher Tema
+            </ion-label>
+            <ion-select
+              [value]="theme()"
+              (ionChange)="onThemeChange($event)"
+              interface="action-sheet"
+              placeholder="Selecione um tema"
+            >
+              <ion-select-option value="elegant">Elegante</ion-select-option>
+              <ion-select-option value="minimal">Minimalista</ion-select-option>
+              <ion-select-option value="floral">Floral</ion-select-option>
+              <ion-select-option value="rustic">Rústico</ion-select-option>
+              <ion-select-option value="modern">Moderno</ion-select-option>
+              <ion-select-option value="romantic">Romântico</ion-select-option>
+              <ion-select-option value="tropical">Tropical</ion-select-option>
+              <ion-select-option value="classic">Clássico</ion-select-option>
+            </ion-select>
+          </div>
+          
+          <ion-button
+            fill="outline"
+            color="secondary"
+            (click)="openAnimationModal()"
+            class="animation-button"
+          >
+            <ion-icon name="play-circle-outline" slot="start"></ion-icon>
+            Ver Animação Completa
+          </ion-button>
+        </div>
+        <p class="controls-hint">
+          💫 Veja como o seu convidado vai receber e abrir o convite
+        </p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Type Description Card -->
+  <ion-card class="type-description">
+    <ion-card-content>
+      <div class="type-info">
+        <ion-icon
+          [name]="currentType().icon"
+          class="type-icon"
+        ></ion-icon>
+        <div>
+          <h3>{{ currentType().label }}</h3>
+          <p>{{ currentType().description }}</p>
+        </div>
+      </div>
+    </ion-card-content>
+  </ion-card>
+
+  <!-- Invitation Preview -->
+  <div class="invitation-preview-container">
+    <app-invitation-card
+      [event]="eventWithTheme()"
+      [showEnvelope]="false"
+    ></app-invitation-card>
+  </div>
+
+  <!-- Sample Data Notice -->
+  <div class="sample-notice">
+    <ion-card>
+      <ion-card-content>
+        <p>
+          📝 <strong>Dados de exemplo</strong> - Ao personalizar, poderá editar
+          todos os textos, nomes, datas e detalhes do evento.
+        </p>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- CTA Section -->
+  <div class="cta-section">
+    <ion-card class="cta-card">
+      <ion-card-content>
+        <div class="cta-content">
+          <h2>Gostou deste tema?</h2>
+          <p>
+            Personalize todos os detalhes do convite e comece a gerir os seus
+            convidados por apenas <strong>€29</strong>
+          </p>
+
+          <div class="cta-features">
+            <div class="feature">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <span>Convites ilimitados</span>
+            </div>
+            <div class="feature">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <span>Gestão de RSVPs</span>
+            </div>
+            <div class="feature">
+              <ion-icon name="checkmark-circle" color="success"></ion-icon>
+              <span>Exportação de dados</span>
+            </div>
+          </div>
+
+          <ion-button
+            expand="block"
+            size="large"
+            class="customize-button"
+            (click)="startCustomization()"
+          >
+            <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+            Personalizar Este Convite
+          </ion-button>
+
+          <ion-button
+            expand="block"
+            fill="clear"
+            size="small"
+            (click)="goBack()"
+          >
+            Ver Outros Temas
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+  <!-- Theme Variations Hint -->
+  <div class="variations-hint">
+    <p>
+      💡 <strong>Dica:</strong> Todos os temas podem ser personalizados com as
+      suas cores favoritas
+    </p>
+  </div>
+</ion-content>
+
+<!-- Animation Modal -->
+<ion-modal
+  [isOpen]="showAnimationModal()"
+  (didDismiss)="closeAnimationModal()"
+  [backdropDismiss]="false"
+  class="animation-modal"
+>
+  <ng-template>
+    <div class="modal-header">
+      <h2>Animação do Convite</h2>
+      <ion-button
+        fill="clear"
+        (click)="closeAnimationModal()"
+        class="close-button"
+      >
+        <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </div>
+
+    <div class="modal-content">
+      <p class="modal-hint">
+        ✨ É assim que os seus convidados vão receber e abrir o convite digital
+      </p>
+      
+      <div class="animation-container">
+        <app-envelope-opener
+          [event]="eventWithTheme()"
+          (opened)="onEnvelopeOpened()"
+        ></app-envelope-opener>
+      </div>
+
+      <div class="modal-instructions">
+        <p>👆 Clique no selo para abrir o envelope</p>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <ion-button
+        expand="block"
+        (click)="closeAnimationModal()"
+      >
+        Fechar
+      </ion-button>
+    </div>
+  </ng-template>
+</ion-modal>
