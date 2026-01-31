@@ -15,6 +15,10 @@ import {
   IonBackButton,
   IonCard,
   IonCardContent,
+  IonModal,
+  IonSelect,
+  IonSelectOption,
+  IonChip,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -22,9 +26,14 @@ import {
   peopleOutline,
   homeOutline,
   arrowForwardOutline,
-  heartOutline, checkmarkCircle } from 'ionicons/icons';
+  heartOutline,
+  checkmarkCircle,
+  playCircleOutline,
+  closeOutline,
+} from 'ionicons/icons';
 
 import { InvitationCardComponent } from '@components/invitation-card/invitation-card.component';
+import { EnvelopeOpenerComponent } from '@components/envelope-opener/envelope-opener.component';
 import { InvitationType, InvitationTheme, Event, Invitation, InvitedPerson, InvitedChild } from '@models/index';
 
 @Component({
@@ -45,7 +54,12 @@ import { InvitationType, InvitationTheme, Event, Invitation, InvitedPerson, Invi
     IonBackButton,
     IonCard,
     IonCardContent,
+    IonModal,
+    IonSelect,
+    IonSelectOption,
+    IonChip,
     InvitationCardComponent,
+    EnvelopeOpenerComponent,
   ],
   templateUrl: './preview.page.html',
   styleUrls: ['./preview.page.scss'],
@@ -53,6 +67,7 @@ import { InvitationType, InvitationTheme, Event, Invitation, InvitedPerson, Invi
 export class PreviewPage implements OnInit {
   theme = signal<InvitationTheme>('elegant');
   invitationType = signal<InvitationType>('single');
+  showAnimationModal = signal(false);
 
   // Sample event data for preview
   sampleEvent: Event = {
@@ -173,7 +188,16 @@ export class PreviewPage implements OnInit {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    addIcons({heartOutline,checkmarkCircle,arrowForwardOutline,personOutline,peopleOutline,homeOutline,});
+    addIcons({
+      heartOutline,
+      checkmarkCircle,
+      arrowForwardOutline,
+      personOutline,
+      peopleOutline,
+      homeOutline,
+      playCircleOutline,
+      closeOutline,
+    });
   }
 
   ngOnInit() {
@@ -201,6 +225,25 @@ export class PreviewPage implements OnInit {
 
   onTypeChange(event: any) {
     this.invitationType.set(event.detail.value);
+  }
+
+  onThemeChange(event: any) {
+    const newTheme = event.detail.value as InvitationTheme;
+    this.theme.set(newTheme);
+    this.sampleEvent.theme = newTheme;
+  }
+
+  openAnimationModal() {
+    this.showAnimationModal.set(true);
+  }
+
+  closeAnimationModal() {
+    this.showAnimationModal.set(false);
+  }
+
+  onEnvelopeOpened() {
+    // Animation completed - could close modal after a delay or wait for user
+    console.log('Envelope animation completed');
   }
 
   startCustomization() {

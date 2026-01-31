@@ -99,8 +99,8 @@ interface CustomizationForm {
 export class CustomizePage implements OnInit {
   theme = signal<InvitationTheme>('elegant');
   
-  // Form data
-  form: CustomizationForm = {
+  // Form data (signal para reatividade)
+  form = signal<CustomizationForm>({
     eventType: 'wedding',
     hosts: ['', ''],
     title: '',
@@ -116,7 +116,53 @@ export class CustomizePage implements OnInit {
     askDietaryRestrictions: true,
     askSongRequest: true,
     askChildrenInfo: true,
-  };
+  });
+
+  // Getters/Setters para ngModel (bridge entre template e signal)
+  get eventType() { return this.form().eventType; }
+  set eventType(value: EventType) { this.form.update(f => ({ ...f, eventType: value })); }
+
+  get hosts() { return this.form().hosts; }
+  set hosts(value: string[]) { this.form.update(f => ({ ...f, hosts: value })); }
+
+  get title() { return this.form().title; }
+  set title(value: string) { this.form.update(f => ({ ...f, title: value })); }
+
+  get subtitle() { return this.form().subtitle; }
+  set subtitle(value: string) { this.form.update(f => ({ ...f, subtitle: value })); }
+
+  get description() { return this.form().description; }
+  set description(value: string) { this.form.update(f => ({ ...f, description: value })); }
+
+  get date() { return this.form().date; }
+  set date(value: string) { this.form.update(f => ({ ...f, date: value })); }
+
+  get time() { return this.form().time; }
+  set time(value: string) { this.form.update(f => ({ ...f, time: value })); }
+
+  get venueName() { return this.form().venueName; }
+  set venueName(value: string) { this.form.update(f => ({ ...f, venueName: value })); }
+
+  get venueAddress() { return this.form().venueAddress; }
+  set venueAddress(value: string) { this.form.update(f => ({ ...f, venueAddress: value })); }
+
+  get venueCity() { return this.form().venueCity; }
+  set venueCity(value: string) { this.form.update(f => ({ ...f, venueCity: value })); }
+
+  get venueCountry() { return this.form().venueCountry; }
+  set venueCountry(value: string) { this.form.update(f => ({ ...f, venueCountry: value })); }
+
+  get allowPlusOne() { return this.form().allowPlusOne; }
+  set allowPlusOne(value: boolean) { this.form.update(f => ({ ...f, allowPlusOne: value })); }
+
+  get askDietaryRestrictions() { return this.form().askDietaryRestrictions; }
+  set askDietaryRestrictions(value: boolean) { this.form.update(f => ({ ...f, askDietaryRestrictions: value })); }
+
+  get askSongRequest() { return this.form().askSongRequest; }
+  set askSongRequest(value: boolean) { this.form.update(f => ({ ...f, askSongRequest: value })); }
+
+  get askChildrenInfo() { return this.form().askChildrenInfo; }
+  set askChildrenInfo(value: boolean) { this.form.update(f => ({ ...f, askChildrenInfo: value })); }
 
   // Event types
   eventTypes = [
@@ -144,39 +190,40 @@ export class CustomizePage implements OnInit {
 
   // Preview event (computed from form)
   previewEvent = computed<Event>(() => {
+    const formData = this.form();
     const venue: Venue = {
-      name: this.form.venueName || 'Local do Evento',
-      address: this.form.venueAddress || 'Endereço',
-      city: this.form.venueCity || 'Cidade',
-      country: this.form.venueCountry || 'Portugal',
+      name: formData.venueName || 'Local do Evento',
+      address: formData.venueAddress || 'Endereço',
+      city: formData.venueCity || 'Cidade',
+      country: formData.venueCountry || 'Portugal',
     };
 
     // Generate title based on event type and hosts
-    let generatedTitle = this.form.title;
-    if (!generatedTitle && this.form.eventType === 'wedding') {
-      const host1 = this.form.hosts[0] || 'Noivo/a';
-      const host2 = this.form.hosts[1] || 'Noivo/a';
+    let generatedTitle = formData.title;
+    if (!generatedTitle && formData.eventType === 'wedding') {
+      const host1 = formData.hosts[0] || 'Noivo/a';
+      const host2 = formData.hosts[1] || 'Noivo/a';
       generatedTitle = `${host1} & ${host2}`;
     } else if (!generatedTitle) {
-      generatedTitle = `${this.eventTypes.find(t => t.value === this.form.eventType)?.label || 'Evento'}`;
+      generatedTitle = `${this.eventTypes.find(t => t.value === formData.eventType)?.label || 'Evento'}`;
     }
 
     return {
       id: 'preview',
       title: generatedTitle,
-      subtitle: this.form.subtitle || 'Celebrem connosco',
-      description: this.form.description || '',
-      eventType: this.form.eventType,
-      date: this.form.date || new Date().toISOString().split('T')[0],
-      time: this.form.time || '15:00',
+      subtitle: formData.subtitle || 'Celebrem connosco',
+      description: formData.description || '',
+      eventType: formData.eventType,
+      date: formData.date || new Date().toISOString().split('T')[0],
+      time: formData.time || '15:00',
       venue,
-      hosts: this.form.hosts.filter(h => h.trim() !== ''),
+      hosts: formData.hosts.filter(h => h.trim() !== ''),
       theme: this.theme(),
       language: 'pt',
-      allowPlusOne: this.form.allowPlusOne,
-      askDietaryRestrictions: this.form.askDietaryRestrictions,
-      askSongRequest: this.form.askSongRequest,
-      askChildrenInfo: this.form.askChildrenInfo,
+      allowPlusOne: formData.allowPlusOne,
+      askDietaryRestrictions: formData.askDietaryRestrictions,
+      askSongRequest: formData.askSongRequest,
+      askChildrenInfo: formData.askChildrenInfo,
       shareCode: 'preview',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -185,9 +232,10 @@ export class CustomizePage implements OnInit {
 
   // Form validation
   isValid = computed(() => {
-    const hasHost = this.form.hosts.some(h => h.trim() !== '');
-    const hasDate = this.form.date !== '';
-    const hasVenue = this.form.venueName.trim() !== '';
+    const formData = this.form();
+    const hasHost = formData.hosts.some(h => h.trim() !== '');
+    const hasDate = formData.date !== '';
+    const hasVenue = formData.venueName.trim() !== '';
     return hasHost && hasDate && hasVenue;
   });
 
@@ -238,23 +286,24 @@ export class CustomizePage implements OnInit {
 
   updateDefaultTitle() {
     // Auto-generate title based on event type
-    if (this.form.eventType === 'wedding') {
-      if (this.form.hosts[0] && this.form.hosts[1]) {
-        this.form.title = `${this.form.hosts[0]} & ${this.form.hosts[1]}`;
+    const formData = this.form();
+    if (formData.eventType === 'wedding') {
+      if (formData.hosts[0] && formData.hosts[1]) {
+        this.form.update(f => ({ ...f, title: `${formData.hosts[0]} & ${formData.hosts[1]}` }));
       } else {
-        this.form.title = 'O Nosso Casamento';
+        this.form.update(f => ({ ...f, title: 'O Nosso Casamento' }));
       }
-      this.form.subtitle = 'Celebrem connosco o nosso dia especial';
+      this.form.update(f => ({ ...f, subtitle: 'Celebrem connosco o nosso dia especial' }));
     } else {
-      const eventLabel = this.eventTypes.find(t => t.value === this.form.eventType)?.label || 'Evento';
-      this.form.title = eventLabel;
-      this.form.subtitle = 'Junte-se a nós para celebrar';
+      const eventLabel = this.eventTypes.find(t => t.value === formData.eventType)?.label || 'Evento';
+      this.form.update(f => ({ ...f, title: eventLabel, subtitle: 'Junte-se a nós para celebrar' }));
     }
   }
 
   onHostChange() {
-    if (this.form.eventType === 'wedding' && this.form.hosts[0] && this.form.hosts[1]) {
-      this.form.title = `${this.form.hosts[0]} & ${this.form.hosts[1]}`;
+    const formData = this.form();
+    if (formData.eventType === 'wedding' && formData.hosts[0] && formData.hosts[1]) {
+      this.form.update(f => ({ ...f, title: `${formData.hosts[0]} & ${formData.hosts[1]}` }));
     }
   }
 
@@ -263,22 +312,24 @@ export class CustomizePage implements OnInit {
       return;
     }
 
+    const formData = this.form();
+
     // Navigate to payment page with form data via navigation state
     this.router.navigate(['/payment'], {
       state: {
         eventData: {
           theme: this.theme(),
-          eventType: this.form.eventType,
-          title: this.form.title,
-          subtitle: this.form.subtitle,
-          description: this.form.description,
-          date: this.form.date,
-          time: this.form.time,
-          venueName: this.form.venueName,
-          venueAddress: this.form.venueAddress,
-          venueCity: this.form.venueCity,
-          venueCountry: this.form.venueCountry,
-          hosts: this.form.hosts.filter((h: string) => h.trim()),
+          eventType: formData.eventType,
+          title: formData.title,
+          subtitle: formData.subtitle,
+          description: formData.description,
+          date: formData.date,
+          time: formData.time,
+          venueName: formData.venueName,
+          venueAddress: formData.venueAddress,
+          venueCity: formData.venueCity,
+          venueCountry: formData.venueCountry,
+          hosts: formData.hosts.filter((h: string) => h.trim()),
         },
       },
     });

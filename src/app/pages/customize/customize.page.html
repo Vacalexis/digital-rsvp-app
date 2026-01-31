@@ -31,7 +31,7 @@
         <ion-card-content>
           <ion-item>
             <ion-select
-              [(ngModel)]="form.eventType"
+              [(ngModel)]="eventType"
               (ionChange)="onEventTypeChange()"
               label="Selecione o tipo"
               label-placement="stacked"
@@ -58,7 +58,7 @@
         <ion-card-content>
           <ion-item>
             <ion-input
-              [(ngModel)]="form.hosts[0]"
+              [(ngModel)]="hosts[0]"
               (ionInput)="onHostChange()"
               label="Nome do primeiro anfitrião"
               label-placement="stacked"
@@ -67,10 +67,10 @@
             ></ion-input>
           </ion-item>
 
-          @if (form.eventType === 'wedding') {
+          @if (eventType === 'wedding') {
             <ion-item>
               <ion-input
-                [(ngModel)]="form.hosts[1]"
+                [(ngModel)]="hosts[1]"
                 (ionInput)="onHostChange()"
                 label="Nome do segundo anfitrião"
                 label-placement="stacked"
@@ -92,7 +92,7 @@
         <ion-card-content>
           <ion-item>
             <ion-input
-              [(ngModel)]="form.title"
+              [(ngModel)]="title"
               label="Título do convite"
               label-placement="stacked"
               placeholder="Ex: O Nosso Casamento"
@@ -102,7 +102,7 @@
 
           <ion-item>
             <ion-input
-              [(ngModel)]="form.subtitle"
+              [(ngModel)]="subtitle"
               label="Subtítulo (opcional)"
               label-placement="stacked"
               placeholder="Ex: Celebrem connosco o nosso dia especial"
@@ -111,7 +111,7 @@
 
           <ion-item>
             <ion-textarea
-              [(ngModel)]="form.description"
+              [(ngModel)]="description"
               label="Mensagem (opcional)"
               label-placement="stacked"
               placeholder="Ex: Junte-se a nós para celebrar o amor..."
@@ -133,7 +133,7 @@
         <ion-card-content>
           <ion-item>
             <ion-input
-              [(ngModel)]="form.date"
+              [(ngModel)]="date"
               type="date"
               label="Data do evento"
               label-placement="stacked"
@@ -143,7 +143,7 @@
 
           <ion-item>
             <ion-input
-              [(ngModel)]="form.time"
+              [(ngModel)]="time"
               type="time"
               label="Hora (opcional)"
               label-placement="stacked"
@@ -163,7 +163,7 @@
         <ion-card-content>
           <ion-item>
             <ion-input
-              [(ngModel)]="form.venueName"
+              [(ngModel)]="venueName"
               label="Nome do local"
               label-placement="stacked"
               placeholder="Ex: Quinta do Vale"
@@ -173,7 +173,7 @@
 
           <ion-item>
             <ion-input
-              [(ngModel)]="form.venueAddress"
+              [(ngModel)]="venueAddress"
               label="Endereço"
               label-placement="stacked"
               placeholder="Ex: Rua das Flores, 123"
@@ -182,7 +182,7 @@
 
           <ion-item>
             <ion-input
-              [(ngModel)]="form.venueCity"
+              [(ngModel)]="venueCity"
               label="Cidade"
               label-placement="stacked"
               placeholder="Ex: Lisboa"
@@ -191,7 +191,7 @@
 
           <ion-item>
             <ion-input
-              [(ngModel)]="form.venueCountry"
+              [(ngModel)]="venueCountry"
               label="País"
               label-placement="stacked"
               placeholder="Portugal"
@@ -210,25 +210,25 @@
         </ion-card-header>
         <ion-card-content>
           <ion-item>
-            <ion-toggle [(ngModel)]="form.allowPlusOne" [enableOnOffLabels]="true">
+            <ion-toggle [(ngModel)]="allowPlusOne" [enableOnOffLabels]="true">
               Permitir acompanhantes (+1)
             </ion-toggle>
           </ion-item>
 
           <ion-item>
-            <ion-toggle [(ngModel)]="form.askDietaryRestrictions" [enableOnOffLabels]="true">
+            <ion-toggle [(ngModel)]="askDietaryRestrictions" [enableOnOffLabels]="true">
               Perguntar restrições alimentares
             </ion-toggle>
           </ion-item>
 
           <ion-item>
-            <ion-toggle [(ngModel)]="form.askSongRequest" [enableOnOffLabels]="true">
+            <ion-toggle [(ngModel)]="askSongRequest" [enableOnOffLabels]="true">
               Perguntar pedido de música
             </ion-toggle>
           </ion-item>
 
           <ion-item>
-            <ion-toggle [(ngModel)]="form.askChildrenInfo" [enableOnOffLabels]="true">
+            <ion-toggle [(ngModel)]="askChildrenInfo" [enableOnOffLabels]="true">
               Perguntar informação sobre filhos
             </ion-toggle>
           </ion-item>
