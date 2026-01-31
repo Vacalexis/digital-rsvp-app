@@ -11,6 +11,25 @@
   --text-muted: #6b7280;
   --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
     0 2px 4px -1px rgba(0, 0, 0, 0.06);
+
+  // Fix input spacing
+  ion-input,
+  ion-textarea,
+  ion-select {
+    --padding-top: 12px;
+    --padding-bottom: 8px;
+    min-height: 56px;
+
+    &::part(label) {
+      margin-bottom: 8px;
+    }
+  }
+
+  ion-item {
+    --inner-padding-end: 0;
+    --padding-start: 0;
+    margin-bottom: 12px;
+  }
 }
 
 .customize-content {
@@ -132,6 +151,73 @@ ion-card {
       }
     }
   }
+}
+
+// ============================================
+// SCHEDULE SECTION
+// ============================================
+
+.schedule-helper {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  margin: 0 0 20px;
+  line-height: 1.5;
+}
+
+.schedule-item {
+  background: rgba(var(--ion-color-light-rgb), 0.5);
+  border: 1px solid rgba(var(--ion-color-primary-rgb), 0.2);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+
+  &:last-of-type {
+    margin-bottom: 16px;
+  }
+
+  .schedule-item-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+
+    h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--ion-color-primary);
+      margin: 0;
+    }
+
+    ion-button {
+      --padding-start: 8px;
+      --padding-end: 8px;
+      margin: 0;
+    }
+  }
+
+  ion-item {
+    --background: white;
+    margin-bottom: 8px;
+    border-radius: 8px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.no-items-text {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-style: italic;
+  margin: 20px 0;
+}
+
+.add-schedule-btn {
+  margin-top: 12px;
+  --border-radius: 8px;
+  font-weight: 600;
 }
 
 // ============================================
@@ -403,4 +489,91 @@ ion-card {
 
 .preview-card {
   animation: fadeIn 400ms ease-out 300ms backwards;
+}
+
+// ============================================
+// ANIMATION BUTTON
+// ============================================
+
+.animation-button {
+  margin-top: 16px;
+  --border-radius: 12px;
+  font-weight: 600;
+}
+
+// ============================================
+// ANIMATION MODAL
+// ============================================
+
+.animation-modal {
+  --width: 100%;
+  --height: 100%;
+  --border-radius: 0;
+
+  @media (min-width: 768px) {
+    --width: 90%;
+    --height: 90%;
+    --max-width: 800px;
+    --max-height: 90vh;
+    --border-radius: 20px;
+  }
+
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(
+      135deg,
+      var(--ion-color-primary) 0%,
+      var(--ion-color-secondary) 100%
+    );
+    color: white;
+
+    h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .close-button {
+      --color: white;
+      --background-hover: rgba(255, 255, 255, 0.1);
+      font-size: 1.5rem;
+    }
+  }
+
+  .modal-content {
+    padding: 0;
+    background: var(--background-cream);
+    min-height: calc(100% - 140px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .animation-container {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      
+      app-envelope-opener {
+        width: 100%;
+        height: 100%;
+      }
+    }
+  }
+
+  .modal-footer {
+    padding: 16px 20px;
+    background: white;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+
+    ion-button {
+      --border-radius: 12px;
+      font-weight: 600;
+    }
+  }
 }
