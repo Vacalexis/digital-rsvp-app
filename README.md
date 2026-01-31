@@ -106,32 +106,44 @@ npm start           # Servidor de desenvolvimento
 npm run build       # Build de produção
 npm run lint        # Verificação de código
 npm run test        # Testes unitários
-npm run get-my-ip   # Obter IP público (para whitelist)
+npm run get-my-ip   # Obter IP público (para referência)
 ```
 
-## 🔐 Proteção por IP (Staging)
+## 🔐 Proteção de Staging
 
-O projeto inclui middleware de proteção por IP para ambientes de staging.
+O projeto inclui autenticação integrada para proteger o site em staging.
 
-### Como configurar
+### Credenciais Padrão
 
-1. **Obter o seu IP:**
-   ```bash
-   npm run get-my-ip
-   ```
+**Username:** `admin`  
+**Password:** `rsvp2024`
 
-2. **Configurar no Vercel:**
-   - Dashboard → Settings → Environment Variables
-   - Nome: `ALLOWED_IPS`
-   - Valor: `seu-ip-aqui` (ou múltiplos IPs separados por vírgula)
-   - Scope: `Preview` (para staging) ou `Production`
+⚠️ **Mudar antes de fazer deploy!**
 
-3. **Re-deploy:**
-   - Push para o branch → Vercel redeploy automático
+### Como Funciona
+
+- **Staging/Produção:** `environment.prod.ts` → `requireAuth: true` → Site protegido
+- **Desenvolvimento:** `environment.ts` → `requireAuth: false` → Acesso livre
+- **RSVP Público:** Rota `/rsvp/:code` sempre acessível (convidados)
+
+### Mudar Password
+
+```bash
+# Gerar hash
+node generate-hash.js admin nova-password
+
+# Atualizar em src/app/services/auth.service.ts
+private readonly VALID_HASH = 'hash-gerado';
+```
 
 **Documentação completa:** [docs/IP-WHITELIST-SETUP.md](docs/IP-WHITELIST-SETUP.md)
 
-💡 **Dica:** Deixe `ALLOWED_IPS` vazio para desativar a proteção.
+### Características
+
+- ✅ Grátis (sem planos pagos necessários)
+- ✅ Rate limiting (5 tentativas → bloqueio 5min)
+- ✅ Credenciais hasheadas (SHA-256)
+- ✅ Sessão em sessionStorage (expira ao fechar tab)
 
 ## 🚀 Deployment
 

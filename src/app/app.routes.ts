@@ -2,40 +2,53 @@ import { Routes } from "@angular/router";
 import { authGuard } from "./guards/auth.guard";
 
 export const routes: Routes = [
-  // Public landing page (default)
-  {
-    path: "",
-    loadComponent: () =>
-      import("./pages/landing/landing.page").then((m) => m.LandingPage),
-  },
+  // Login page (unprotected)
   {
     path: "login",
     loadComponent: () =>
       import("./pages/login/login.page").then((m) => m.LoginPage),
   },
-  // Public theme gallery
+  // Public RSVP form (unprotected - guests need access without login)
+  {
+    path: "rsvp/:code",
+    loadComponent: () =>
+      import("./pages/rsvp/rsvp.page").then((m) => m.RsvpPage),
+  },
+  // All other routes require authentication in staging
+  // Public landing page (protected in staging via environment.requireAuth)
+  {
+    path: "",
+    loadComponent: () =>
+      import("./pages/landing/landing.page").then((m) => m.LandingPage),
+    canActivate: [authGuard],
+  },
+  // Public theme gallery (protected in staging)
   {
     path: "themes",
     loadComponent: () =>
       import("./pages/themes/themes.page").then((m) => m.ThemesPage),
+    canActivate: [authGuard],
   },
-  // Public theme preview
+  // Public theme preview (protected in staging)
   {
     path: "preview/:theme",
     loadComponent: () =>
       import("./pages/preview/preview.page").then((m) => m.PreviewPage),
+    canActivate: [authGuard],
   },
-  // Public customization flow
+  // Public customization flow (protected in staging)
   {
     path: "customize",
     loadComponent: () =>
       import("./pages/customize/customize.page").then((m) => m.CustomizePage),
+    canActivate: [authGuard],
   },
-  // Mock payment page (public)
+  // Mock payment page (protected in staging)
   {
     path: "payment",
     loadComponent: () =>
       import("./pages/payment/payment.page").then((m) => m.PaymentPage),
+    canActivate: [authGuard],
   },
   {
     path: "events",
@@ -110,11 +123,5 @@ export const routes: Routes = [
     loadComponent: () =>
       import("./pages/settings/settings.page").then((m) => m.SettingsPage),
     canActivate: [authGuard],
-  },
-  {
-    path: "rsvp/:code",
-    loadComponent: () =>
-      import("./pages/rsvp/rsvp.page").then((m) => m.RsvpPage),
-    // No auth guard - public RSVP page
   },
 ];
