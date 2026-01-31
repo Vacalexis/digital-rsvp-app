@@ -1,0 +1,200 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/customize'"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Pagamento</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="payment-content">
+  @if (paymentSuccess()) {
+    <!-- Success State -->
+    <div class="success-container">
+      <div class="success-content">
+        <ion-icon name="checkmark-circle-outline" class="success-icon"></ion-icon>
+        <h2>Pagamento Concluído!</h2>
+        <p>O seu evento foi criado com sucesso.</p>
+        <ion-spinner name="dots"></ion-spinner>
+        <p class="redirect-message">A redirecionar para o BackOffice...</p>
+      </div>
+    </div>
+  } @else {
+    <!-- Payment Form -->
+    <div class="payment-container">
+      <!-- Order Summary -->
+      <div class="order-section">
+        <h2>Resumo da Compra</h2>
+
+        @if (eventData(); as data) {
+          <ion-card class="summary-card">
+            <ion-card-header>
+              <ion-card-title>
+                <ion-icon name="calendar-outline"></ion-icon>
+                {{ data.title || 'Evento' }}
+              </ion-card-title>
+            </ion-card-header>
+            <ion-card-content>
+              <ion-list lines="none">
+                <ion-item>
+                  <ion-icon name="calendar-outline" slot="start"></ion-icon>
+                  <ion-label>
+                    <p>Tipo de Evento</p>
+                    <h3>{{ eventTypeLabels[data.eventType] }}</h3>
+                  </ion-label>
+                </ion-item>
+
+                <ion-item>
+                  <ion-icon name="calendar-outline" slot="start"></ion-icon>
+                  <ion-label>
+                    <p>Data</p>
+                    <h3>{{ data.date }}</h3>
+                  </ion-label>
+                </ion-item>
+
+                <ion-item>
+                  <ion-icon name="location-outline" slot="start"></ion-icon>
+                  <ion-label>
+                    <p>Local</p>
+                    <h3>{{ data.venueName }}</h3>
+                  </ion-label>
+                </ion-item>
+
+                <ion-item>
+                  <ion-icon name="people-outline" slot="start"></ion-icon>
+                  <ion-label>
+                    <p>Anfitriões</p>
+                    <h3>{{ displayHosts() }}</h3>
+                  </ion-label>
+                </ion-item>
+
+                <ion-item>
+                  <ion-icon name="heart-outline" slot="start"></ion-icon>
+                  <ion-label>
+                    <p>Tema</p>
+                    <h3>{{ themeNames[data.theme] }}</h3>
+                  </ion-label>
+                </ion-item>
+              </ion-list>
+            </ion-card-content>
+          </ion-card>
+        }
+
+        <!-- Features Included -->
+        <ion-card class="features-card">
+          <ion-card-header>
+            <ion-card-title>Incluído no Plano</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <div class="features-list">
+              <div class="feature">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>Convites digitais ilimitados</span>
+              </div>
+              <div class="feature">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>Gestão completa de convidados</span>
+              </div>
+              <div class="feature">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>Rastreamento de RSVPs em tempo real</span>
+              </div>
+              <div class="feature">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>Exportação de dados (CSV/Excel)</span>
+              </div>
+              <div class="feature">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>Restrições alimentares e pedidos</span>
+              </div>
+              <div class="feature">
+                <ion-icon name="checkmark-circle-outline" color="success"></ion-icon>
+                <span>1 ano de acesso completo</span>
+              </div>
+            </div>
+          </ion-card-content>
+        </ion-card>
+
+        <!-- Price -->
+        <ion-card class="price-card">
+          <ion-card-content>
+            <div class="price-row">
+              <span>Convite Digital RSVP</span>
+              <span class="price">€29,00</span>
+            </div>
+            <div class="price-row total">
+              <span>Total</span>
+              <span class="price">€29,00</span>
+            </div>
+            <p class="price-note">
+              💡 Pagamento único, sem mensalidades
+            </p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Mock Payment Section -->
+      <div class="payment-section">
+        <h2>Pagamento</h2>
+
+        <ion-card class="payment-card">
+          <ion-card-content>
+            <div class="mock-payment-info">
+              <ion-icon name="card-outline" class="payment-icon"></ion-icon>
+              <h3>Simulação de Pagamento</h3>
+              <p>
+                Esta é uma versão de demonstração. Em produção, aqui apareceria
+                o formulário Stripe seguro para processar o pagamento.
+              </p>
+            </div>
+
+            <!-- Security Badges -->
+            <div class="security-badges">
+              <div class="badge">
+                <ion-icon name="lock-closed-outline"></ion-icon>
+                <span>Pagamento Seguro</span>
+              </div>
+              <div class="badge">
+                <ion-icon name="shield-checkmark-outline"></ion-icon>
+                <span>SSL Encriptado</span>
+              </div>
+            </div>
+
+            <!-- Mock Payment Button -->
+            <ion-button
+              expand="block"
+              size="large"
+              color="success"
+              [disabled]="isProcessing()"
+              (click)="processPayment()"
+              class="pay-button"
+            >
+              @if (isProcessing()) {
+                <ion-spinner name="dots"></ion-spinner>
+                <span>A processar...</span>
+              } @else {
+                <ion-icon name="checkmark-circle-outline" slot="start"></ion-icon>
+                Completar Compra (Mock €29)
+              }
+            </ion-button>
+
+            <ion-button
+              expand="block"
+              fill="clear"
+              [disabled]="isProcessing()"
+              (click)="cancelPayment()"
+            >
+              Voltar ao Formulário
+            </ion-button>
+
+            <p class="disclaimer">
+              Ao clicar em "Completar Compra", concorda com os nossos
+              <a href="#">Termos de Serviço</a> e
+              <a href="#">Política de Privacidade</a>.
+            </p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  }
+</ion-content>

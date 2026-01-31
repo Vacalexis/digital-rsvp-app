@@ -1,0 +1,406 @@
+/**
+ * Customize Page Styles
+ * 
+ * Two-column layout with form + live preview
+ */
+
+:host {
+  --background-cream: #faf5f0;
+  --background-soft: #f3eae1;
+  --text-dark: #1f2937;
+  --text-muted: #6b7280;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.customize-content {
+  --background: var(--background-cream);
+}
+
+// ============================================
+// THEME CHIP (HEADER)
+// ============================================
+
+.theme-chip {
+  --background: rgba(255, 255, 255, 0.2);
+  --color: white;
+  font-weight: 600;
+  margin-right: 8px;
+
+  ion-icon {
+    font-size: 1.1rem;
+  }
+}
+
+// ============================================
+// CONTAINER LAYOUT
+// ============================================
+
+.customize-container {
+  display: flex;
+  flex-direction: column;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding-bottom: 120px; // Space for sticky footer
+}
+
+.form-section {
+  flex: 1;
+  padding: 16px;
+}
+
+.preview-section {
+  display: none; // Hidden on mobile, shown on tablet+
+}
+
+// ============================================
+// SECTION HEADERS
+// ============================================
+
+.section-header {
+  padding: 24px 16px 16px;
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0 0 8px;
+  }
+
+  p {
+    font-size: 1rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
+// ============================================
+// FORM CARDS
+// ============================================
+
+ion-card {
+  margin: 0 0 16px;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow);
+
+  ion-card-header {
+    padding: 16px 16px 12px;
+
+    ion-card-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--text-dark);
+
+      ion-icon {
+        font-size: 1.3rem;
+        color: var(--ion-color-primary);
+      }
+    }
+  }
+
+  ion-card-content {
+    padding: 0 16px 16px;
+
+    ion-item {
+      --background: transparent;
+      --padding-start: 0;
+      --inner-padding-end: 0;
+      margin-bottom: 12px;
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      ion-input,
+      ion-textarea,
+      ion-select {
+        --padding-start: 12px;
+        --padding-end: 12px;
+        --padding-top: 12px;
+        --padding-bottom: 12px;
+        --background: white;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      ion-toggle {
+        --handle-width: 24px;
+        --handle-height: 24px;
+      }
+    }
+  }
+}
+
+// ============================================
+// PREVIEW SECTION
+// ============================================
+
+.preview-header {
+  position: sticky;
+  top: 0;
+  padding: 24px 16px 16px;
+  background: var(--background-cream);
+  z-index: 10;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-dark);
+    margin: 0 0 8px;
+
+    ion-icon {
+      font-size: 1.5rem;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  p {
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
+.preview-card {
+  padding: 24px 16px;
+  
+  app-invitation-card {
+    display: block;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+}
+
+.preview-info {
+  padding: 0 16px 24px;
+  max-width: 500px;
+  margin: 0 auto;
+
+  ion-card {
+    background: rgba(201, 169, 98, 0.1);
+    border: 1px solid rgba(201, 169, 98, 0.3);
+    box-shadow: none;
+    margin: 0;
+
+    ion-card-content {
+      padding: 16px;
+
+      p {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        margin: 0;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// ============================================
+// STICKY CTA FOOTER
+// ============================================
+
+.cta-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 12px 16px;
+  background: var(--background-cream);
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.05);
+  z-index: 100;
+
+  ion-card {
+    margin: 0;
+    box-shadow: none;
+    background: white;
+    border: 2px solid var(--ion-color-primary);
+  }
+
+  .cta-content {
+    padding: 8px;
+
+    .cta-info {
+      text-align: center;
+      margin-bottom: 12px;
+
+      h4 {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin: 0 0 4px;
+      }
+
+      p {
+        font-size: 0.95rem;
+        color: var(--text-muted);
+        margin: 0;
+
+        strong {
+          color: var(--ion-color-primary);
+          font-weight: 800;
+          font-size: 1.1rem;
+        }
+      }
+    }
+
+    ion-button {
+      --border-radius: 10px;
+      --padding-top: 14px;
+      --padding-bottom: 14px;
+      font-weight: 700;
+      margin: 0;
+
+      ion-icon {
+        font-size: 1.2rem;
+      }
+    }
+
+    .validation-hint {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      font-size: 0.85rem;
+      color: var(--ion-color-warning);
+      font-weight: 500;
+
+      ion-icon {
+        font-size: 1.1rem;
+      }
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE - TABLET & UP
+// ============================================
+
+@media (min-width: 768px) {
+  .customize-container {
+    flex-direction: row;
+    gap: 24px;
+    padding: 24px;
+  }
+
+  .form-section {
+    flex: 1;
+    max-width: 600px;
+    padding: 0;
+  }
+
+  .preview-section {
+    display: block;
+    flex: 1;
+    max-width: 500px;
+    position: sticky;
+    top: 0;
+    height: fit-content;
+  }
+
+  .section-header {
+    padding: 0 0 16px;
+  }
+
+  .preview-header {
+    position: static;
+    padding: 0 0 16px;
+    border-bottom: none;
+  }
+
+  .preview-card {
+    padding: 0 0 24px;
+  }
+
+  .preview-info {
+    padding: 0;
+  }
+
+  .cta-footer {
+    position: static;
+    padding: 24px 0 0;
+    border-top: none;
+    box-shadow: none;
+    background: transparent;
+    max-width: 600px;
+    margin: 0 auto;
+
+    ion-card {
+      box-shadow: var(--card-shadow);
+    }
+
+    .cta-content {
+      padding: 16px;
+    }
+  }
+
+  .customize-container {
+    padding-bottom: 24px; // No extra space needed on desktop
+  }
+}
+
+@media (min-width: 1024px) {
+  .form-section {
+    max-width: 650px;
+  }
+
+  .preview-section {
+    max-width: 550px;
+  }
+
+  .section-header {
+    h2 {
+      font-size: 2rem;
+    }
+  }
+
+  ion-card {
+    ion-card-header {
+      ion-card-title {
+        font-size: 1.25rem;
+
+        ion-icon {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-section ion-card {
+  animation: fadeIn 300ms ease-out backwards;
+
+  @for $i from 1 through 6 {
+    &:nth-child(#{$i + 1}) {
+      // +1 to account for section-header
+      animation-delay: #{$i * 50}ms;
+    }
+  }
+}
+
+.preview-card {
+  animation: fadeIn 400ms ease-out 300ms backwards;
+}

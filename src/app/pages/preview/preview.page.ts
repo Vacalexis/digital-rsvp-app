@@ -204,10 +204,9 @@ export class PreviewPage implements OnInit {
   }
 
   startCustomization() {
-    // TODO: Navigate to customization flow (not yet implemented)
-    // For now, show alert or navigate to login
-    this.router.navigate(['/login'], {
-      queryParams: { theme: this.theme(), returnUrl: '/events/new' },
+    // Navigate to customization flow with selected theme
+    this.router.navigate(['/customize'], {
+      queryParams: { theme: this.theme() },
     });
   }
 

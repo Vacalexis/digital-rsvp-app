@@ -1,0 +1,298 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button [defaultHref]="'/preview/' + theme()"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Personalizar Convite</ion-title>
+    <ion-chip slot="end" class="theme-chip">
+      <ion-icon name="heart-outline"></ion-icon>
+      <ion-label>{{ themeNames[theme()] }}</ion-label>
+    </ion-chip>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="customize-content">
+  <div class="customize-container">
+    <!-- Form Section -->
+    <div class="form-section">
+      <div class="section-header">
+        <h2>Detalhes do Evento</h2>
+        <p>Preencha os campos para personalizar o seu convite</p>
+      </div>
+
+      <!-- Event Type -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="calendar-outline"></ion-icon>
+            Tipo de Evento
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-select
+              [(ngModel)]="form.eventType"
+              (ionChange)="onEventTypeChange()"
+              label="Selecione o tipo"
+              label-placement="stacked"
+              interface="action-sheet"
+            >
+              @for (type of eventTypes; track type.value) {
+                <ion-select-option [value]="type.value">
+                  {{ type.label }}
+                </ion-select-option>
+              }
+            </ion-select>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Hosts -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="people-outline"></ion-icon>
+            Anfitriões
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.hosts[0]"
+              (ionInput)="onHostChange()"
+              label="Nome do primeiro anfitrião"
+              label-placement="stacked"
+              placeholder="Ex: Ana Silva"
+              [required]="true"
+            ></ion-input>
+          </ion-item>
+
+          @if (form.eventType === 'wedding') {
+            <ion-item>
+              <ion-input
+                [(ngModel)]="form.hosts[1]"
+                (ionInput)="onHostChange()"
+                label="Nome do segundo anfitrião"
+                label-placement="stacked"
+                placeholder="Ex: João Santos"
+              ></ion-input>
+            </ion-item>
+          }
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Event Details -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="heart-outline"></ion-icon>
+            Detalhes
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.title"
+              label="Título do convite"
+              label-placement="stacked"
+              placeholder="Ex: O Nosso Casamento"
+              helperText="Deixe vazio para gerar automaticamente"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.subtitle"
+              label="Subtítulo (opcional)"
+              label-placement="stacked"
+              placeholder="Ex: Celebrem connosco o nosso dia especial"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-textarea
+              [(ngModel)]="form.description"
+              label="Mensagem (opcional)"
+              label-placement="stacked"
+              placeholder="Ex: Junte-se a nós para celebrar o amor..."
+              [rows]="3"
+              [autoGrow]="true"
+            ></ion-textarea>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Date & Time -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="calendar-outline"></ion-icon>
+            Data e Hora
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.date"
+              type="date"
+              label="Data do evento"
+              label-placement="stacked"
+              [required]="true"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.time"
+              type="time"
+              label="Hora (opcional)"
+              label-placement="stacked"
+            ></ion-input>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Venue -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="location-outline"></ion-icon>
+            Local
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.venueName"
+              label="Nome do local"
+              label-placement="stacked"
+              placeholder="Ex: Quinta do Vale"
+              [required]="true"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.venueAddress"
+              label="Endereço"
+              label-placement="stacked"
+              placeholder="Ex: Rua das Flores, 123"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.venueCity"
+              label="Cidade"
+              label-placement="stacked"
+              placeholder="Ex: Lisboa"
+            ></ion-input>
+          </ion-item>
+
+          <ion-item>
+            <ion-input
+              [(ngModel)]="form.venueCountry"
+              label="País"
+              label-placement="stacked"
+              placeholder="Portugal"
+            ></ion-input>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Options -->
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>
+            <ion-icon name="settings-outline"></ion-icon>
+            Opções de RSVP
+          </ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-item>
+            <ion-toggle [(ngModel)]="form.allowPlusOne" [enableOnOffLabels]="true">
+              Permitir acompanhantes (+1)
+            </ion-toggle>
+          </ion-item>
+
+          <ion-item>
+            <ion-toggle [(ngModel)]="form.askDietaryRestrictions" [enableOnOffLabels]="true">
+              Perguntar restrições alimentares
+            </ion-toggle>
+          </ion-item>
+
+          <ion-item>
+            <ion-toggle [(ngModel)]="form.askSongRequest" [enableOnOffLabels]="true">
+              Perguntar pedido de música
+            </ion-toggle>
+          </ion-item>
+
+          <ion-item>
+            <ion-toggle [(ngModel)]="form.askChildrenInfo" [enableOnOffLabels]="true">
+              Perguntar informação sobre filhos
+            </ion-toggle>
+          </ion-item>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- Preview Section -->
+    <div class="preview-section">
+      <div class="preview-header">
+        <h3>
+          <ion-icon name="eye-outline"></ion-icon>
+          Pré-visualização
+        </h3>
+        <p>Assim ficará o seu convite</p>
+      </div>
+
+      <div class="preview-card">
+        <app-invitation-card
+          [event]="previewEvent()"
+          [showEnvelope]="false"
+          [showCountdown]="true"
+        ></app-invitation-card>
+      </div>
+
+      <div class="preview-info">
+        <ion-card>
+          <ion-card-content>
+            <p>
+              ✨ O convite atualiza automaticamente conforme preenche os campos
+            </p>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sticky CTA -->
+  <div class="cta-footer">
+    <ion-card>
+      <ion-card-content>
+        <div class="cta-content">
+          <div class="cta-info">
+            <h4>Pronto para continuar?</h4>
+            <p>Apenas <strong>€29</strong> para criar o seu evento</p>
+          </div>
+          <ion-button
+            expand="block"
+            size="large"
+            [disabled]="!isValid()"
+            (click)="proceedToPayment()"
+          >
+            <ion-icon name="arrow-forward-outline" slot="end"></ion-icon>
+            Continuar para Pagamento
+          </ion-button>
+          
+          @if (!isValid()) {
+            <div class="validation-hint">
+              <ion-icon name="checkmark-circle-outline"></ion-icon>
+              Preencha: Nome do anfitrião, Data e Local
+            </div>
+          }
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>

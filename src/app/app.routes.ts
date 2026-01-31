@@ -25,6 +25,18 @@ export const routes: Routes = [
     loadComponent: () =>
       import("./pages/preview/preview.page").then((m) => m.PreviewPage),
   },
+  // Public customization flow
+  {
+    path: "customize",
+    loadComponent: () =>
+      import("./pages/customize/customize.page").then((m) => m.CustomizePage),
+  },
+  // Mock payment page (public)
+  {
+    path: "payment",
+    loadComponent: () =>
+      import("./pages/payment/payment.page").then((m) => m.PaymentPage),
+  },
   {
     path: "events",
     loadComponent: () =>
