@@ -1,0 +1,399 @@
+/**
+ * Public Preview Page Styles
+ * 
+ * Theme preview with invitation type toggle
+ */
+
+:host {
+  --background-cream: #faf5f0;
+  --background-soft: #f3eae1;
+  --text-dark: #1f2937;
+  --text-muted: #6b7280;
+  --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --card-shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1),
+    0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.preview-content {
+  --background: var(--background-cream);
+}
+
+// ============================================
+// TYPE TOOLBAR
+// ============================================
+
+.type-toolbar {
+  --background: white;
+  --border-color: rgba(0, 0, 0, 0.1);
+  padding: 8px 16px;
+
+  ion-segment {
+    max-width: 500px;
+    margin: 0 auto;
+
+    ion-segment-button {
+      --indicator-color: var(--ion-color-primary);
+      font-size: 0.85rem;
+
+      ion-icon {
+        font-size: 1.3rem;
+        margin-bottom: 4px;
+      }
+
+      ion-label {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+// ============================================
+// THEME INFO BANNER
+// ============================================
+
+.theme-info {
+  padding: 20px 16px 16px;
+  text-align: center;
+  background: white;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+
+  .theme-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    background: linear-gradient(
+      135deg,
+      var(--ion-color-primary) 0%,
+      var(--ion-color-secondary) 100%
+    );
+    color: white;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    margin-bottom: 12px;
+    box-shadow: var(--card-shadow);
+
+    ion-icon {
+      font-size: 1.2rem;
+    }
+
+    strong {
+      font-weight: 700;
+    }
+  }
+
+  .theme-hint {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+  }
+}
+
+// ============================================
+// TYPE DESCRIPTION CARD
+// ============================================
+
+.type-description {
+  margin: 16px;
+  box-shadow: var(--card-shadow);
+  border-radius: 12px;
+
+  .type-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    .type-icon {
+      font-size: 2.5rem;
+      color: var(--ion-color-primary);
+      flex-shrink: 0;
+    }
+
+    h3 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin: 0 0 4px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+      margin: 0;
+    }
+  }
+}
+
+// ============================================
+// INVITATION PREVIEW
+// ============================================
+
+.invitation-preview-container {
+  padding: 24px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  // Override invitation card styles for centered preview
+  app-invitation-card {
+    display: block;
+    margin: 0 auto;
+  }
+}
+
+// ============================================
+// SAMPLE NOTICE
+// ============================================
+
+.sample-notice {
+  padding: 0 16px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  ion-card {
+    margin: 0;
+    background: rgba(201, 169, 98, 0.1);
+    border: 1px solid rgba(201, 169, 98, 0.3);
+    box-shadow: none;
+    border-radius: 12px;
+
+    ion-card-content {
+      padding: 16px;
+
+      p {
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        margin: 0;
+        line-height: 1.5;
+
+        strong {
+          font-weight: 700;
+        }
+      }
+    }
+  }
+}
+
+// ============================================
+// CTA SECTION
+// ============================================
+
+.cta-section {
+  padding: 24px 16px;
+  max-width: 600px;
+  margin: 0 auto;
+
+  .cta-card {
+    margin: 0;
+    background: white;
+    box-shadow: var(--card-shadow-hover);
+    border-radius: 16px;
+    border: 2px solid var(--ion-color-primary);
+  }
+
+  .cta-content {
+    padding: 8px;
+    text-align: center;
+
+    h2 {
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-dark);
+      margin: 0 0 12px;
+    }
+
+    > p {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: 0 0 24px;
+
+      strong {
+        color: var(--ion-color-primary);
+        font-weight: 800;
+        font-size: 1.15rem;
+      }
+    }
+  }
+
+  .cta-features {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+    padding: 20px;
+    background: var(--background-cream);
+    border-radius: 12px;
+
+    .feature {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+
+      ion-icon {
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+
+      span {
+        text-align: left;
+      }
+    }
+  }
+
+  .customize-button {
+    --border-radius: 12px;
+    --padding-top: 16px;
+    --padding-bottom: 16px;
+    font-weight: 700;
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+
+    ion-icon {
+      font-size: 1.3rem;
+    }
+  }
+}
+
+// ============================================
+// VARIATIONS HINT
+// ============================================
+
+.variations-hint {
+  padding: 0 16px 32px;
+  text-align: center;
+
+  p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin: 0;
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    display: inline-block;
+
+    strong {
+      font-weight: 700;
+      color: var(--text-dark);
+    }
+  }
+}
+
+// ============================================
+// RESPONSIVE - TABLET & UP
+// ============================================
+
+@media (min-width: 768px) {
+  .type-toolbar {
+    ion-segment {
+      ion-segment-button {
+        font-size: 0.95rem;
+
+        ion-icon {
+          font-size: 1.5rem;
+        }
+      }
+    }
+  }
+
+  .theme-info {
+    padding: 28px 16px 20px;
+
+    .theme-badge {
+      font-size: 1.05rem;
+      padding: 10px 20px;
+
+      ion-icon {
+        font-size: 1.4rem;
+      }
+    }
+
+    .theme-hint {
+      font-size: 1rem;
+    }
+  }
+
+  .invitation-preview-container {
+    padding: 32px 16px;
+  }
+
+  .cta-section {
+    padding: 32px 16px;
+
+    .cta-content {
+      h2 {
+        font-size: 2rem;
+      }
+
+      > p {
+        font-size: 1.125rem;
+      }
+    }
+
+    .cta-features {
+      flex-direction: row;
+      justify-content: space-around;
+      padding: 24px;
+
+      .feature {
+        flex-direction: column;
+        text-align: center;
+
+        span {
+          text-align: center;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 1024px) {
+  .invitation-preview-container {
+    max-width: 700px;
+  }
+
+  .cta-section,
+  .sample-notice {
+    max-width: 700px;
+  }
+}
+
+// ============================================
+// ANIMATIONS
+// ============================================
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.type-description,
+.invitation-preview-container,
+.sample-notice,
+.cta-section {
+  animation: fadeIn 400ms ease-out backwards;
+}
+
+.type-description {
+  animation-delay: 100ms;
+}
+
+.invitation-preview-container {
+  animation-delay: 200ms;
+}
+
+.sample-notice {
+  animation-delay: 300ms;
+}
+
+.cta-section {
+  animation-delay: 400ms;
+}

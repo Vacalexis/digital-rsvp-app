@@ -13,6 +13,18 @@ export const routes: Routes = [
     loadComponent: () =>
       import("./pages/login/login.page").then((m) => m.LoginPage),
   },
+  // Public theme gallery
+  {
+    path: "themes",
+    loadComponent: () =>
+      import("./pages/themes/themes.page").then((m) => m.ThemesPage),
+  },
+  // Public theme preview
+  {
+    path: "preview/:theme",
+    loadComponent: () =>
+      import("./pages/preview/preview.page").then((m) => m.PreviewPage),
+  },
   {
     path: "events",
     loadComponent: () =>
